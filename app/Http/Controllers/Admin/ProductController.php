@@ -1,0 +1,249 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\Product;
+use Illuminate\Http\Request;
+
+class ProductController extends Controller
+{
+    public function index(Request $request)
+    {
+        $query = Product::query();
+
+        if ($request->search) {
+            $q = $request->search;
+            $query->where(function($sub) use ($q) {
+                $sub->where('name', 'like', "%{$q}%")
+                    ->orWhere('brand', 'like', "%{$q}%");
+            });
+        }
+
+        if ($request->brand) {
+            $query->where('brand', $request->brand);
+        }
+
+        $products = $query->latest()->get();
+
+        $stats = [
+            'total'    => Product::count(),
+            'active'   => Product::where('status', 'active')->count(),
+            'total_sold' => Product::sum('sold'),
+        ];
+
+        return view('admin.products.index', compact('products', 'stats'));
+    }
+
+    public function create()
+    {
+        return view('admin.products.create');
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'brand' => 'required|string|max:255',
+            'plan' => 'required|string|max:50',
+            'price' => 'required|numeric|min:0',
+            'old_price' => 'nullable|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'status' => 'required|in:active,inactive',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
+            'features' => 'nullable|string',
+            'servers' => 'nullable|string|max:255',
+            'countries' => 'nullable|string|max:255',
+            'devices' => 'nullable|string|max:255',
+            'speed' => 'nullable|string|max:255',
+            'protocol' => 'nullable|string|max:255',
+            'headquarter' => 'nullable|string|max:255',
+            'founded' => 'nullable|string|max:255',
+            'refund' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+            'rating' => 'nullable|numeric|min:0|max:5',
+            'reviews' => 'nullable|integer|min:0',
+        ]);
+
+        $slug = strtolower($request->brand);
+        $colorMap = [
+            'nordvpn' => '#4687FF',
+            'expressvpn' => '#DA3940',
+            'surfshark' => '#10B981',
+            'hma vpn' => '#F59E0B',
+            'hma' => '#F59E0B',
+            'cyberghost' => '#8B5CF6',
+            'purevpn' => '#EF4444',
+            'ipvanish' => '#0EA5E9',
+            'protonvpn' => '#6D28D9',
+        ];
+        $color = $colorMap[$slug] ?? '#4687FF';
+
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            
+            // Ensure directory exists
+            if (!file_exists(public_path('uploads/products'))) {
+                mkdir(public_path('uploads/products'), 0777, true);
+            }
+            
+            $file->move(public_path('uploads/products'), $filename);
+            $imagePath = 'uploads/products/' . $filename;
+        }
+
+        $features = [];
+        if ($request->features) {
+            $features = array_map('trim', explode(',', $request->features));
+            $features = array_filter($features);
+        } else {
+            // default features
+            $features = ['Mã bản quyền chính hãng', 'Bảo mật tuyệt đối', 'Hỗ trợ 24/7'];
+        }
+
+        Product::create([
+            'name' => $request->name,
+            'brand' => $request->brand,
+            'slug' => $slug,
+            'color' => $color,
+            'price' => $request->price,
+            'old_price' => $request->old_price,
+            'plan' => $request->plan,
+            'stock' => $request->stock,
+            'status' => $request->status,
+            'image_path' => $imagePath,
+            'features' => $features,
+            'rating' => $request->rating ?? 4.8,
+            'reviews' => $request->reviews ?? 120,
+            'sold' => 0,
+            'servers' => $request->servers,
+            'countries' => $request->countries,
+            'devices' => $request->devices,
+            'speed' => $request->speed,
+            'protocol' => $request->protocol,
+            'headquarter' => $request->headquarter,
+            'founded' => $request->founded,
+            'refund' => $request->refund,
+            'description' => $request->description,
+        ]);
+
+        return redirect()->route('admin.products.index')->with('success', 'Thêm gói VPN mới thành công!');
+    }
+
+    public function edit($id)
+    {
+        $product = Product::findOrFail($id);
+        return view('admin.products.edit', compact('product'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $product = Product::findOrFail($id);
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'brand' => 'required|string|max:255',
+            'plan' => 'required|string|max:50',
+            'price' => 'required|numeric|min:0',
+            'old_price' => 'nullable|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+            'status' => 'required|in:active,inactive',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
+            'features' => 'nullable|string',
+            'servers' => 'nullable|string|max:255',
+            'countries' => 'nullable|string|max:255',
+            'devices' => 'nullable|string|max:255',
+            'speed' => 'nullable|string|max:255',
+            'protocol' => 'nullable|string|max:255',
+            'headquarter' => 'nullable|string|max:255',
+            'founded' => 'nullable|string|max:255',
+            'refund' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+            'rating' => 'nullable|numeric|min:0|max:5',
+            'reviews' => 'nullable|integer|min:0',
+        ]);
+
+        $slug = strtolower($request->brand);
+        $colorMap = [
+            'nordvpn' => '#4687FF',
+            'expressvpn' => '#DA3940',
+            'surfshark' => '#10B981',
+            'hma vpn' => '#F59E0B',
+            'hma' => '#F59E0B',
+            'cyberghost' => '#8B5CF6',
+            'purevpn' => '#EF4444',
+            'ipvanish' => '#0EA5E9',
+            'protonvpn' => '#6D28D9',
+        ];
+        $color = $colorMap[$slug] ?? '#4687FF';
+
+        $imagePath = $product->image_path;
+        if ($request->hasFile('image')) {
+            // Delete old image if exists
+            if ($product->image_path && file_exists(public_path($product->image_path))) {
+                @unlink(public_path($product->image_path));
+            }
+
+            $file = $request->file('image');
+            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            
+            // Ensure directory exists
+            if (!file_exists(public_path('uploads/products'))) {
+                mkdir(public_path('uploads/products'), 0777, true);
+            }
+
+            $file->move(public_path('uploads/products'), $filename);
+            $imagePath = 'uploads/products/' . $filename;
+        }
+
+        $features = [];
+        if ($request->features) {
+            $features = array_map('trim', explode(',', $request->features));
+            $features = array_filter($features);
+        } else {
+            $features = $product->features ?: ['Mã bản quyền chính hãng', 'Bảo mật tuyệt đối', 'Hỗ trợ 24/7'];
+        }
+
+        $product->update([
+            'name' => $request->name,
+            'brand' => $request->brand,
+            'slug' => $slug,
+            'color' => $color,
+            'price' => $request->price,
+            'old_price' => $request->old_price,
+            'plan' => $request->plan,
+            'stock' => $request->stock,
+            'status' => $request->status,
+            'image_path' => $imagePath,
+            'features' => $features,
+            'rating' => $request->rating ?? 4.8,
+            'reviews' => $request->reviews ?? 120,
+            'servers' => $request->servers,
+            'countries' => $request->countries,
+            'devices' => $request->devices,
+            'speed' => $request->speed,
+            'protocol' => $request->protocol,
+            'headquarter' => $request->headquarter,
+            'founded' => $request->founded,
+            'refund' => $request->refund,
+            'description' => $request->description,
+        ]);
+
+        return redirect()->route('admin.products.index')->with('success', 'Cập nhật gói VPN thành công!');
+    }
+
+    public function destroy($id)
+    {
+        $product = Product::findOrFail($id);
+        
+        // Delete image file if exists
+        if ($product->image_path && file_exists(public_path($product->image_path))) {
+            @unlink(public_path($product->image_path));
+        }
+
+        $product->delete();
+
+        return redirect()->route('admin.products.index')->with('success', 'Xóa gói VPN thành công!');
+    }
+}
