@@ -47,6 +47,14 @@ return [
             'report' => false,
         ],
 
+        'public_uploads' => [
+            'driver' => 'local',
+            'root' => is_dir(base_path('../public_html')) ? base_path('../public_html') : public_path(),
+            'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
