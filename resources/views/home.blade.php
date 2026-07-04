@@ -2,6 +2,51 @@
 
 @section('title', 'VPNStore - Cửa Hàng VPN Chính Hãng Số 1 Việt Nam')
 @section('meta_description', 'Mua VPN chính hãng: NordVPN, ExpressVPN, Surfshark, HMA, CyberGhost với giá tốt nhất. Bảo hành 30 ngày, hỗ trợ 24/7.')
+@section('meta_keywords', 'vpn gia re, mua vpn, tai khoan nordvpn, tai khoan expressvpn, mua surfshark, key hma vpn, cyberghost gia re, gia vpn')
+
+@section('json_ld')
+<script type="application/ld+json">
+{
+  "@@context": "https://schema.org",
+  "@@graph": [
+    {
+      "@@type": "Organization",
+      "@@id": "{{ route('home') }}#organization",
+      "name": "VPNStore",
+      "url": "{{ route('home') }}",
+      "logo": "{{ asset('favicon.ico') }}",
+      "sameAs": [
+        "https://t.me/specademy"
+      ],
+      "contactPoint": [
+        {
+          "@@type": "ContactPoint",
+          "telephone": "+84708910952",
+          "contactType": "customer support",
+          "areaServed": "VN",
+          "availableLanguage": "Vietnamese"
+        }
+      ]
+    },
+    {
+      "@@type": "WebSite",
+      "@@id": "{{ route('home') }}#website",
+      "url": "{{ route('home') }}",
+      "name": "VPNStore",
+      "description": "Mua VPN chính hãng: NordVPN, ExpressVPN, Surfshark, HMA, CyberGhost với giá tốt nhất. Bảo hành 30 ngày, hỗ trợ 24/7.",
+      "publisher": {
+        "@@id": "{{ route('home') }}#organization"
+      },
+      "potentialAction": {
+        "@@type": "SearchAction",
+        "target": "{{ route('search') }}?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+  ]
+}
+</script>
+@endsection
 
 @section('content')
 
@@ -269,7 +314,8 @@
                                 @endfor
                             </div>
                             <span class="fw-600 ms-1" style="font-size:12.5px;color:var(--gray-700)">{{ $prod['rating'] }}</span>
-                            <span class="rating-count ms-1">({{ number_format($prod['reviews']) }})</span>
+                            <span class="rating-count ms-1">({{ number_format($prod['reviews']) }} đánh giá)</span>
+                            <span class="ms-2 text-muted" style="font-size:11.5px">• Đã bán {{ \App\Models\Setting::get('sales_' . strtolower($prod['slug']), '100+') }}</span>
                         </div>
                         <div class="product-price-wrap">
                             <div class="product-price-old">{{ number_format($prod['old_price']) }}đ</div>
@@ -287,6 +333,11 @@
                             <a href="{{ route('product.detail', $prod['slug']) }}" class="btn-add-cart" style="text-decoration:none">
                                 Xem Chi Tiết
                             </a>
+                            @if(($prod['stock'] ?? 0) <= 0)
+                            <button class="btn-wishlist" disabled style="background:#cbd5e1; border-color:#cbd5e1; color:#64748b; cursor:not-allowed;" title="Hết Hàng">
+                                <i class="bi bi-x-circle"></i>
+                            </button>
+                            @else
                             <button class="btn-wishlist"
                                 data-add-cart
                                 data-id="{{ $prod['id'] }}"
@@ -299,6 +350,7 @@
                                 title="Thêm Vào Giỏ">
                                 <i class="bi bi-bag-plus"></i>
                             </button>
+                            @endif
                             <button class="btn-wishlist" data-wishlist>
                                 <i class="bi bi-heart"></i>
                             </button>
@@ -333,7 +385,7 @@
                     Đặc biệt khi mua gói dài hạn bạn sẽ được tặng thêm 3 tháng miễn phí
                     và hỗ trợ kỹ thuật ưu tiên. Cơ hội không thể bỏ qua!
                 </p>
-                <div class="d-flex gap-3 mt-4">
+                <div class="d-flex flex-column flex-sm-row gap-3 mt-4">
                     <a href="{{ route('products') }}" class="btn btn-warning fw-700 px-4 py-3 rounded-pill">
                         <i class="bi bi-bag-fill me-2"></i>Khám Phá Sản Phẩm — Tiết Kiệm 70%
                     </a>

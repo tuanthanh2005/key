@@ -134,7 +134,7 @@
                         <!-- Order Items -->
                         <div class="p-4 border-bottom" style="border-color:var(--gray-100)!important">
                             <h6 class="fw-700 mb-3" style="font-size:14px">Sản Phẩm Đặt Mua</h6>
-                            <div class="d-flex align-items-center gap-3 p-3 rounded-3" style="background:var(--gray-50)">
+                            <div class="order-product-item d-flex align-items-center gap-3 p-3 rounded-3" style="background:var(--gray-50)">
                                 <div style="width:52px;height:52px;background:linear-gradient(135deg,#4687FF,#2563eb);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:24px">
                                     <i class="bi bi-shield-lock-fill"></i>
                                 </div>
@@ -189,7 +189,7 @@
                                 
                                 <div class="mb-3">
                                     <label class="form-label fw-600 text-dark mb-1" style="font-size:13px">Nội dung đánh giá:</label>
-                                    <textarea name="comment" rows="3" class="form-control" placeholder="Chia sẻ trải nghiệm của bạn về dịch vụ/sản phẩm VPN này..." required style="border-radius:10px;font-size:13px"></textarea>
+                                    <textarea name="comment" rows="3" class="form-control" placeholder="Chia sẻ trải nghiệm của bạn về dịch vụ/sản phẩm VPN này... (Không bắt buộc)" style="border-radius:10px;font-size:13px"></textarea>
                                 </div>
                                 
                                 <button type="submit" class="btn btn-primary rounded-pill px-4 fw-600" style="font-size:13.5px">
@@ -290,9 +290,10 @@
                                 <i class="bi bi-headset text-primary" style="font-size:24px;flex-shrink:0"></i>
                                 <div>
                                     <div class="fw-700" style="font-size:13.5px;color:var(--primary)">Cần hỗ trợ?</div>
-                                    <div style="font-size:12.5px;color:var(--gray-600)">
-                                        Liên hệ qua Telegram <strong>@specademy</strong> hoặc Zalo <strong>0708910952 / 0569012134</strong>
-                                    </div>
+                                     <div style="font-size:12.5px;color:var(--gray-600)">
+                                         Liên hệ qua Telegram <strong>{{ '@' . ltrim($settings['telegram_support'] ?? 'specademy', '@') }}</strong>
+                                         @if(!empty($settings['zalo_support'])) hoặc Zalo <strong>{{ $settings['zalo_support'] }}{{ !empty($settings['zalo_support_2']) ? ' / ' . $settings['zalo_support_2'] : '' }}</strong> @endif
+                                     </div>
                                 </div>
                                 <a href="{{ route('contact') }}" class="btn btn-sm btn-primary ms-auto rounded-pill px-3">Liên Hệ</a>
                             </div>
@@ -321,18 +322,26 @@
                     Không tìm thấy đơn hàng? Kiểm tra lại email hoặc liên hệ hỗ trợ:
                 </p>
                 <div class="d-flex flex-wrap gap-2">
-                    <a href="https://t.me/specademy" target="_blank" class="btn btn-sm rounded-pill px-3" style="background:#e3f2fd;color:#1565c0;font-size:12.5px;font-weight:600;border:1px solid #bbdefb">
-                        <i class="bi bi-telegram me-1"></i>Telegram: @specademy
+                    @if(!empty($settings['telegram_support']))
+                    <a href="{{ $settings['telegram_url'] ?? 'https://t.me/' . ltrim($settings['telegram_support'],'@') }}" target="_blank" class="btn btn-sm rounded-pill px-3" style="background:#e3f2fd;color:#1565c0;font-size:12.5px;font-weight:600;border:1px solid #bbdefb">
+                        <i class="bi bi-telegram me-1"></i>Telegram: {{ '@' . ltrim($settings['telegram_support'],'@') }}
                     </a>
-                    <a href="https://zalo.me/0708910952" target="_blank" class="btn btn-sm rounded-pill px-3" style="background:#fce4ec;color:#7b1fa2;font-size:12.5px;font-weight:600;border:1px solid #f3e5f5">
-                        <i class="bi bi-chat-dots me-1"></i>Zalo 1: 0708910952
+                    @endif
+                    @if(!empty($settings['zalo_support']))
+                    <a href="{{ $settings['zalo_url_1'] ?? 'https://zalo.me/' . $settings['zalo_support'] }}" target="_blank" class="btn btn-sm rounded-pill px-3" style="background:#fce4ec;color:#7b1fa2;font-size:12.5px;font-weight:600;border:1px solid #f3e5f5">
+                        <i class="bi bi-chat-dots me-1"></i>Zalo 1: {{ $settings['zalo_support'] }}
                     </a>
-                    <a href="https://zalo.me/0569012134" target="_blank" class="btn btn-sm rounded-pill px-3" style="background:#fce4ec;color:#7b1fa2;font-size:12.5px;font-weight:600;border:1px solid #f3e5f5">
-                        <i class="bi bi-chat-dots me-1"></i>Zalo 2: 0569012134
+                    @endif
+                    @if(!empty($settings['zalo_support_2']))
+                    <a href="{{ $settings['zalo_url_2'] ?? 'https://zalo.me/' . $settings['zalo_support_2'] }}" target="_blank" class="btn btn-sm rounded-pill px-3" style="background:#fce4ec;color:#7b1fa2;font-size:12.5px;font-weight:600;border:1px solid #f3e5f5">
+                        <i class="bi bi-chat-dots me-1"></i>Zalo 2: {{ $settings['zalo_support_2'] }}
                     </a>
-                    <a href="mailto:tetuongmmovn@gmail.com" class="btn btn-sm rounded-pill px-3" style="background:#e8f5e9;color:#2e7d32;font-size:12.5px;font-weight:600;border:1px solid #c8e6c9">
-                        <i class="bi bi-envelope me-1"></i>tetuongmmovn@gmail.com
+                    @endif
+                    @if(!empty($settings['contact_email']))
+                    <a href="mailto:{{ $settings['contact_email'] }}" class="btn btn-sm rounded-pill px-3" style="background:#e8f5e9;color:#2e7d32;font-size:12.5px;font-weight:600;border:1px solid #c8e6c9">
+                        <i class="bi bi-envelope me-1"></i>{{ $settings['contact_email'] }}
                     </a>
+                    @endif
                 </div>
             </div>
         </div>

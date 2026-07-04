@@ -1,0 +1,65 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\Setting;
+use Illuminate\Http\Request;
+
+class SettingController extends Controller
+{
+    /**
+     * Hiển thị trang cài đặt
+     */
+    public function index()
+    {
+        $settings = Setting::getAllKeyed();
+        return view('admin.settings.index', compact('settings'));
+    }
+
+    /**
+     * Lưu cài đặt hệ thống (bulk update)
+     */
+    public function update(Request $request)
+    {
+        $data = $request->except(['_token', '_method']);
+
+        // Validate một số field quan trọng
+        $request->validate([
+            'auto_discount_threshold' => 'nullable|integer|min:0',
+            'auto_discount_rate'      => 'nullable|numeric|min:0|max:100',
+            'dashboard_max_days'      => 'nullable|integer|min:1|max:365',
+            'dashboard_orders_per_page' => 'nullable|integer|min:5|max:100',
+            'contact_email'           => 'nullable|email',
+        ], [
+            'auto_discount_rate.max'     => 'Tỷ lệ giảm giá tối đa 100%.',
+            'dashboard_max_days.max'     => 'Không được vượt quá 365 ngày.',
+            'contact_email.email'        => 'Email không hợp lệ.',
+        ]);
+
+        foreach ($data as $key => $value) {
+            Setting::set($key, $value);
+        }
+
+        // Xóa cache sau khi cập nhật xong
+        Setting::clearCache();
+
+        return redirect()->back()->with('success', 'Đã lưu cấu hình hệ thống thành công!');
+    }
+
+    /**
+     * API public: Trả về settings cần cho frontend JS (discount, bank info)
+     */
+    public function publicApi()
+    {
+        $s = Setting::getAllKeyed();
+        return response()->json([
+            'auto_discount_threshold' => (int) ($s['auto_discount_threshold'] ?? 500000),
+            'auto_discount_rate'      => (float) ($s['auto_discount_rate'] ?? 5),
+            'bank_code'               => $s['bank_code'] ?? 'OCB',
+            'bank_account_number'     => $s['bank_account_number'] ?? '',
+            'bank_account_name'       => $s['bank_account_name'] ?? '',
+            'bank_bin'                => $s['bank_bin'] ?? '',
+        ]);
+    }
+}

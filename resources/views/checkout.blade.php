@@ -53,11 +53,11 @@
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label">Họ và Tên <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" placeholder="Nguyễn Văn A" required id="full-name">
+                        <input type="text" class="form-control" placeholder="Nguyễn Văn A" required id="full-name" value="{{ auth()->user()->name ?? '' }}">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Email <span class="text-danger">*</span></label>
-                        <input type="email" class="form-control" placeholder="email@gmail.com" required id="email">
+                        <input type="email" class="form-control" placeholder="email@gmail.com" required id="email" value="{{ auth()->user()->email ?? '' }}">
                         <small class="text-muted mt-1 d-block"><i class="bi bi-info-circle me-1"></i>Key VPN sẽ được gửi về email này</small>
                     </div>
                     <div class="col-md-6">
@@ -201,6 +201,10 @@
                     <span id="cart-discount" class="fw-600 text-success">0đ</span>
                 </div>
                 <div class="cart-summary-row">
+                    <span>Mã giảm giá</span>
+                    <span id="cart-coupon" class="fw-600 text-success">Chưa áp dụng</span>
+                </div>
+                <div class="cart-summary-row">
                     <span>Phí vận chuyển</span>
                     <span class="fw-600 text-success">Miễn phí</span>
                 </div>
@@ -256,6 +260,7 @@
 
 @section('extra_js')
 <script>
+window.stockMap = @json($stockMap);
 // Generate a unique order code on page load
 const orderCode = (function() {
     const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -289,25 +294,56 @@ document.addEventListener('DOMContentLoaded', function() {
     if (cart.length === 0 && summaryEl) {
         summaryEl.innerHTML = '<p class="text-center text-muted">Giỏ hàng trống</p>';
     } else if (summaryEl) {
-        summaryEl.innerHTML = cart.map(item => `
-            <div class="d-flex align-items-center gap-3 mb-3">
+        summaryEl.innerHTML = cart.map(item => {
+            const stockKey = (item.brand + '_' + item.plan).toLowerCase().replace(/\s+/g, '');
+            const isOutOfStock = window.stockMap !== undefined && window.stockMap[stockKey] !== undefined && window.stockMap[stockKey] <= 0;
+            return `
+            <div class="checkout-cart-item d-flex align-items-center gap-3 mb-3 ${isOutOfStock ? 'opacity-75' : ''}">
                 <div class="cart-item-img" style="width:50px;height:50px;background:${item.brandColor}15;color:${item.brandColor};border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">
                     <i class="bi bi-shield-fill-check"></i>
                 </div>
                 <div class="flex-grow-1">
-                    <div class="fw-600" style="font-size:13px">${item.name}</div>
+                    <div class="fw-600" style="font-size:13px">
+                        ${item.name}
+                        ${isOutOfStock ? '<span class="badge bg-danger ms-2" style="font-size:10.5px">Hết Hàng</span>' : ''}
+                    </div>
                     <div style="font-size:11.5px;color:var(--gray-400)">Gói: ${item.plan} · SL: ${item.qty}</div>
                 </div>
                 <div class="fw-700 text-primary" style="font-size:14px">${(item.price * item.qty).toLocaleString('vi-VN')}đ</div>
             </div>
-        `).join('');
+            `;
+        }).join('');
     }
 
+    // Lấy discount settings từ server
+    const siteSettings = {!! json_encode([
+        'auto_discount_threshold' => (int)($settings['auto_discount_threshold'] ?? 500000),
+        'auto_discount_rate'      => (float)($settings['auto_discount_rate'] ?? 5),
+        'bank_code'               => $settings['bank_code'] ?? 'OCB',
+        'bank_account_number'     => $settings['bank_account_number'] ?? '',
+        'bank_account_name'       => $settings['bank_account_name'] ?? '',
+    ]) !!};
+
     const subtotal = CartManager.getTotal();
-    const discount = subtotal > 500000 ? Math.round(subtotal * 0.05) : 0;
-    const total = subtotal - discount;
+    const autoDiscount = subtotal > siteSettings.auto_discount_threshold
+        ? Math.round(subtotal * siteSettings.auto_discount_rate / 100)
+        : 0;
+    const couponCode = CartManager.getCoupon();
+    const couponDiscount = CartManager.getCouponDiscount(subtotal);
+    const total = Math.max(0, subtotal - autoDiscount - couponDiscount);
+
     if (subtotalEl) subtotalEl.textContent = subtotal.toLocaleString('vi-VN') + 'đ';
-    if (discountEl) discountEl.textContent = discount > 0 ? '-' + discount.toLocaleString('vi-VN') + 'đ' : '0đ';
+    if (discountEl) discountEl.textContent = autoDiscount > 0 ? '-' + autoDiscount.toLocaleString('vi-VN') + 'đ' : '0đ';
+    
+    const couponEl = document.getElementById('cart-coupon');
+    if (couponEl) {
+        if (couponCode) {
+            couponEl.innerHTML = `<span class="badge bg-success-light text-success">${couponCode}</span> -${couponDiscount.toLocaleString('vi-VN')}đ`;
+        } else {
+            couponEl.textContent = 'Chưa áp dụng';
+        }
+    }
+    
     if (totalEl) totalEl.textContent = total.toLocaleString('vi-VN') + 'đ';
 
     // Show unique order code as bank transfer note
@@ -316,10 +352,10 @@ document.addEventListener('DOMContentLoaded', function() {
         transferNote.textContent = orderCode;
     }
 
-    // Set VietQR code image
+    // Set VietQR code image từ settings
     const qrImage = document.getElementById('vietqr-code');
-    if (qrImage) {
-        qrImage.src = `https://img.vietqr.io/image/OCB-0772698113-compact2.png?amount=${total}&addInfo=${encodeURIComponent(orderCode)}&accountName=TRAN%20THANH%20TUAN`;
+    if (qrImage && siteSettings.bank_account_number) {
+        qrImage.src = `https://img.vietqr.io/image/${siteSettings.bank_code}-${siteSettings.bank_account_number}-compact2.png?amount=${total}&addInfo=${encodeURIComponent(orderCode)}&accountName=${encodeURIComponent(siteSettings.bank_account_name)}`;
     }
 });
 
@@ -328,7 +364,20 @@ document.getElementById('checkoutForm')?.addEventListener('submit', function(e) 
     e.preventDefault();
     const cart = CartManager.getCart();
     if (cart.length === 0) { showToast('Giỏ hàng trống!', 'warning'); return; }
-    
+
+    // Client-side verification: check if any item is out of stock
+    let hasOutOfStock = false;
+    cart.forEach(item => {
+        const stockKey = (item.brand + '_' + item.plan).toLowerCase().replace(/\s+/g, '');
+        if (window.stockMap !== undefined && window.stockMap[stockKey] !== undefined && window.stockMap[stockKey] <= 0) {
+            hasOutOfStock = true;
+        }
+    });
+    if (hasOutOfStock) {
+        showToast('Giỏ hàng của bạn chứa sản phẩm đã hết hàng. Vui lòng quay lại giỏ hàng để loại bỏ trước khi thanh toán!', 'danger');
+        return;
+    }
+
     // Show confirm payment modal
     const confirmModal = new bootstrap.Modal(document.getElementById('confirmPaymentModal'));
     confirmModal.show();
@@ -370,6 +419,7 @@ function submitCheckout() {
             telegram: document.getElementById('telegram').value,
             note: document.getElementById('note').value,
             payment_method: document.querySelector('input[name="payment"]:checked').value,
+            coupon: CartManager.getCoupon(),
             cart: cart
         })
     })

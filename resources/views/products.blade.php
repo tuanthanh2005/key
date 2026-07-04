@@ -43,9 +43,12 @@
 <div class="container py-5">
     <div class="row g-4">
 
-        <!-- SIDEBAR FILTER -->
         <div class="col-lg-3">
-            <div class="filter-sidebar">
+            <button class="btn btn-outline-primary w-100 d-lg-none mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse" aria-expanded="false" aria-controls="filterCollapse">
+                <i class="bi bi-funnel me-2"></i>Bộ Lọc & Tìm Kiếm
+            </button>
+            <div class="collapse d-lg-block" id="filterCollapse">
+                <div class="filter-sidebar">
                 <div class="filter-header">
                     <h6><i class="bi bi-funnel me-2 text-primary"></i>Bộ Lọc</h6>
                     <button class="btn btn-sm text-primary p-0" style="font-size:12.5px;font-weight:600" onclick="resetFilters()">Đặt lại</button>
@@ -114,6 +117,7 @@
                 </div>
 
 
+                </div>
             </div>
         </div>
 
@@ -164,7 +168,8 @@
                     data-brand="{{ strtolower($prod['brand']) }}"
                     data-price="{{ $prod['price'] }}"
                     data-rating="{{ $prod['rating'] }}"
-                    data-slug="{{ $prod['slug'] }}">
+                    data-slug="{{ $prod['slug'] }}"
+                    data-plan="{{ $prod['plan'] }}">
                     <div class="product-card">
                         <div class="product-card-badge">
                             @if($prod['price'] < ($prod['old_price'] ?? 0))<span class="badge-sale">-{{ round((($prod['old_price'] ?? 0) - $prod['price']) / ($prod['old_price'] ?? 1) * 100) }}%</span>@endif
@@ -195,7 +200,8 @@
                                     @for($i=1;$i<=5;$i++)<i class="bi {{ $i <= floor($prod['rating']) ? 'bi-star-fill' : ($i - $prod['rating'] < 1 ? 'bi-star-half' : 'bi-star') }}"></i>@endfor
                                 </div>
                                 <span class="fw-600 ms-1" style="font-size:12px;color:var(--gray-700)">{{ $prod['rating'] }}</span>
-                                <span class="rating-count">({{ number_format($prod['reviews']) }})</span>
+                                <span class="rating-count">({{ number_format($prod['reviews']) }} đánh giá)</span>
+                                <span class="ms-2 text-muted" style="font-size:11.5px">• Đã bán {{ \App\Models\Setting::get('sales_' . strtolower($prod['slug']), '100+') }}</span>
                             </div>
                             <div class="product-price-wrap">
                                 <div class="product-price-old">{{ number_format($prod['old_price']) }}đ</div>
@@ -208,6 +214,11 @@
                                 <a href="{{ route('product.detail', $prod['slug']) }}" class="btn-add-cart" style="text-decoration:none;display:flex;align-items:center;justify-content:center;gap:8px">
                                     Xem Chi Tiết
                                 </a>
+                                @if(($prod['stock'] ?? 0) <= 0)
+                                <button class="btn-wishlist" disabled style="background:#cbd5e1; border-color:#cbd5e1; color:#64748b; cursor:not-allowed;" title="Hết Hàng">
+                                    <i class="bi bi-x-circle"></i>
+                                </button>
+                                @else
                                 <button class="btn-wishlist"
                                     data-add-cart
                                     data-id="{{ $prod['id'] }}"
@@ -220,6 +231,7 @@
                                     title="Thêm Vào Giỏ">
                                     <i class="bi bi-bag-plus"></i>
                                 </button>
+                                @endif
                                 <button class="btn-wishlist" data-wishlist>
                                     <i class="bi bi-heart"></i>
                                 </button>
@@ -248,13 +260,15 @@
 @section('extra_js')
 <script>
 function resetFilters() {
-    document.querySelectorAll('.brand-filter, .duration-filter, input[type="checkbox"]').forEach(cb => cb.checked = false);
-    document.getElementById('productSearch').value = '';
-    document.getElementById('priceRange').value = 2000000;
-    document.getElementById('priceDisplay').textContent = '2.000.000đ trở xuống';
-    document.querySelectorAll('.product-card-wrap').forEach(el => el.style.display = '');
-    document.getElementById('emptyState').classList.add('d-none');
-    updateCount();
+    document.querySelectorAll('.brand-filter, .duration-filter').forEach(cb => cb.checked = false);
+    const searchInput = document.getElementById('productSearch');
+    if (searchInput) searchInput.value = '';
+    const priceRange = document.getElementById('priceRange');
+    if (priceRange) priceRange.value = 2000000;
+    const priceDisplay = document.getElementById('priceDisplay');
+    if (priceDisplay) priceDisplay.textContent = '2.000.000đ trở xuống';
+    
+    applyFilters();
 }
 
 function updateCount() {
@@ -265,19 +279,47 @@ function updateCount() {
     if (empty) empty.classList.toggle('d-none', visible > 0);
 }
 
-// Brand filter checkboxes
-document.querySelectorAll('.brand-filter').forEach(cb => {
-    cb.addEventListener('change', function() {
-        const selected = Array.from(document.querySelectorAll('.brand-filter:checked')).map(c => c.dataset.brand);
-        document.querySelectorAll('.product-card-wrap').forEach(el => {
-            if (selected.length === 0 || selected.includes(el.dataset.slug)) {
-                el.style.display = '';
-            } else {
-                el.style.display = 'none';
-            }
-        });
-        updateCount();
+function applyFilters() {
+    const searchQuery = (document.getElementById('productSearch')?.value || '').toLowerCase().trim();
+    const selectedBrands = Array.from(document.querySelectorAll('.brand-filter:checked')).map(c => c.dataset.brand);
+    const selectedDurations = Array.from(document.querySelectorAll('.duration-filter:checked')).map(c => c.dataset.duration);
+    const maxPrice = parseFloat(document.getElementById('priceRange')?.value || 2000000);
+
+    document.querySelectorAll('.product-card-wrap').forEach(el => {
+        const name = el.dataset.name || '';
+        const brand = el.dataset.brand || '';
+        const slug = el.dataset.slug || '';
+        const plan = el.dataset.plan || '';
+        const price = parseFloat(el.dataset.price || 0);
+
+        const matchesSearch = searchQuery === '' || name.includes(searchQuery) || brand.includes(searchQuery);
+        const matchesBrand = selectedBrands.length === 0 || selectedBrands.includes(slug);
+        const matchesDuration = selectedDurations.length === 0 || selectedDurations.includes(plan);
+        const matchesPrice = price <= maxPrice;
+
+        if (matchesSearch && matchesBrand && matchesDuration && matchesPrice) {
+            el.style.display = '';
+        } else {
+            el.style.display = 'none';
+        }
     });
+    updateCount();
+}
+
+// Bind events
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('productSearch')?.addEventListener('input', applyFilters);
+    document.querySelectorAll('.brand-filter').forEach(cb => cb.addEventListener('change', applyFilters));
+    document.querySelectorAll('.duration-filter').forEach(cb => cb.addEventListener('change', applyFilters));
+    
+    const priceRange = document.getElementById('priceRange');
+    if (priceRange) {
+        priceRange.addEventListener('input', function() {
+            const display = document.getElementById('priceDisplay');
+            if (display) display.textContent = formatCurrency(parseInt(this.value)) + ' trở xuống';
+            applyFilters();
+        });
+    }
 });
 
 // View toggle

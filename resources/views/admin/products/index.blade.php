@@ -126,9 +126,13 @@
                     </td>
                     <td>
                         @if($prod->status === 'active')
-                        <span class="admin-badge admin-badge-success">Đang Bán</span>
+                            @if($prod->stock <= 0)
+                                <span class="admin-badge admin-badge-danger">Hết Hàng</span>
+                            @else
+                                <span class="admin-badge admin-badge-success">Đang Bán</span>
+                            @endif
                         @else
-                        <span class="admin-badge admin-badge-secondary">Ẩn</span>
+                            <span class="admin-badge admin-badge-secondary">Ẩn</span>
                         @endif
                     </td>
                     <td>

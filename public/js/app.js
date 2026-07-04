@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // ============================
     const CartManager = {
         key: 'vpnstore_cart',
+        couponKey: 'vpnstore_coupon',
 
         getCart() {
             try {
@@ -19,6 +20,27 @@ document.addEventListener('DOMContentLoaded', function () {
         saveCart(cart) {
             localStorage.setItem(this.key, JSON.stringify(cart));
             this.updateBadge();
+        },
+
+        getCoupon() {
+            return localStorage.getItem(this.couponKey) || null;
+        },
+
+        setCoupon(code) {
+            localStorage.setItem(this.couponKey, code);
+        },
+
+        clearCoupon() {
+            localStorage.removeItem(this.couponKey);
+        },
+
+        getCouponDiscount(subtotal) {
+            const coupon = this.getCoupon();
+            const coupons = { 'VPNVN10': 0.1, 'VIP20': 0.2, 'SALE15': 0.15 };
+            if (coupon && coupons[coupon]) {
+                return Math.round(subtotal * coupons[coupon]);
+            }
+            return 0;
         },
 
         addItem(product) {
@@ -58,15 +80,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
         clear() {
             localStorage.removeItem(this.key);
+            this.clearCoupon();
             this.updateBadge();
         },
 
         updateBadge() {
-            const badge = document.getElementById('cart-count');
-            if (badge) {
+            const badges = document.querySelectorAll('.cart-badge');
+            if (badges.length > 0) {
                 const count = this.getCount();
-                badge.textContent = count;
-                badge.style.display = count > 0 ? 'flex' : 'none';
+                badges.forEach(badge => {
+                    badge.textContent = count;
+                    badge.style.display = count > 0 ? 'flex' : 'none';
+                });
             }
         }
     };
@@ -88,6 +113,10 @@ document.addEventListener('DOMContentLoaded', function () {
             const brandColor  = this.dataset.color || '#2563eb';
             const brandSlug   = this.dataset.slug || '';
 
+            // Check if there is a quantity selector on the page (e.g. product-detail page)
+            const qtyInput = document.getElementById('detail-qty');
+            const qtyVal = qtyInput ? (parseInt(qtyInput.value) || 1) : 1;
+
             CartManager.addItem({
                 id: productId + '_' + plan,
                 productId,
@@ -97,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 price,
                 brandColor,
                 brandSlug,
-                qty: 1
+                qty: qtyVal
             });
 
             // Button animation
@@ -388,32 +417,42 @@ document.addEventListener('DOMContentLoaded', function () {
                     <div class="empty-state-icon"><i class="bi bi-bag-x"></i></div>
                     <h5>Giỏ hàng của bạn đang trống</h5>
                     <p>Hãy thêm sản phẩm VPN vào giỏ hàng nhé!</p>
-                    <a href="/products" class="btn btn-primary mt-3 rounded-pill px-4">
+                    <a href="/san-pham" class="btn btn-primary mt-3 rounded-pill px-4">
                         <i class="bi bi-grid me-2"></i>Xem Sản Phẩm
                     </a>
                 </div>
             `;
-            updateCartSummaryDisplay(0, 0);
+            updateCartSummaryDisplay(0, 0, null, 0);
             return;
         }
 
-        cartContainer.innerHTML = cart.map(item => `
-            <div class="cart-item mb-3" id="cart-item-${item.id}">
+        let hasOutOfStockItem = false;
+        cartContainer.innerHTML = cart.map(item => {
+            const stockKey = (item.brand + '_' + item.plan).toLowerCase().replace(/\s+/g, '');
+            const isOutOfStock = window.stockMap !== undefined && window.stockMap[stockKey] !== undefined && window.stockMap[stockKey] <= 0;
+            if (isOutOfStock) {
+                hasOutOfStockItem = true;
+            }
+            return `
+            <div class="cart-item mb-3 ${isOutOfStock ? 'border-danger bg-light' : ''}" id="cart-item-${item.id}">
                 <div class="d-flex align-items-center gap-3">
                     <div class="cart-item-img" style="background:${item.brandColor}15;color:${item.brandColor}">
                         <i class="bi bi-shield-lock-fill" style="font-size:28px"></i>
                     </div>
                     <div class="flex-grow-1">
-                        <div class="fw-700 mb-1" style="font-size:14px">${item.name}</div>
+                        <div class="fw-700 mb-1" style="font-size:14px">
+                            ${item.name}
+                            ${isOutOfStock ? '<span class="badge bg-danger ms-2" style="font-size:10.5px">Hết Hàng</span>' : ''}
+                        </div>
                         <div class="text-muted" style="font-size:12.5px">
                             <span class="badge me-1" style="background:${item.brandColor}20;color:${item.brandColor};font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px">${item.brand}</span>
                             Gói: ${item.plan}
                         </div>
                         <div class="d-flex align-items-center gap-3 mt-2">
                             <div class="qty-control">
-                                <button class="qty-btn" data-action="minus" onclick="updateItemQty('${item.id}','${item.plan}', -1)"><i class="bi bi-dash"></i></button>
+                                <button class="qty-btn" data-action="minus" onclick="updateItemQty('${item.id}','${item.plan}', -1)" ${isOutOfStock ? 'disabled' : ''}><i class="bi bi-dash"></i></button>
                                 <input type="text" class="qty-input" value="${item.qty}" id="qty-${item.id}" readonly>
-                                <button class="qty-btn" data-action="plus" onclick="updateItemQty('${item.id}','${item.plan}', 1)"><i class="bi bi-plus"></i></button>
+                                <button class="qty-btn" data-action="plus" onclick="updateItemQty('${item.id}','${item.plan}', 1)" ${isOutOfStock ? 'disabled' : ''}><i class="bi bi-plus"></i></button>
                             </div>
                             <span class="fw-800 text-primary" style="font-size:16px">${formatCurrency(item.price)}</span>
                         </div>
@@ -426,21 +465,57 @@ document.addEventListener('DOMContentLoaded', function () {
                     </div>
                 </div>
             </div>
-        `).join('');
+            `;
+        }).join('');
+
+        const checkoutBtn = document.querySelector('a[href*="thanh-toan"]');
+        if (checkoutBtn) {
+            if (hasOutOfStockItem) {
+                checkoutBtn.classList.add('disabled');
+                checkoutBtn.style.background = '#cbd5e1';
+                checkoutBtn.style.borderColor = '#cbd5e1';
+                checkoutBtn.style.color = '#64748b';
+                checkoutBtn.style.pointerEvents = 'none';
+                checkoutBtn.innerHTML = '<i class="bi bi-exclamation-circle me-2"></i>Có sản phẩm hết hàng';
+            } else {
+                checkoutBtn.classList.remove('disabled');
+                checkoutBtn.style.background = '';
+                checkoutBtn.style.borderColor = '';
+                checkoutBtn.style.color = '';
+                checkoutBtn.style.pointerEvents = '';
+                checkoutBtn.innerHTML = '<i class="bi bi-credit-card me-2"></i>Tiến Hành Thanh Toán';
+            }
+        }
 
         const subtotal = CartManager.getTotal();
-        const discount = subtotal > 500000 ? Math.round(subtotal * 0.05) : 0;
-        updateCartSummaryDisplay(subtotal, discount);
+        const autoDiscount = subtotal > 500000 ? Math.round(subtotal * 0.05) : 0;
+        const couponCode = CartManager.getCoupon();
+        const couponDiscount = CartManager.getCouponDiscount(subtotal);
+        updateCartSummaryDisplay(subtotal, autoDiscount, couponCode, couponDiscount);
     }
 
-    function updateCartSummaryDisplay(subtotal, discount) {
+    function updateCartSummaryDisplay(subtotal, autoDiscount, couponCode, couponDiscount) {
         const subtotalEl = document.getElementById('cart-subtotal');
         const discountEl = document.getElementById('cart-discount');
+        const couponEl   = document.getElementById('cart-coupon');
         const totalEl    = document.getElementById('cart-total');
+        
+        const total = Math.max(0, subtotal - autoDiscount - couponDiscount);
+        
         if (subtotalEl) subtotalEl.textContent = formatCurrency(subtotal);
-        if (discountEl) discountEl.textContent = discount > 0 ? '-' + formatCurrency(discount) : '0đ';
-        if (totalEl)    totalEl.textContent    = formatCurrency(subtotal - discount);
+        if (discountEl) discountEl.textContent = autoDiscount > 0 ? '-' + formatCurrency(autoDiscount) : '0đ';
+        
+        if (couponEl) {
+            if (couponCode) {
+                couponEl.innerHTML = `<span class="badge bg-success-light text-success">${couponCode}</span> -${formatCurrency(couponDiscount)}`;
+            } else {
+                couponEl.textContent = 'Chưa áp dụng';
+            }
+        }
+        if (totalEl) totalEl.textContent = formatCurrency(total);
     }
+
+    window.renderCartPage = renderCartPage;
 
     window.updateItemQty = function (id, plan, delta) {
         const cart = CartManager.getCart();
@@ -505,4 +580,116 @@ document.addEventListener('DOMContentLoaded', function () {
             countdownEl.textContent = `${h}:${m}:${s}`;
         }, 1000);
     }
+
+    // ============================
+    // WISHLIST (HEART BUTTON) LOGIC
+    // ============================
+    function updateWishlistStates() {
+        const wishlist = window.dbWishlist !== null
+            ? window.dbWishlist
+            : JSON.parse(localStorage.getItem('wishlist') || '[]');
+
+        document.querySelectorAll('[data-wishlist]').forEach(btn => {
+            let id = btn.dataset.id;
+            if (!id) {
+                const card = btn.closest('.product-card') || btn.closest('.product-card-wrap');
+                if (card) {
+                    const cartBtn = card.querySelector('[data-add-cart]');
+                    if (cartBtn) id = cartBtn.dataset.id;
+                }
+            }
+            if (!id) {
+                const cartBtn = document.getElementById('btn-main-add-cart');
+                if (cartBtn) id = cartBtn.dataset.id;
+            }
+            
+            const icon = btn.querySelector('i');
+            if (id && wishlist.includes(parseInt(id))) {
+                if (icon) icon.className = 'bi bi-heart-fill';
+                btn.style.color = '#ef4444';
+            } else {
+                if (icon) icon.className = 'bi bi-heart';
+                btn.style.color = '';
+            }
+        });
+    }
+
+    // Initialize wishlist states on load
+    updateWishlistStates();
+
+    // Event delegation for wishlist toggle clicks
+    document.addEventListener('click', function(e) {
+        const btn = e.target.closest('[data-wishlist]');
+        if (!btn) return;
+        
+        e.preventDefault();
+        
+        // If not logged in, redirect to login
+        if (window.dbWishlist === null) {
+            showToast('Vui lòng đăng nhập để lưu sản phẩm yêu thích!', 'warning');
+            setTimeout(() => {
+                window.location.href = '/auth/dang-nhap';
+            }, 1200);
+            return;
+        }
+        
+        let id = btn.dataset.id;
+        if (!id) {
+            const card = btn.closest('.product-card') || btn.closest('.product-card-wrap');
+            if (card) {
+                const cartBtn = card.querySelector('[data-add-cart]');
+                if (cartBtn) id = cartBtn.dataset.id;
+            }
+        }
+        if (!id) {
+            const cartBtn = document.getElementById('btn-main-add-cart');
+            if (cartBtn) id = cartBtn.dataset.id;
+        }
+        
+        if (!id) return;
+        
+        // Logged in: Sync with Database via AJAX
+        btn.disabled = true;
+        fetch('/wishlist/toggle', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': window.csrfToken || ''
+            },
+            body: JSON.stringify({ product_id: parseInt(id) })
+        })
+        .then(res => res.json())
+        .then(data => {
+            btn.disabled = false;
+            if (data.success) {
+                window.dbWishlist = data.wishlist;
+                updateWishlistStates();
+                showToast(data.message, 'success');
+                
+                // If we are on the wishlist page and an item is removed, animate and remove it
+                if (data.action === 'removed') {
+                    const cardWrap = document.querySelector(`.product-card-wrap[data-id="${id}"]`);
+                    if (cardWrap && window.location.pathname.includes('/san-pham-yeu-thich')) {
+                        cardWrap.style.transition = 'all 0.4s ease';
+                        cardWrap.style.opacity = '0';
+                        cardWrap.style.transform = 'scale(0.9)';
+                        setTimeout(() => {
+                            cardWrap.remove();
+                            // Check if no items left
+                            const remaining = document.querySelectorAll('.product-card-wrap').length;
+                            if (remaining === 0) {
+                                window.location.reload();
+                            }
+                        }, 400);
+                    }
+                }
+            } else {
+                showToast(data.message || 'Có lỗi xảy ra!', 'danger');
+            }
+        })
+        .catch(err => {
+            btn.disabled = false;
+            showToast('Lỗi kết nối máy chủ!', 'danger');
+        });
+    });
 });

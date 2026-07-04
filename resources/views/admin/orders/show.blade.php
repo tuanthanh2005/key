@@ -66,7 +66,7 @@
                     </div>
                 </div>
 
-                <!-- License Key -->
+                <!-- License Key đã giao -->
                 @if($order->license_key)
                 <div class="mt-4 p-3 rounded-3" style="background:#dcfce7;border:1px solid #bbf7d0">
                     <div class="fw-700 text-success mb-2" style="font-size:13px">
@@ -107,13 +107,18 @@
                             </select>
                         </div>
                         <div class="col-12">
-                            <label class="form-label fw-600" style="font-size:12.5px">Key VPN (gửi cho khách)</label>
-                            <textarea name="license_key" class="form-control" rows="3" placeholder="Nhập key VPN để giao cho khách..." style="border-radius:10px;font-family:monospace">{{ $order->license_key }}</textarea>
+                            <label class="form-label fw-600" style="font-size:12.5px">Key VPN (lưu vào đơn)</label>
+                            <textarea name="license_key" class="form-control" rows="3" placeholder="Nhập key VPN để lưu vào đơn hàng..." style="border-radius:10px;font-family:monospace">{{ $order->license_key }}</textarea>
                         </div>
                         <div class="col-12">
-                            <button type="submit" class="btn btn-primary rounded-pill px-4 fw-600">
-                                <i class="bi bi-check-circle me-2"></i>Cập Nhật Đơn Hàng
-                            </button>
+                            <div class="d-flex gap-2 flex-wrap">
+                                <button type="submit" class="btn btn-primary rounded-pill px-4 fw-600">
+                                    <i class="bi bi-check-circle me-2"></i>Cập Nhật Đơn Hàng
+                                </button>
+                                <button type="button" onclick="openSendKeyModal()" class="btn btn-success rounded-pill px-4 fw-600">
+                                    <i class="bi bi-send-fill me-2"></i>Lưu & Gửi Key Cho Khách
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -131,13 +136,21 @@
                 </div>
             </div>
             <div class="admin-card-body">
+                <!-- Avatar -->
                 <div class="text-center mb-4">
-                    <div style="width:60px;height:60px;background:linear-gradient(135deg,#2563eb,#7c3aed);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:24px;margin:0 auto 12px">
+                    <div style="width:64px;height:64px;background:linear-gradient(135deg,#2563eb,#7c3aed);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:26px;margin:0 auto 10px">
                         {{ strtoupper(substr($order->customer_name,0,1)) }}
                     </div>
                     <div class="fw-800" style="font-size:16px">{{ $order->customer_name }}</div>
+                    <div class="text-muted" style="font-size:12.5px">{{ $order->customer_email }}</div>
                 </div>
-                @foreach([['bi-envelope','Email',$order->customer_email],['bi-telephone','Điện thoại',$order->customer_phone??'—'],['bi-chat-dots','Ghi chú',$order->note??'Không có']] as [$icon,$label,$val])
+
+                <!-- Info rows -->
+                @foreach([
+                    ['bi-envelope','Email', $order->customer_email],
+                    ['bi-telephone','Điện thoại', $order->customer_phone ?? '—'],
+                    ['bi-chat-dots','Ghi chú', $order->note ?? 'Không có']
+                ] as [$icon,$label,$val])
                 <div class="d-flex gap-3 mb-3 pb-3 border-bottom" style="border-color:var(--admin-border)!important">
                     <i class="bi {{ $icon }} text-primary mt-1"></i>
                     <div>
@@ -146,19 +159,41 @@
                     </div>
                 </div>
                 @endforeach
+
+                <!-- ===== ACTION BUTTONS ===== -->
                 <div class="d-grid gap-2 mt-3">
-                    <a href="mailto:{{ $order->customer_email }}" class="btn btn-outline-primary rounded-pill btn-sm fw-600">
-                        <i class="bi bi-envelope me-2"></i>Gửi Email
-                    </a>
+
+                    {{-- Gửi Email Key: mở modal --}}
+                    <button type="button" onclick="openSendKeyModal()"
+                        class="btn rounded-pill btn-sm fw-600"
+                        style="background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;border:none;padding:10px">
+                        <i class="bi bi-envelope-paper-fill me-2"></i>Gửi Email Key Cho Khách
+                    </button>
+
+                    {{-- Nhắn Zalo: deep link zalo.me --}}
                     @if($order->customer_phone)
-                    <a href="tel:{{ $order->customer_phone }}" class="btn btn-outline-success rounded-pill btn-sm fw-600">
-                        <i class="bi bi-telephone me-2"></i>Gọi Điện
+                    @php $phone = preg_replace('/[^0-9]/', '', $order->customer_phone); @endphp
+                    <a href="https://zalo.me/{{ $phone }}" target="_blank"
+                        class="btn btn-outline-success rounded-pill btn-sm fw-600"
+                        style="padding:9px">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="me-2" viewBox="0 0 24 24" style="vertical-align:-2px">
+                            <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 01.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12.017 24c6.621 0 11.985-5.367 11.985-11.987C24 5.367 18.635.001 12.017.001z"/>
+                        </svg>
+                        Nhắn Zalo Khách
+                    </a>
+
+                    {{-- Gọi điện thoại --}}
+                    <a href="tel:{{ $order->customer_phone }}"
+                        class="btn btn-outline-secondary rounded-pill btn-sm fw-600"
+                        style="padding:9px">
+                        <i class="bi bi-telephone-fill me-2"></i>Gọi: {{ $order->customer_phone }}
                     </a>
                     @endif
                 </div>
             </div>
         </div>
 
+        <!-- Thao Tác Nhanh -->
         <div class="admin-card">
             <div class="admin-card-header">
                 <div class="admin-card-title">
@@ -180,4 +215,279 @@
         </div>
     </div>
 </div>
+
+{{-- =========================================================================
+     MODAL: NHẬP KEY → PREVIEW TEMPLATE → MỞ GMAIL GỬI NGAY
+     ========================================================================= --}}
+<div class="modal fade" id="sendKeyModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" style="max-width:680px">
+        <div class="modal-content" style="border-radius:20px;border:none;box-shadow:0 25px 60px rgba(0,0,0,.18);overflow:hidden">
+
+            {{-- Header gradient --}}
+            <div class="modal-header border-0" style="background:linear-gradient(135deg,#2563eb 0%,#7c3aed 100%);padding:22px 28px 18px">
+                <div>
+                    <h5 class="modal-title fw-800 text-white mb-1" style="font-size:17px">
+                        <i class="bi bi-envelope-paper-fill me-2"></i>Gửi Key VPN Cho Khách
+                    </h5>
+                    <div style="color:rgba(255,255,255,.75);font-size:12.5px">
+                        Nhập key → Preview email template → Mở Gmail gửi ngay
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="modal"></button>
+            </div>
+
+            {{-- Body --}}
+            <div class="modal-body" style="padding:24px 28px 16px">
+
+                {{-- Thông tin khách (readonly) --}}
+                <div class="p-3 rounded-3 mb-4" style="background:#f0f4ff;border:1.5px solid #c7d7ff">
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <div style="font-size:10.5px;color:#6b7280;font-weight:700;text-transform:uppercase;letter-spacing:.5px">Gửi tới</div>
+                            <div class="fw-700 text-primary" style="font-size:13px">{{ $order->customer_email }}</div>
+                        </div>
+                        <div class="col-6">
+                            <div style="font-size:10.5px;color:#6b7280;font-weight:700;text-transform:uppercase;letter-spacing:.5px">Khách hàng</div>
+                            <div class="fw-700" style="font-size:13px">{{ $order->customer_name }}</div>
+                        </div>
+                        <div class="col-6">
+                            <div style="font-size:10.5px;color:#6b7280;font-weight:700;text-transform:uppercase;letter-spacing:.5px">Sản phẩm</div>
+                            <div class="fw-600" style="font-size:12.5px">{{ $order->brand }} · {{ ucfirst($order->plan) }}</div>
+                        </div>
+                        <div class="col-6">
+                            <div style="font-size:10.5px;color:#6b7280;font-weight:700;text-transform:uppercase;letter-spacing:.5px">Mã đơn</div>
+                            <div class="fw-700 text-primary" style="font-size:12.5px">#{{ $order->order_code }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Nhập key / tài khoản --}}
+                <div class="mb-3">
+                    <label class="form-label fw-700 d-flex align-items-center gap-2 mb-2" style="font-size:13px">
+                        <i class="bi bi-key-fill text-warning"></i>
+                        Key / Tài Khoản VPN
+                        <span class="text-danger ms-1">*</span>
+                        <span class="ms-auto badge bg-warning-subtle text-warning" style="font-size:10.5px">Bắt buộc</span>
+                    </label>
+                    <textarea
+                        id="keyInput"
+                        class="form-control"
+                        rows="4"
+                        placeholder="Nhập key hoặc thông tin tài khoản VPN...&#10;Ví dụ:&#10;  Email: user@vpn.com&#10;  Mật khẩu: abc123&#10;  Key: XXXX-XXXX-XXXX-XXXX"
+                        style="border-radius:12px;font-family:'Courier New',monospace;font-size:13.5px;border:2px solid #e5e7eb;line-height:1.6;transition:border-color .2s"
+                        oninput="updateEmailPreview()"
+                    >{{ $order->license_key ?? '' }}</textarea>
+                    <div class="d-flex gap-2 mt-2">
+                        <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-3" onclick="clearKey()" style="font-size:12px">
+                            <i class="bi bi-x-circle me-1"></i>Xóa hết
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3" onclick="copyKey()" id="copyKeyBtn" style="font-size:12px">
+                            <i class="bi bi-clipboard me-1"></i>Copy
+                        </button>
+                    </div>
+                </div>
+
+                {{-- Divider --}}
+                <div class="d-flex align-items-center gap-3 my-3">
+                    <div style="flex:1;height:1px;background:#e5e7eb"></div>
+                    <span style="font-size:11.5px;color:#9ca3af;font-weight:600">PREVIEW EMAIL</span>
+                    <div style="flex:1;height:1px;background:#e5e7eb"></div>
+                </div>
+
+                {{-- Preview Email --}}
+                <div>
+                    <div class="d-flex align-items-center mb-2 gap-2">
+                        <i class="bi bi-eye text-primary" style="font-size:14px"></i>
+                        <span class="fw-700" style="font-size:12.5px">Nội dung email sẽ được gửi</span>
+                        <span class="badge rounded-pill ms-auto" style="background:#f0fdf4;color:#16a34a;font-size:10.5px;border:1px solid #bbf7d0">
+                            <i class="bi bi-arrow-repeat me-1"></i>Tự động cập nhật
+                        </span>
+                    </div>
+                    <div id="emailPreviewBox"
+                         style="background:#fafafa;border:1.5px dashed #d1d5db;border-radius:12px;padding:16px;font-size:12.5px;line-height:1.75;max-height:240px;overflow-y:auto;font-family:'Courier New',monospace;white-space:pre-wrap;color:#374151">
+                    </div>
+                </div>
+            </div>
+
+            {{-- Footer --}}
+            <div class="modal-footer border-0" style="padding:16px 28px 22px;background:#fafafa;gap:10px">
+                <button type="button" class="btn btn-outline-secondary rounded-pill px-4 fw-600" data-bs-dismiss="modal" style="font-size:13.5px">
+                    Đóng
+                </button>
+                <button type="button" class="btn rounded-pill px-5 fw-700" id="sendEmailBtn" onclick="sendEmailNow()"
+                    style="background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;border:none;font-size:14px;letter-spacing:.3px">
+                    <i class="bi bi-send-fill me-2"></i>Mở Gmail & Gửi Ngay
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@endsection
+
+@section('extra_css')
+<style>
+#keyInput:focus { border-color: #2563eb !important; box-shadow: 0 0 0 3px rgba(37,99,235,.15); }
+#emailPreviewBox { transition: all .2s; }
+</style>
+@endsection
+
+@section('extra_js')
+<script>
+// ─── Dữ liệu đơn hàng (server → JS) ─────────────────────────────────────────
+const ORDER = {
+    code:        @json($order->order_code),
+    customer:    @json($order->customer_name),
+    email:       @json($order->customer_email),
+    brand:       @json($order->brand),
+    plan:        @json(ucfirst($order->plan)),
+    total:       @json(number_format($order->total)),
+    storeName:   @json($settings['store_name'] ?? 'VPNStore'),
+    supportTele: @json(ltrim($settings['telegram_support'] ?? 'specademy', '@')),
+    supportZalo: @json($settings['zalo_support'] ?? ''),
+    existingKey: @json($order->license_key ?? ''),
+};
+
+// ─── Mở modal ────────────────────────────────────────────────────────────────
+function openSendKeyModal() {
+    const keyInput = document.getElementById('keyInput');
+    if (ORDER.existingKey && !keyInput.value) {
+        keyInput.value = ORDER.existingKey;
+    }
+    updateEmailPreview();
+    new bootstrap.Modal(document.getElementById('sendKeyModal')).show();
+}
+
+// ─── Build email template ────────────────────────────────────────────────────
+function buildEmailTemplate(keyContent) {
+    const key  = (keyContent || '').trim() || '[Chưa nhập key / tài khoản]';
+    const line = '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━';
+    const support = ORDER.supportZalo
+        ? `Zalo: ${ORDER.supportZalo}  |  Telegram: @${ORDER.supportTele}`
+        : `Telegram: @${ORDER.supportTele}`;
+
+    return `Xin chào ${ORDER.customer},
+
+Cảm ơn bạn đã tin tưởng đặt hàng tại ${ORDER.storeName}! 🎉
+
+${line}
+📦 THÔNG TIN ĐƠN HÀNG
+${line}
+Mã đơn hàng    : #${ORDER.code}
+Sản phẩm       : ${ORDER.brand} (${ORDER.plan})
+Tổng thanh toán: ${ORDER.total}đ
+
+${line}
+🔑 KEY / TÀI KHOẢN VPN CỦA BẠN
+${line}
+${key}
+
+${line}
+📌 HƯỚNG DẪN KÍCH HOẠT
+${line}
+1. Tải ứng dụng ${ORDER.brand} chính hãng về thiết bị
+2. Đăng nhập bằng thông tin tài khoản ở trên
+3. Kết nối VPN và sử dụng ngay!
+
+💬 Nếu cần hỗ trợ kích hoạt miễn phí:
+   ${support}
+
+Trân trọng cảm ơn,
+Đội ngũ ${ORDER.storeName}`;
+}
+
+function buildSubject() {
+    return `[${ORDER.storeName}] 🔑 Key VPN ${ORDER.brand} - Đơn #${ORDER.code}`;
+}
+
+// ─── Cập nhật preview ────────────────────────────────────────────────────────
+function updateEmailPreview() {
+    const keyVal  = document.getElementById('keyInput').value;
+    const box     = document.getElementById('emailPreviewBox');
+    const content = buildEmailTemplate(keyVal);
+
+    // Highlight key section
+    box.innerHTML = escapeHtml(content)
+        .replace(/(━+)/g, '<span style="color:#d1d5db">$1</span>')
+        .replace(/(🔑 KEY \/ TÀI KHOẢN VPN CỦA BẠN)/g, '<strong style="color:#2563eb;font-family:inherit">$1</strong>')
+        .replace(/(📦 THÔNG TIN ĐƠN HÀNG)/g, '<strong style="font-family:inherit">$1</strong>')
+        .replace(/(#[A-Z0-9]+)/g, '<strong style="color:#7c3aed">$1</strong>')
+        .replace(/\n/g, '<br>');
+}
+
+function escapeHtml(text) {
+    return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ─── Gửi email: mở Gmail compose với template đầy đủ ─────────────────────────
+function sendEmailNow() {
+    const keyInput = document.getElementById('keyInput');
+    const key      = keyInput.value.trim();
+
+    // Validate
+    if (!key) {
+        keyInput.style.borderColor = '#ef4444';
+        keyInput.focus();
+        keyInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Shake animation
+        keyInput.style.animation = 'shake .3s';
+        setTimeout(() => { keyInput.style.animation = ''; }, 400);
+        return;
+    }
+    keyInput.style.borderColor = '';
+
+    const subject = encodeURIComponent(buildSubject());
+    const body    = encodeURIComponent(buildEmailTemplate(key));
+    const to      = encodeURIComponent(ORDER.email);
+
+    // Mở Gmail compose
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&to=${to}&su=${subject}&body=${body}`;
+    window.open(gmailUrl, '_blank', 'noopener');
+
+    // UX feedback
+    const btn = document.getElementById('sendEmailBtn');
+    btn.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i>Đang mở Gmail...';
+    btn.style.background = 'linear-gradient(135deg,#16a34a,#15803d)';
+    btn.disabled = true;
+
+    setTimeout(() => {
+        btn.innerHTML = '<i class="bi bi-send-fill me-2"></i>Mở Gmail & Gửi Ngay';
+        btn.style.background = 'linear-gradient(135deg,#2563eb,#7c3aed)';
+        btn.disabled = false;
+        bootstrap.Modal.getInstance(document.getElementById('sendKeyModal')).hide();
+    }, 2000);
+}
+
+// ─── Tiện ích ─────────────────────────────────────────────────────────────────
+function clearKey() {
+    document.getElementById('keyInput').value = '';
+    updateEmailPreview();
+    document.getElementById('keyInput').focus();
+}
+
+function copyKey() {
+    const key = document.getElementById('keyInput').value;
+    if (!key) return;
+    navigator.clipboard.writeText(key).then(() => {
+        const btn = document.getElementById('copyKeyBtn');
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i>Đã copy!';
+        btn.classList.replace('btn-outline-primary', 'btn-success');
+        setTimeout(() => {
+            btn.innerHTML = orig;
+            btn.classList.replace('btn-success', 'btn-outline-primary');
+        }, 1800);
+    });
+}
+
+// Init
+document.addEventListener('DOMContentLoaded', updateEmailPreview);
+</script>
+<style>
+@keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20%,60%  { transform: translateX(-6px); }
+    40%,80%  { transform: translateX(6px); }
+}
+</style>
 @endsection

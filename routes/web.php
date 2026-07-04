@@ -8,6 +8,8 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\CouponController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,19 +23,35 @@ use App\Http\Controllers\Admin\ProductController;
 Route::get('/', [ShopController::class, 'home'])->name('home');
 Route::get('/san-pham', [ShopController::class, 'products'])->name('products');
 Route::get('/san-pham/{slug}', [ShopController::class, 'productDetail'])
-    ->where('slug', 'nordvpn|expressvpn|surfshark|hma|cyberghost|purevpn|ipvanish|protonvpn')
+    ->where('slug', '[a-z0-9\-]+')
     ->name('product.detail');
 Route::get('/gio-hang', [ShopController::class, 'cart'])->name('cart');
-Route::get('/thanh-toan', [ShopController::class, 'checkout'])->name('checkout');
-Route::post('/thanh-toan', [ShopController::class, 'storeOrder'])->name('checkout.store');
+Route::get('/thanh-toan', [ShopController::class, 'checkout'])->name('checkout')->middleware('auth');
+Route::post('/thanh-toan', [ShopController::class, 'storeOrder'])->name('checkout.store')->middleware('auth');
 Route::get('/order/success', [ShopController::class, 'orderSuccess'])->name('order.success');
 Route::get('/tra-don-hang', [ShopController::class, 'orderCheck'])->name('order.check');
 Route::post('/tra-don-hang/review', [ShopController::class, 'submitOrderReview'])->name('order.review.submit');
 Route::get('/lich-su-don-hang', [ShopController::class, 'orderHistory'])->name('order.history')->middleware('auth');
+Route::post('/wishlist/toggle', [ShopController::class, 'toggleWishlist'])->name('wishlist.toggle');
+Route::get('/san-pham-yeu-thich', [ShopController::class, 'wishlistPage'])->name('wishlist.index')->middleware('auth');
 Route::get('/bang-gia', [ShopController::class, 'pricing'])->name('pricing');
 Route::get('/gioi-thieu', [ShopController::class, 'about'])->name('about');
 Route::get('/lien-he', [ShopController::class, 'contact'])->name('contact');
 Route::get('/tim-kiem', [ShopController::class, 'search'])->name('search');
+
+// =============================================
+// XML Sitemap
+// =============================================
+Route::get('/sitemap.xml', function () {
+    // Lấy slug từ DB thay vì hardcode
+    $brands = \App\Models\Product::where('status', 'active')
+        ->whereNotNull('slug')
+        ->distinct()
+        ->pluck('slug')
+        ->toArray();
+    return response()->view('sitemap', compact('brands'))
+        ->header('Content-Type', 'text/xml');
+})->name('sitemap');
 
 // =============================================
 // XÁC THỰC (Auth)
@@ -67,6 +85,19 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 
     // Dashboard
     Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
+
+    // Cài đặt hệ thống
+    Route::get('/cai-dat', [SettingController::class, 'index'])->name('settings.index');
+    Route::post('/cai-dat', [SettingController::class, 'update'])->name('settings.update');
+    Route::get('/api/settings', [SettingController::class, 'publicApi'])->name('settings.api');
+
+    // Quản lý mã coupon
+    Route::prefix('coupon')->name('coupons.')->group(function () {
+        Route::get('/', [CouponController::class, 'index'])->name('index');
+        Route::post('/', [CouponController::class, 'store'])->name('store');
+        Route::put('/{coupon}', [CouponController::class, 'update'])->name('update');
+        Route::delete('/{coupon}', [CouponController::class, 'destroy'])->name('destroy');
+    });
 
     // Quản lý đơn hàng
     Route::prefix('don-hang')->name('orders.')->group(function () {

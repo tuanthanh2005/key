@@ -56,7 +56,7 @@
         <div class="row g-5">
             <!-- Contact Form -->
             <div class="col-lg-7">
-                <div class="bg-white border rounded-4 p-5" style="border-color:var(--gray-200)!important">
+                <div class="bg-white border rounded-4 p-3 p-md-5" style="border-color:var(--gray-200)!important">
                     <h2 class="fw-800 mb-2 font-poppins" style="font-size:22px">Gửi Tin Nhắn</h2>
                     <p class="text-muted mb-4" style="font-size:14px">Điền thông tin và chúng tôi sẽ phản hồi sớm nhất</p>
 

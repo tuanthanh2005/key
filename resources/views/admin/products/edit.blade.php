@@ -51,7 +51,13 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-600 text-dark">Số Lượng Key Sẵn Có</label>
-                            <input type="number" name="stock" class="form-control" value="{{ $product->stock }}" style="border-radius: 10px;">
+                            <div class="d-flex align-items-center gap-3">
+                                <input type="number" name="stock" id="productStock" class="form-control" value="{{ $product->stock }}" style="border-radius: 10px; width:120px;" {{ $product->stock <= 0 ? 'readonly' : '' }}>
+                                <div class="form-check form-switch mb-0">
+                                    <input class="form-check-input" type="checkbox" id="stockToggle" name="is_out_of_stock" value="1" {{ $product->stock <= 0 ? 'checked' : '' }}>
+                                    <label class="form-check-label fw-700 text-danger" for="stockToggle" style="font-size:13px">Bật HẾT HÀNG</label>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-600 text-dark">Trạng Thái Kinh Doanh</label>
@@ -153,6 +159,25 @@ document.getElementById('imageInput')?.addEventListener('change', function() {
             }
         }
         reader.readAsDataURL(file);
+    }
+});
+
+// Out of stock checkbox switch toggle
+document.getElementById('stockToggle')?.addEventListener('change', function() {
+    const stockInput = document.getElementById('productStock');
+    if (stockInput) {
+        if (this.checked) {
+            // Save current stock in temp attribute if active, then set to 0
+            if (stockInput.value > 0) {
+                stockInput.dataset.prevStock = stockInput.value;
+            }
+            stockInput.value = 0;
+            stockInput.readOnly = true;
+        } else {
+            // Restore previous stock or default to 999
+            stockInput.value = stockInput.dataset.prevStock || 999;
+            stockInput.readOnly = false;
+        }
     }
 });
 </script>

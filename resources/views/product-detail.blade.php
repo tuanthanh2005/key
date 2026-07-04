@@ -1,9 +1,3 @@
-@extends('layouts.app')
-
-@section('title', ($brand['name'] ?? 'VPN') . ' - Chi Tiết Sản Phẩm - VPNStore')
-
-@section('content')
-
 @php
 $slug = $slug ?? request()->segment(2) ?? 'nordvpn';
 
@@ -55,6 +49,7 @@ foreach ($dbProducts ?? [] as $dbProd) {
         'founded' => $dbProd->founded ?: ($brand['founded'] ?? ''),
         'refund' => $dbProd->refund ?: ($brand['refund'] ?? ''),
         'description' => $dbProd->description ?: ($brand['desc'] ?? ''),
+        'stock' => $dbProd->stock,
     ];
 }
 
@@ -67,7 +62,98 @@ if (empty($plans)) {
         ['id'=>4, 'key'=>'2year',  'label'=>'2 Năm',   'price'=>849000, 'old'=>2880000,'save'=>'Tiết kiệm 70%', 'popular'=>false, 'image_path'=>null, 'servers'=>'5,400+', 'countries'=>'60+', 'devices'=>'6', 'speed'=>'Nhanh', 'protocol'=>'WireGuard', 'headquarter'=>'Panama', 'founded'=>'2012', 'refund'=>'30 ngày', 'description'=>'NordVPN là một dịch vụ VPN phổ biến.'],
     ];
 }
+
+$defaultPlan = collect($plans)->firstWhere('popular', true) ?: ($plans[0] ?? null);
+$curRating = floatval($defaultPlan['rating'] ?? 4.8);
+$curReviews = intval($defaultPlan['reviews'] ?? 120);
 @endphp
+
+@extends('layouts.app')
+
+@section('title', $brand['name'] . ' Giá Rẻ Bản Quyền Chính Hãng — VPNStore')
+@section('meta_description', $brand['name'] . ' chính hãng giá tốt nhất. Mua tài khoản/key ' . $brand['name'] . ' bảo hành uy tín 30 ngày, đổi trả tức thì. Nhận key trong 5 phút.')
+@section('meta_keywords', strtolower($brand['name']) . ' gia re, mua ' . strtolower($brand['name']) . ', tai khoan ' . strtolower($brand['name']) . ', key ' . strtolower($brand['name']) . ' ban quyen, vpn store')
+
+@section('json_ld')
+<script type="application/ld+json">
+{
+  "@@context": "https://schema.org",
+  "@@graph": [
+    {
+      "@@type": "BreadcrumbList",
+      "@@id": "{{ request()->url() }}#breadcrumb",
+      "itemListElement": [
+        {
+          "@@type": "ListItem",
+          "position": 1,
+          "name": "Trang Chủ",
+          "item": "{{ route('home') }}"
+        },
+        {
+          "@@type": "ListItem",
+          "position": 2,
+          "name": "Sản Phẩm",
+          "item": "{{ route('products') }}"
+        },
+        {
+          "@@type": "ListItem",
+          "position": 3,
+          "name": "{{ $brand['name'] }}",
+          "item": "{{ request()->url() }}"
+        }
+      ]
+    },
+    {
+      "@@type": "Product",
+      "@@id": "{{ request()->url() }}#product",
+      "name": "{{ $brand['name'] }} — VPN Bản Quyền Chính Hãng",
+      "image": "{{ !empty($defaultPlan['image_path']) ? asset($defaultPlan['image_path']) : asset('favicon.ico') }}",
+      "description": "{{ strip_tags($brand['desc']) }}",
+      "brand": {
+        "@@type": "Brand",
+        "name": "{{ $brand['name'] }}"
+      },
+      "offers": {
+        "@@type": "AggregateOffer",
+        "priceCurrency": "VND",
+        "lowPrice": "{{ collect($plans)->min('price') }}",
+        "highPrice": "{{ collect($plans)->max('price') }}",
+        "offerCount": "{{ count($plans) }}",
+        "availability": "https://schema.org/InStock",
+        "url": "{{ request()->url() }}"
+      },
+      "aggregateRating": {
+        "@@type": "AggregateRating",
+        "ratingValue": "{{ $curRating }}",
+        "reviewCount": "{{ $curReviews }}",
+        "bestRating": "5",
+        "worstRating": "1"
+      },
+      "review": [
+        @foreach(array_slice($realReviews, 0, 3) as $idx => $rv)
+        {
+          "@@type": "Review",
+          "author": {
+            "@@type": "Person",
+            "name": "{{ $rv['name'] }}"
+          },
+          "datePublished": "{{ date('Y-m-d', strtotime('-' . ($idx + 2) . ' days')) }}",
+          "reviewBody": "{{ $rv['text'] }}",
+          "reviewRating": {
+            "@@type": "Rating",
+            "ratingValue": "{{ $rv['star'] }}",
+            "bestRating": "5"
+          }
+        }{{ $idx < 2 && $idx < count($realReviews) - 1 ? ',' : '' }}
+        @endforeach
+      ]
+    }
+  ]
+}
+</script>
+@endsection
+
+@section('content')
 
 <!-- BREADCRUMB -->
 <div class="breadcrumb-section">
@@ -149,6 +235,9 @@ if (empty($plans)) {
                 <span class="badge bg-success-light text-success rounded-pill" style="font-size:11.5px;font-weight:700;background:var(--success-light)!important;border:1px solid #bbf7d0">
                     <i class="bi bi-check-circle-fill me-1"></i>Còn Hàng
                 </span>
+                <span class="badge bg-primary-light text-primary rounded-pill" style="font-size:11.5px;font-weight:700;background:var(--primary-light)!important;border:1px solid var(--primary-100)">
+                    <i class="bi bi-cart-check-fill me-1"></i>Đã Bán {{ \App\Models\Setting::get('sales_' . $slug, '100+') }}
+                </span>
                 @php
                     $curRating = floatval($defaultPlan['rating'] ?? 4.8);
                     $curReviews = intval($defaultPlan['reviews'] ?? 120);
@@ -174,7 +263,8 @@ if (empty($plans)) {
                 </h6>
                 <div class="plan-selector" id="plan-selector">
                     @foreach($plans as $plan)
-                    <div class="plan-option {{ $plan['popular'] ? 'selected' : '' }}"
+                    <div class="plan-option {{ $plan['popular'] ? 'selected' : '' }} {{ $plan['stock'] <= 0 ? 'out-of-stock-option' : '' }}"
+                        data-id="{{ $plan['id'] }}"
                         data-plan="{{ $plan['key'] }}"
                         data-period="{{ $plan['label'] }}"
                         data-price="{{ $plan['price'] }}"
@@ -188,8 +278,11 @@ if (empty($plans)) {
                         data-headquarter="{{ $plan['headquarter'] }}"
                         data-founded="{{ $plan['founded'] }}"
                         data-refund="{{ $plan['refund'] }}"
-                        data-desc="{{ $plan['description'] }}">
-                        @if($plan['popular'])
+                        data-desc="{{ $plan['description'] }}"
+                        data-stock="{{ $plan['stock'] }}">
+                        @if($plan['stock'] <= 0)
+                        <span class="plan-badge bg-danger text-white">Hết Hàng</span>
+                        @elseif($plan['popular'])
                         <span class="plan-badge">Phổ Biến</span>
                         @endif
                         <div class="plan-period">{{ $plan['label'] }}</div>
@@ -205,7 +298,7 @@ if (empty($plans)) {
             </div>
 
             <!-- Price Display -->
-            <div class="p-4 rounded-3 mb-4" style="background:linear-gradient(135deg,var(--primary-light),var(--accent-light));border:1.5px solid var(--primary-100)">
+            <div class="p-4 rounded-3 mb-4 detail-price-container" style="background:linear-gradient(135deg,var(--primary-light),var(--accent-light));border:1.5px solid var(--primary-100)">
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
                         <div class="text-muted" style="font-size:12.5px;font-weight:600;text-decoration:line-through">
@@ -246,6 +339,9 @@ if (empty($plans)) {
 
             <!-- Action Buttons -->
             <div class="d-flex gap-3 mb-4 flex-wrap">
+                @php
+                    $isDefaultOutOfStock = ($plans[2]['stock'] ?? 0) <= 0;
+                @endphp
                 <button class="btn-add-cart flex-grow-1 py-3 fs-6"
                     id="btn-main-add-cart"
                     data-add-cart
@@ -255,10 +351,18 @@ if (empty($plans)) {
                     data-plan="1year"
                     data-price="{{ $plans[2]['price'] }}"
                     data-color="{{ $brand['color'] }}"
-                    data-slug="{{ $slug }}">
-                    <i class="bi bi-bag-plus me-2"></i>Thêm Vào Giỏ Hàng
+                    data-slug="{{ $slug }}"
+                    @if($isDefaultOutOfStock)
+                        disabled
+                        style="background:#94a3b8; border-color:#94a3b8; cursor:not-allowed; pointer-events:none;"
+                    @endif>
+                    @if($isDefaultOutOfStock)
+                        <i class="bi bi-x-circle me-2"></i>Tạm Hết Hàng
+                    @else
+                        <i class="bi bi-bag-plus me-2"></i>Thêm Vào Giỏ Hàng
+                    @endif
                 </button>
-                <button class="btn-wishlist" data-wishlist style="width:48px;height:48px;border-radius:var(--radius);font-size:20px">
+                <button class="btn-wishlist" data-wishlist data-id="{{ $defaultPlan['id'] }}" style="width:48px;height:48px;border-radius:var(--radius);font-size:20px">
                     <i class="bi bi-heart"></i>
                 </button>
             </div>
@@ -403,15 +507,50 @@ if (empty($plans)) {
 // Sync plan selection with qty and add-to-cart
 document.querySelectorAll('.plan-option').forEach(opt => {
     opt.addEventListener('click', function() {
+        document.querySelectorAll('.plan-option').forEach(el => el.classList.remove('selected'));
+        this.classList.add('selected');
+
         const price = this.dataset.price;
         const plan  = this.dataset.plan;
         const period = this.dataset.period;
         const image = this.dataset.image;
         const btn = document.getElementById('btn-main-add-cart');
+        const stock = parseInt(this.dataset.stock || 0);
         if (btn) {
             btn.dataset.price = price;
             btn.dataset.plan  = plan;
             btn.dataset.name  = '{{ $brand["name"] }} ' + period;
+
+            if (stock <= 0) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="bi bi-x-circle me-2"></i>Tạm Hết Hàng';
+                btn.style.background = '#94a3b8';
+                btn.style.borderColor = '#94a3b8';
+                btn.style.cursor = 'not-allowed';
+                btn.style.pointerEvents = 'none';
+            } else {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-bag-plus me-2"></i>Thêm Vào Giỏ Hàng';
+                btn.style.background = '';
+                btn.style.borderColor = '';
+                btn.style.cursor = '';
+                btn.style.pointerEvents = '';
+            }
+        }
+
+        const id = this.dataset.id;
+        const wishlistBtn = document.querySelector('[data-wishlist]');
+        if (wishlistBtn && id) {
+            wishlistBtn.dataset.id = id;
+            if (window.dbWishlist && window.dbWishlist.includes(parseInt(id))) {
+                const icon = wishlistBtn.querySelector('i');
+                if (icon) icon.className = 'bi bi-heart-fill';
+                wishlistBtn.style.color = '#ef4444';
+            } else {
+                const icon = wishlistBtn.querySelector('i');
+                if (icon) icon.className = 'bi bi-heart';
+                wishlistBtn.style.color = '';
+            }
         }
         // Update old price display too
         const oldPrice = parseInt(this.dataset.old || 0);

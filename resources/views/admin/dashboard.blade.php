@@ -29,24 +29,26 @@
 <!-- DATE RANGE FILTER BAR -->
 <div class="admin-card mb-4 p-3">
     <form action="{{ route('admin.dashboard') }}" method="GET" class="row g-3 align-items-center">
-        <div class="col-auto">
-            <span class="fw-700 text-dark"><i class="bi bi-funnel-fill text-primary me-1"></i>Lọc Doanh Thu:</span>
+        <div class="col-12 col-md-auto">
+            <span class="fw-700 text-dark" style="font-size:13.5px"><i class="bi bi-funnel-fill text-primary me-1"></i>Lọc Doanh Thu:</span>
         </div>
-        <div class="col-auto">
-            <div class="d-flex align-items-center gap-2">
-                <label class="mb-0 text-muted" style="font-size:13px;">Từ ngày:</label>
-                <input type="date" name="start_date" value="{{ $startDate }}" class="form-control form-control-sm" style="border-radius:8px; width:160px;">
+        <div class="col-12 col-sm-auto">
+            <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center gap-1 gap-sm-2">
+                <label class="mb-0 text-muted" style="font-size:12.5px; white-space:nowrap">Từ ngày:</label>
+                <input type="date" name="start_date" value="{{ $startDate }}" class="form-control form-control-sm w-100" style="border-radius:8px; min-width:130px;">
             </div>
         </div>
-        <div class="col-auto">
-            <div class="d-flex align-items-center gap-2">
-                <label class="mb-0 text-muted" style="font-size:13px;">Đến ngày:</label>
-                <input type="date" name="end_date" value="{{ $endDate }}" class="form-control form-control-sm" style="border-radius:8px; width:160px;">
+        <div class="col-12 col-sm-auto">
+            <div class="d-flex flex-column flex-sm-row align-items-start align-items-sm-center gap-1 gap-sm-2">
+                <label class="mb-0 text-muted" style="font-size:12.5px; white-space:nowrap">Đến ngày:</label>
+                <input type="date" name="end_date" value="{{ $endDate }}" class="form-control form-control-sm w-100" style="border-radius:8px; min-width:130px;">
             </div>
         </div>
-        <div class="col-auto">
-            <button type="submit" class="btn btn-sm btn-primary rounded-pill px-3 fw-600">Áp Dụng</button>
-            <a href="{{ route('admin.dashboard') }}" class="btn btn-sm btn-outline-secondary rounded-pill px-3">Mặc Định (Tuần Này)</a>
+        <div class="col-12 col-md-auto mt-3 mt-md-0">
+            <div class="d-flex gap-2 flex-wrap">
+                <button type="submit" class="btn btn-sm btn-primary rounded-pill px-3 fw-600">Áp Dụng</button>
+                <a href="{{ route('admin.dashboard') }}" class="btn btn-sm btn-outline-secondary rounded-pill px-3" style="font-size:12px">Mặc Định (Tuần Này)</a>
+            </div>
         </div>
         @if(session('warning'))
         <div class="col-12 mt-2">
@@ -59,7 +61,7 @@
 </div>
 
 <!-- STAT CARDS -->
-<div class="row g-4 mb-4">
+<div class="row g-4 mb-4 row-stat-cards">
     @php
     $cards = [
         ['label'=>'Tổng Doanh Thu','value'=>number_format($stats['total_revenue']).'đ','icon'=>'bi-currency-exchange','color'=>'#2563eb','bg'=>'#dbeafe','change'=>'Doanh thu tích lũy','up'=>true],
@@ -69,7 +71,7 @@
     ];
     @endphp
     @foreach($cards as $card)
-    <div class="col-6 col-lg-3">
+    <div class="col-12 col-sm-6 col-lg-3">
         <div class="admin-stat-card" style="--card-color:{{ $card['color'] }}">
             <div class="stat-icon" style="background:{{ $card['bg'] }};color:{{ $card['color'] }}">
                 <i class="bi {{ $card['icon'] }}"></i>

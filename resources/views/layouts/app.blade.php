@@ -2,9 +2,29 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="@yield('meta_description', 'VPNStore - Chuyên cung cấp VPN chính hãng: HMA, Surfshark, NordVPN, ExpressVPN với giá tốt nhất')">
-    <title>@yield('title', 'VPNStore - Cửa Hàng VPN Chính Hãng')</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="@yield('meta_description', $settings['meta_description'] ?? 'VPNStore - Chuyên cung cấp VPN chính hãng với giá tốt nhất. Bảo hành 30 ngày, hỗ trợ 24/7.')">
+    <meta name="keywords" content="@yield('meta_keywords', 'vpn gia re, mua vpn, nordvpn, expressvpn, surfshark, hma vpn, cyberghost, protonvpn, ipvanish, purevpn')">
+    <meta name="robots" content="index, follow">
+    <title>@yield('title', ($settings['store_name'] ?? 'VPNStore') . ' - Cửa Hàng VPN Chính Hãng')</title>
+
+    <!-- Canonical Link -->
+    <link rel="canonical" href="{{ request()->url() }}">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="@yield('og_type', 'website')">
+    <meta property="og:url" content="{{ request()->url() }}">
+    <meta property="og:title" content="@yield('title', 'VPNStore - Cửa Hàng VPN Chính Hãng')">
+    <meta property="og:description" content="@yield('meta_description', 'VPNStore - Chuyên cung cấp VPN chính hãng: HMA, Surfshark, NordVPN, ExpressVPN với giá tốt nhất. Bảo hành 30 ngày, hỗ trợ 24/7.')">
+    <meta property="og:image" content="@yield('og_image', asset('favicon.ico'))">
+    <meta property="og:site_name" content="VPNStore">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="{{ request()->url() }}">
+    <meta name="twitter:title" content="@yield('title', 'VPNStore - Cửa Hàng VPN Chính Hãng')">
+    <meta name="twitter:description" content="@yield('meta_description', 'VPNStore - Chuyên cung cấp VPN chính hãng: HMA, Surfshark, NordVPN, ExpressVPN với giá tốt nhất. Bảo hành 30 ngày, hỗ trợ 24/7.')">
+    <meta name="twitter:image" content="@yield('og_image', asset('favicon.ico'))">
 
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -13,8 +33,11 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}?v=1.22">
     @yield('extra_css')
+
+    <!-- JSON-LD Structured Data -->
+    @yield('json_ld')
 </head>
 <body>
 
@@ -25,19 +48,25 @@
             <div class="col-md-6">
                 <span class="topbar-text">
                     <i class="bi bi-shield-check me-1"></i>
-                    Bảo hành 30 ngày · Hỗ trợ 24/7 · Thanh toán an toàn
+                    {{ $settings['topbar_text'] ?? 'Bảo hành 30 ngày · Hỗ trợ 24/7 · Thanh toán an toàn' }}
                 </span>
             </div>
             <div class="col-md-6 text-md-end">
-                <a href="https://zalo.me/0708910952" target="_blank" class="topbar-link me-3">
-                    <i class="bi bi-telephone me-1"></i> Zalo 1: 0708910952
+                @if(!empty($settings['zalo_support']))
+                <a href="{{ $settings['zalo_url_1'] ?? 'https://zalo.me/' . $settings['zalo_support'] }}" target="_blank" class="topbar-link me-3">
+                    <i class="bi bi-telephone me-1"></i> Zalo 1: {{ $settings['zalo_support'] }}
                 </a>
-                <a href="https://zalo.me/0569012134" target="_blank" class="topbar-link me-3">
-                    <i class="bi bi-telephone me-1"></i> Zalo 2: 0569012134
+                @endif
+                @if(!empty($settings['zalo_support_2']))
+                <a href="{{ $settings['zalo_url_2'] ?? 'https://zalo.me/' . $settings['zalo_support_2'] }}" target="_blank" class="topbar-link me-3">
+                    <i class="bi bi-telephone me-1"></i> Zalo 2: {{ $settings['zalo_support_2'] }}
                 </a>
-                <a href="mailto:tetuongmmovn@gmail.com" class="topbar-link">
-                    <i class="bi bi-envelope me-1"></i> tetuongmmovn@gmail.com
+                @endif
+                @if(!empty($settings['contact_email']))
+                <a href="mailto:{{ $settings['contact_email'] }}" class="topbar-link">
+                    <i class="bi bi-envelope me-1"></i> {{ $settings['contact_email'] }}
                 </a>
+                @endif
             </div>
         </div>
     </div>  
@@ -56,6 +85,60 @@
                 <small class="logo-sub d-block">Chính hãng · Uy tín</small>
             </div>
         </a>
+
+        <!-- Mobile Quick Icons (visible on mobile, next to toggler) -->
+        <div class="d-flex align-items-center gap-2 ms-auto me-2 d-lg-none">
+            <!-- Search -->
+            <button class="btn btn-icon" data-bs-toggle="modal" data-bs-target="#searchModal">
+                <i class="bi bi-search"></i>
+            </button>
+            <!-- Cart -->
+            <a href="{{ route('cart') }}" class="btn btn-cart position-relative">
+                <i class="bi bi-bag"></i>
+                <span class="cart-badge" id="cart-count-mobile">0</span>
+            </a>
+            <!-- Auth Actions -->
+            @auth
+                <div class="dropdown">
+                    <button class="btn btn-icon dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-person-circle"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow border-0" style="border-radius: 12px; margin-top: 10px;">
+                        @if(auth()->user()->isAdmin())
+                            <li>
+                                <a class="dropdown-item fw-600 text-primary" href="{{ route('admin.dashboard') }}">
+                                    <i class="bi bi-speedometer2 me-2"></i>Trang Admin
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                        @endif
+                        <li>
+                            <a class="dropdown-item fw-600" href="{{ route('order.history') }}">
+                                <i class="bi bi-clock-history me-2 text-muted"></i>Lịch Sử Đơn Hàng
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item fw-600" href="{{ route('wishlist.index') }}">
+                                <i class="bi bi-heart me-2 text-danger"></i>Sản Phẩm Yêu Thích
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form method="POST" action="{{ route('auth.logout') }}">
+                                @csrf
+                                <button type="submit" class="dropdown-item text-danger fw-600">
+                                    <i class="bi bi-box-arrow-right me-2"></i>Đăng Xuất
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            @else
+                <a href="{{ route('auth.login') }}" class="btn btn-icon" title="Đăng Nhập">
+                    <i class="bi bi-box-arrow-in-right"></i>
+                </a>
+            @endauth
+        </div>
 
         <!-- Toggler -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
@@ -112,8 +195,8 @@
                 </li>
             </ul>
 
-            <!-- Right Side -->
-            <div class="d-flex align-items-center gap-2">
+            <!-- Right Side (Desktop only) -->
+            <div class="d-none d-lg-flex align-items-center gap-2">
                 <!-- Search -->
                 <button class="btn btn-icon" data-bs-toggle="modal" data-bs-target="#searchModal" id="search-btn">
                     <i class="bi bi-search"></i>
@@ -147,6 +230,11 @@
                             <li>
                                 <a class="dropdown-item fw-600" href="{{ route('order.history') }}">
                                     <i class="bi bi-clock-history me-2 text-muted"></i>Lịch Sử Đơn Hàng
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item fw-600" href="{{ route('wishlist.index') }}">
+                                    <i class="bi bi-heart me-2 text-danger"></i>Sản Phẩm Yêu Thích
                                 </a>
                             </li>
                             <li><hr class="dropdown-divider"></li>
@@ -269,19 +357,27 @@
                     <ul class="footer-contact-list">
                         <li>
                             <i class="bi bi-chat-dots-fill"></i>
-                            <span>Zalo 1: <a href="https://zalo.me/0708910952" target="_blank">0708910952</a></span>
+                            @if(!empty($settings['zalo_support']))
+                            <span>Zalo 1: <a href="{{ $settings['zalo_url_1'] ?? 'https://zalo.me/' . $settings['zalo_support'] }}" target="_blank">{{ $settings['zalo_support'] }}</a></span>
+                            @endif
                         </li>
                         <li>
                             <i class="bi bi-chat-dots-fill"></i>
-                            <span>Zalo 2: <a href="https://zalo.me/0569012134" target="_blank">0569012134</a></span>
+                            @if(!empty($settings['zalo_support_2']))
+                            <span>Zalo 2: <a href="{{ $settings['zalo_url_2'] ?? 'https://zalo.me/' . $settings['zalo_support_2'] }}" target="_blank">{{ $settings['zalo_support_2'] }}</a></span>
+                            @endif
                         </li>
                         <li>
                             <i class="bi bi-envelope-fill"></i>
-                            <span>Email: <a href="mailto:tetuongmmovn@gmail.com">tetuongmmovn@gmail.com</a></span>
+                            @if(!empty($settings['contact_email']))
+                            <span>Email: <a href="mailto:{{ $settings['contact_email'] }}">{{ $settings['contact_email'] }}</a></span>
+                            @endif
                         </li>
                         <li>
                             <i class="bi bi-telegram"></i>
-                            <span>Telegram: <a href="https://t.me/specademy" target="_blank">@specademy</a></span>
+                            @if(!empty($settings['telegram_support']))
+                            <span>Telegram: <a href="{{ $settings['telegram_url'] ?? 'https://t.me/' . ltrim($settings['telegram_support'],'@') }}" target="_blank">{{ '@' . ltrim($settings['telegram_support'],'@') }}</a></span>
+                            @endif
                         </li>
                         <li>
                             <i class="bi bi-clock-fill"></i>
@@ -308,7 +404,7 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-6">
-                    <p class="mb-0 small">© 2025 VPNStore. Tất cả quyền được bảo lưu.</p>
+                    <p class="mb-0 small">© {{ date('Y') }} {{ $settings['footer_copyright'] ?? ($settings['store_name'] ?? 'VPNStore') . '. Tất cả quyền được bảo lưu.' }}</p>
                 </div>
                 <div class="col-md-6 text-md-end">
                     <div class="payment-methods">
@@ -343,7 +439,11 @@
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <!-- Custom JS -->
-<script src="{{ asset('js/app.js') }}"></script>
+<script>
+    window.dbWishlist = @json(auth()->check() ? \App\Models\Wishlist::where('user_id', auth()->id())->pluck('product_id')->toArray() : null);
+    window.csrfToken = '{{ csrf_token() }}';
+</script>
+<script src="{{ asset('js/app.js') }}?v=1.24"></script>
 @yield('extra_js')
 </body>
 </html>

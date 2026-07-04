@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\User;
 use App\Models\Product;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -24,14 +25,14 @@ class AdminController extends Controller
             $endDate = date('Y-m-d', strtotime('sunday this week'));
         }
 
-        // Validate max range of 2 months
+        // Validate max range từ settings
+        $maxDays = (int) Setting::get('dashboard_max_days', 60);
         $start = new \DateTime($startDate);
         $end = new \DateTime($endDate);
         $diff = $start->diff($end)->days;
 
-        if ($diff > 60) {
-            // Adjust start date to be end date - 60 days
-            $adjustedStartDate = (clone $end)->modify('-60 days')->format('Y-m-d');
+        if ($diff > $maxDays) {
+            $adjustedStartDate = (clone $end)->modify('-' . $maxDays . ' days')->format('Y-m-d');
             return redirect()->route('admin.dashboard', [
                 'start_date' => $adjustedStartDate,
                 'end_date' => $endDate
@@ -81,21 +82,24 @@ class AdminController extends Controller
 
         $revenueChartData = array_values($revenueData);
 
-        // 2. Đơn hàng phân trang (10 cái)
-        $recentOrders = Order::latest()->paginate(10)->withQueryString();
+        // 2. Đơn hàng phân trang (lấy từ settings)
+        $ordersPerPage = (int) Setting::get('dashboard_orders_per_page', 10);
+        $recentOrders = Order::latest()->paginate($ordersPerPage)->withQueryString();
 
-        // 3. Khách hàng mới nhất (5 người)
-        $recentUsers = User::where('role', 'user')->latest()->take(5)->get();
+        // 3. Khách hàng mới nhất (lấy từ settings)
+        $recentUsersCount = (int) Setting::get('dashboard_recent_users_count', 5);
+        $recentUsers = User::where('role', 'user')->latest()->take($recentUsersCount)->get();
 
         // 4. Doanh thu theo thương hiệu từ DB
         $brandStats = $this->getBrandStats();
 
-        // 5. Top sản phẩm bán chạy từ DB (sản phẩm mua nhiều)
+        // 5. Top sản phẩm bán chạy từ DB (lấy từ settings)
+        $topProductsCount = (int) Setting::get('dashboard_top_products_count', 5);
         $topProducts = Order::where('payment_status', 'paid')
             ->selectRaw('product_name, SUM(quantity) as sold_count, SUM(total) as revenue')
             ->groupBy('product_name')
             ->orderBy('sold_count', 'desc')
-            ->take(5)
+            ->take($topProductsCount)
             ->get();
 
 
@@ -107,47 +111,37 @@ class AdminController extends Controller
 
     private function getBrandStats(): array
     {
-        $brandColors = [
-            'NordVPN'    => '#4687FF',
-            'ExpressVPN' => '#DA3940',
-            'Surfshark'  => '#10B981',
-            'HMA VPN'    => '#F59E0B',
-            'CyberGhost' => '#8B5CF6',
-            'ProtonVPN'  => '#6D28D9',
-            'IPVanish'   => '#0EA5E9',
-            'PureVPN'    => '#EF4444',
-        ];
-
+        // Lấy màu từ cột color trong products thay vì hardcode
         $brands = Order::where('payment_status', 'paid')
             ->selectRaw('brand, COUNT(*) as count, SUM(total) as revenue')
             ->groupBy('brand')
             ->get();
 
+        // Lấy map brand => color từ bảng products
+        $productColors = Product::select('brand', 'color')
+            ->distinct()
+            ->whereNotNull('color')
+            ->get()
+            ->pluck('color', 'brand')
+            ->toArray();
+
+        $defaultColors = ['#2563eb','#10b981','#f59e0b','#8b5cf6','#ef4444','#0ea5e9','#6d28d9','#da3940'];
+        $colorIndex    = 0;
         $brandStatsMap = [];
-        foreach ($brandColors as $b => $color) {
-            $brandStatsMap[strtolower($b)] = [
-                'brand' => $b,
-                'orders' => 0,
-                'revenue' => 0,
-                'color' => $color,
-            ];
-        }
 
         foreach ($brands as $br) {
-            $key = strtolower($br->brand);
-            if (isset($brandStatsMap[$key])) {
-                $brandStatsMap[$key]['orders'] = $br->count;
-                $brandStatsMap[$key]['revenue'] = (float) $br->revenue;
-            } else {
-                $brandStatsMap[$key] = [
-                    'brand' => $br->brand,
-                    'orders' => $br->count,
-                    'revenue' => (float) $br->revenue,
-                    'color' => '#6c757d',
-                ];
-            }
+            $key   = strtolower($br->brand);
+            $color = $productColors[$br->brand] ?? $defaultColors[$colorIndex % count($defaultColors)];
+            $colorIndex++;
+            $brandStatsMap[$key] = [
+                'brand'   => $br->brand,
+                'orders'  => $br->count,
+                'revenue' => (float) $br->revenue,
+                'color'   => $color,
+            ];
         }
 
         return array_values($brandStatsMap);
     }
+
 }

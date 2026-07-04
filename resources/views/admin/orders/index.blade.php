@@ -7,7 +7,7 @@
 @section('content')
 
 <!-- Stats Row -->
-<div class="row g-3 mb-4">
+<div class="row g-3 mb-4 row-stat-cards">
     @php
     $orderCards = [
         ['label'=>'Tổng Đơn','value'=>number_format($stats['total']),'icon'=>'bi-bag-fill','color'=>'#2563eb','bg'=>'#dbeafe'],
@@ -17,7 +17,7 @@
     ];
     @endphp
     @foreach($orderCards as $c)
-    <div class="col-6 col-md-3">
+    <div class="col-12 col-sm-6 col-md-3">
         <div class="admin-stat-card p-3" style="--card-color:{{ $c['color'] }}">
             <div class="stat-icon" style="background:{{ $c['bg'] }};color:{{ $c['color'] }};width:42px;height:42px;font-size:20px;border-radius:10px">
                 <i class="bi {{ $c['icon'] }}"></i>

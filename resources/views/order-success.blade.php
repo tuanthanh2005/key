@@ -7,7 +7,7 @@
     <div class="row justify-content-center">
         <div class="col-lg-7">
             <!-- Success Card -->
-            <div class="text-center bg-white rounded-4 p-5 shadow-sm" style="border:1.5px solid var(--gray-200)">
+            <div class="text-center bg-white rounded-4 p-3 p-md-5 shadow-sm" style="border:1.5px solid var(--gray-200)">
                 <div class="mb-4" style="font-size:80px;color:#22c55e;animation:bounceIn .6s ease">
                     <i class="bi bi-check-circle-fill"></i>
                 </div>
@@ -44,7 +44,7 @@
                         <div style="width:28px;height:28px;background:var(--success);border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0">2</div>
                         <div>
                             <div class="fw-600" style="font-size:13.5px">Xác Nhận Thanh Toán</div>
-                            <div class="text-muted" style="font-size:12.5px">Gửi ảnh chụp màn hình xác nhận CK về Telegram @specademy hoặc Zalo 0708910952 / 0569012134</div>
+                            <div class="text-muted" style="font-size:12.5px">Gửi ảnh chụp màn hình xác nhận CK về Telegram {{ '@' . ltrim($settings['telegram_support'] ?? 'specademy', '@') }}{{ !empty($settings['zalo_support']) ? ' hoặc Zalo ' . $settings['zalo_support'] . (!empty($settings['zalo_support_2']) ? ' / ' . $settings['zalo_support_2'] : '') : '' }}</div>
                         </div>
                     </div>
                     <div class="d-flex gap-3">
@@ -64,7 +64,7 @@
                     <a href="{{ route('home') }}" class="btn btn-outline-secondary rounded-pill px-4 fw-600">
                         <i class="bi bi-house me-2"></i>Về Trang Chủ
                     </a>
-                    <a href="https://t.me/specademy" target="_blank" class="btn btn-outline-primary rounded-pill px-4 fw-600">
+                    <a href="{{ $settings['telegram_url'] ?? 'https://t.me/' . ltrim($settings['telegram_support'] ?? 'specademy','@') }}" target="_blank" class="btn btn-outline-primary rounded-pill px-4 fw-600">
                         <i class="bi bi-telegram me-2"></i>Telegram Hỗ Trợ
                     </a>
                 </div>

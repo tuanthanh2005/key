@@ -50,7 +50,12 @@
                 </button>
                 <div class="ms-auto d-none d-md-flex align-items-center gap-2 text-muted" style="font-size:13px">
                     <i class="bi bi-info-circle text-primary"></i>
-                    Dùng mã <strong class="text-primary">VPNVN10</strong> giảm thêm 10%
+                @php $firstCoupon = array_key_first($publicCoupons ?? []); @endphp
+                @if($firstCoupon)
+                <small class="text-muted" style="font-size:11.5px">
+                    Dùng mã <strong class="text-primary">{{ $firstCoupon }}</strong> giảm thêm {{ $publicCoupons[$firstCoupon] }}%
+                </small>
+                @endif
                 </div>
             </div>
 
@@ -131,15 +136,18 @@
 
 @section('extra_js')
 <script>
+window.stockMap = @json($stockMap);
+// Coupon codes được lấy từ DB qua server-side rendering
+const validCouponsFromServer = @json($publicCoupons ?? []);
+
 function applyCoupon() {
     const code = document.getElementById('couponInput').value.trim().toUpperCase();
-    const couponEl = document.getElementById('cart-coupon');
-    const validCodes = { 'VPNVN10': 10, 'VIP20': 20, 'SALE15': 15 };
-    if (validCodes[code]) {
-        couponEl.textContent = '-' + validCodes[code] + '%';
-        showToast('Áp dụng mã ' + code + ' thành công! Giảm ' + validCodes[code] + '%', 'success');
+    if (validCouponsFromServer[code] !== undefined) {
+        CartManager.setCoupon(code);
+        window.renderCartPage();
+        showToast('Áp dụng mã ' + code + ' thành công! Giảm ' + validCouponsFromServer[code] + '%', 'success');
     } else if (code) {
-        showToast('Mã giảm giá không hợp lệ!', 'danger');
+        showToast('Mã giảm giá không hợp lệ hoặc đã hết hạn!', 'danger');
     }
 }
 </script>

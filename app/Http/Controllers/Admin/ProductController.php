@@ -65,41 +65,28 @@ class ProductController extends Controller
             'reviews' => 'nullable|integer|min:0',
         ]);
 
-        $slug = strtolower($request->brand);
-        $colorMap = [
-            'nordvpn' => '#4687FF',
-            'expressvpn' => '#DA3940',
-            'surfshark' => '#10B981',
-            'hma vpn' => '#F59E0B',
-            'hma' => '#F59E0B',
-            'cyberghost' => '#8B5CF6',
-            'purevpn' => '#EF4444',
-            'ipvanish' => '#0EA5E9',
-            'protonvpn' => '#6D28D9',
-        ];
-        $color = $colorMap[$slug] ?? '#4687FF';
+        $slug  = strtolower(str_replace(' ', '', $request->brand));
+        // Màu: lấy từ product.color nếu có, không hardcode theo brand
+        $color = '#4687FF'; // fallback mặc định
 
         $imagePath = null;
         if ($request->hasFile('image')) {
-            $file = $request->file('image');
+            $file     = $request->file('image');
             $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-            
-            // Ensure directory exists
             if (!file_exists(public_path('uploads/products'))) {
                 mkdir(public_path('uploads/products'), 0777, true);
             }
-            
             $file->move(public_path('uploads/products'), $filename);
             $imagePath = 'uploads/products/' . $filename;
         }
 
         $features = [];
         if ($request->features) {
-            $features = array_map('trim', explode(',', $request->features));
-            $features = array_filter($features);
+            $features = array_filter(array_map('trim', explode(',', $request->features)));
         } else {
-            // default features
-            $features = ['Mã bản quyền chính hãng', 'Bảo mật tuyệt đối', 'Hỗ trợ 24/7'];
+            // Lấy default features từ settings
+            $defaultFeatureStr = \App\Models\Setting::get('default_product_features', 'Mã bản quyền chính hãng,Bảo mật tuyệt đối,Hỗ trợ 24/7');
+            $features = array_filter(array_map('trim', explode(',', $defaultFeatureStr)));
         }
 
         Product::create([
@@ -164,19 +151,9 @@ class ProductController extends Controller
             'reviews' => 'nullable|integer|min:0',
         ]);
 
-        $slug = strtolower($request->brand);
-        $colorMap = [
-            'nordvpn' => '#4687FF',
-            'expressvpn' => '#DA3940',
-            'surfshark' => '#10B981',
-            'hma vpn' => '#F59E0B',
-            'hma' => '#F59E0B',
-            'cyberghost' => '#8B5CF6',
-            'purevpn' => '#EF4444',
-            'ipvanish' => '#0EA5E9',
-            'protonvpn' => '#6D28D9',
-        ];
-        $color = $colorMap[$slug] ?? '#4687FF';
+        $slug  = strtolower(str_replace(' ', '', $request->brand));
+        // Giữ nguyên color từ product, hoặc fallback
+        $color = $product->color ?: '#4687FF';
 
         $imagePath = $product->image_path;
         if ($request->hasFile('image')) {
@@ -199,10 +176,10 @@ class ProductController extends Controller
 
         $features = [];
         if ($request->features) {
-            $features = array_map('trim', explode(',', $request->features));
-            $features = array_filter($features);
+            $features = array_filter(array_map('trim', explode(',', $request->features)));
         } else {
-            $features = $product->features ?: ['Mã bản quyền chính hãng', 'Bảo mật tuyệt đối', 'Hỗ trợ 24/7'];
+            $defaultFeatureStr = \App\Models\Setting::get('default_product_features', 'Mã bản quyền chính hãng,Bảo mật tuyệt đối,Hỗ trợ 24/7');
+            $features = $product->features ?: array_filter(array_map('trim', explode(',', $defaultFeatureStr)));
         }
 
         $product->update([

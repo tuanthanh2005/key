@@ -17,7 +17,7 @@
     <div class="row justify-content-center">
         <div class="col-lg-10">
             @if($orders->isEmpty())
-                <div class="card border-0 shadow-sm text-center p-5 rounded-4" style="background:#fff;border:1px solid var(--gray-200)!important">
+                <div class="card border-0 shadow-sm text-center p-3 p-md-5 rounded-4" style="background:#fff;border:1px solid var(--gray-200)!important">
                     <div class="mb-4 text-muted">
                         <i class="bi bi-folder-x" style="font-size: 80px;color: var(--gray-200);"></i>
                     </div>
@@ -30,7 +30,8 @@
                     </div>
                 </div>
             @else
-                <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="background:#fff;border:1px solid var(--gray-200)!important">
+                <!-- Desktop Table View -->
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden d-none d-md-block" style="background:#fff;border:1px solid var(--gray-200)!important">
                     <div class="card-header bg-white py-3 px-4 border-bottom-0">
                         <h5 class="fw-800 text-gray-900 mb-0 d-flex align-items-center gap-2">
                             <i class="bi bi-list-task text-primary"></i>Danh Sách Đơn Hàng ({{ $orders->count() }})
@@ -97,6 +98,64 @@
                             </tbody>
                         </table>
                     </div>
+                </div>
+
+                <!-- Mobile Card List View -->
+                <div class="d-md-none">
+                    <h5 class="fw-800 text-gray-900 mb-3 px-1 d-flex align-items-center gap-2">
+                        <i class="bi bi-list-task text-primary"></i>Đơn Hàng Đã Mua ({{ $orders->count() }})
+                    </h5>
+                    @foreach($orders as $order)
+                        <div class="card border border-2 rounded-4 mb-3 p-3 shadow-sm" style="background:#fff;border-color:var(--gray-200)!important">
+                            <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom" style="border-color:var(--gray-100)!important">
+                                <a href="{{ route('order.check') }}?order={{ $order->order_code }}" class="fw-800 text-primary text-decoration-none" style="font-size:15px">
+                                    #{{ $order->order_code }}
+                                </a>
+                                @if($order->order_status === 'completed')
+                                    <span class="badge text-bg-success px-2 py-1 rounded-pill fw-600" style="font-size:11px">Hoàn Tất</span>
+                                @elseif($order->order_status === 'cancelled')
+                                    <span class="badge text-bg-secondary px-2 py-1 rounded-pill fw-600" style="font-size:11px">Đã Hủy</span>
+                                @else
+                                    <span class="badge text-bg-warning text-white px-2 py-1 rounded-pill fw-600" style="font-size:11px">Đang Xử Lý</span>
+                                @endif
+                            </div>
+                            
+                            <div class="row g-2 mb-3" style="font-size:13px">
+                                <div class="col-6">
+                                    <span class="text-muted d-block" style="font-size:10.5px;font-weight:600">Sản Phẩm</span>
+                                    <span class="fw-700 text-gray-800">{{ $order->product_name }}</span>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <span class="text-muted d-block" style="font-size:10.5px;font-weight:600">Tổng Tiền</span>
+                                    <span class="fw-800 text-primary">{{ number_format($order->total) }}đ</span>
+                                </div>
+                                <div class="col-12 mt-2">
+                                    <span class="text-muted d-block" style="font-size:10.5px;font-weight:600">Ngày Đặt</span>
+                                    <span class="fw-600 text-gray-700">{{ $order->created_at->format('H:i — d/m/Y') }}</span>
+                                </div>
+                            </div>
+
+                            <div class="p-3 rounded-3 text-center" style="background:var(--gray-50); border: 1.5px dashed var(--gray-200)">
+                                <span class="text-muted d-block mb-1" style="font-size:10.5px;font-weight:700;letter-spacing:.3px">KEY VPN CỦA BẠN</span>
+                                @if($order->order_status === 'completed')
+                                    @if(!empty($order->license_key))
+                                        <div class="d-flex align-items-center gap-2 bg-success-light text-success px-3 py-2 rounded-2 justify-content-center" style="font-family: 'Courier New', Courier, monospace; font-weight: 700; font-size: 13px; border:1px solid rgba(22,163,74,0.15)">
+                                            <span style="word-break:break-all" id="m-key-{{ $order->id }}">{{ $order->license_key }}</span>
+                                            <button type="button" class="btn btn-sm text-success p-0 ms-1" onclick="copyTextDirect('{{ $order->license_key }}')">
+                                                <i class="bi bi-copy"></i>
+                                            </button>
+                                        </div>
+                                    @else
+                                        <span class="text-muted small"><i class="bi bi-hourglass-split me-1"></i>Đang khởi tạo key</span>
+                                    @endif
+                                @elseif($order->order_status === 'cancelled')
+                                    <span class="text-danger small"><i class="bi bi-x-circle me-1"></i>Đã Hủy</span>
+                                @else
+                                    <span class="text-warning small fw-600"><i class="bi bi-hourglass-split me-1"></i>Chờ xác nhận CK</span>
+                                @endif
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
             @endif
         </div>

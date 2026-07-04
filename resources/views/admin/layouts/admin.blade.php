@@ -2,13 +2,13 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Admin') — VPNStore Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>@yield('title', 'Admin') — {{ $settings['store_name'] ?? 'VPNStore' }} Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/admin.css') }}?v=1.12">
 </head>
 <body class="admin-body">
 
@@ -20,7 +20,7 @@
             <i class="bi bi-shield-lock-fill"></i>
         </div>
         <div>
-            <div class="sidebar-logo-text">VPNStore</div>
+            <div class="sidebar-logo-text">{{ $settings['store_name'] ?? 'VPNStore' }}</div>
             <div class="sidebar-logo-sub">Admin Panel</div>
         </div>
         <button class="sidebar-close d-lg-none" onclick="toggleSidebar()">
@@ -75,6 +75,18 @@
         </a>
 
         <div class="sidebar-section-label mt-2">HỆ THỐNG</div>
+        <a href="{{ route('admin.settings.index') }}" class="sidebar-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
+            <i class="bi bi-gear-fill"></i>
+            <span>Cài Đặt</span>
+        </a>
+        <a href="{{ route('admin.coupons.index') }}" class="sidebar-link {{ request()->routeIs('admin.coupons.*') ? 'active' : '' }}">
+            <i class="bi bi-tags-fill"></i>
+            <span>Mã Coupon</span>
+            @php $activeCoupons = \App\Models\Coupon::valid()->count(); @endphp
+            @if($activeCoupons > 0)
+            <span class="sidebar-badge badge-blue">{{ $activeCoupons }}</span>
+            @endif
+        </a>
         <a href="{{ route('home') }}" class="sidebar-link" target="_blank">
             <i class="bi bi-shop"></i>
             <span>Xem Cửa Hàng</span>
@@ -193,38 +205,73 @@
 
 <!-- Settings Modal -->
 <div class="modal fade" id="settingsModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" style="border-radius:16px;border:1px solid var(--admin-border)">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <form action="{{ route('admin.settings.update') }}" method="POST" class="modal-content" style="border-radius:16px;border:1px solid var(--admin-border)">
+            @csrf
             <div class="modal-header border-0 pb-0">
-                <h5 class="modal-title fw-700">Cài Đặt Hệ Thống</h5>
+                <h5 class="modal-title fw-700"><i class="bi bi-gear-fill text-primary me-2"></i>Cài Đặt Hệ Thống</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <div class="mb-3">
-                    <label class="form-label fw-600">Tên Cửa Hàng</label>
-                    <input type="text" class="form-control" value="VPNStore">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label fw-600">Email Liên Hệ</label>
-                    <input type="email" class="form-control" value="tetuongmmovn@gmail.com">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label fw-600">Telegram Support</label>
-                    <input type="text" class="form-control" value="@specademy">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label fw-600">Chế Độ Bảo Trì</label>
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="maintenanceMode">
-                        <label class="form-check-label" for="maintenanceMode">Tắt cửa hàng để bảo trì</label>
+                <div class="row">
+                    <!-- General Settings -->
+                    <div class="col-md-6 border-end">
+                        <h6 class="fw-800 text-primary mb-3">Cấu Hình Chung</h6>
+                        <div class="mb-3">
+                            <label class="form-label fw-600">Tên Cửa Hàng</label>
+                            <input type="text" name="store_name" class="form-control" value="{{ \App\Models\Setting::get('store_name', 'VPNStore') }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-600">Email Liên Hệ</label>
+                            <input type="email" name="contact_email" class="form-control" value="{{ \App\Models\Setting::get('contact_email', 'tetuongmmovn@gmail.com') }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-600">Telegram Support</label>
+                            <input type="text" name="telegram_support" class="form-control" value="{{ \App\Models\Setting::get('telegram_support', '@specademy') }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-600">Zalo Support</label>
+                            <input type="text" name="zalo_support" class="form-control" value="{{ \App\Models\Setting::get('zalo_support', '0708910952') }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-600">Chế Độ Bảo Trì</label>
+                            <div class="form-check form-switch">
+                                <input type="hidden" name="maintenance_mode" value="0">
+                                <input class="form-check-input" type="checkbox" name="maintenance_mode" value="1" id="maintenanceMode" {{ \App\Models\Setting::get('maintenance_mode', '0') == '1' ? 'checked' : '' }}>
+                                <label class="form-check-label" for="maintenanceMode">Tắt cửa hàng để bảo trì</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fake Sales Settings -->
+                    <div class="col-md-6">
+                        <h6 class="fw-800 text-primary mb-3">Số Lượt Bán Giả Lập (Fake Sales)</h6>
+                        <p class="text-muted small mb-3">Cấu hình hiển thị số lượng đã bán (ví dụ: 500+, 100+) hiển thị trên trang chủ và trang chi tiết sản phẩm.</p>
+                        @foreach([
+                            'sales_nordvpn' => 'NordVPN',
+                            'sales_expressvpn' => 'ExpressVPN',
+                            'sales_surfshark' => 'Surfshark',
+                            'sales_hma' => 'HMA VPN',
+                            'sales_cyberghost' => 'CyberGhost',
+                            'sales_purevpn' => 'PureVPN',
+                            'sales_ipvanish' => 'IPVanish',
+                            'sales_protonvpn' => 'ProtonVPN'
+                        ] as $key => $label)
+                        <div class="mb-2 row align-items-center">
+                            <label class="col-sm-5 col-form-label fw-600 small">{{ $label }}</label>
+                            <div class="col-sm-7">
+                                <input type="text" name="{{ $key }}" class="form-control form-control-sm" value="{{ \App\Models\Setting::get($key, '50+') }}" placeholder="Ví dụ: 100+">
+                            </div>
+                        </div>
+                        @endforeach
                     </div>
                 </div>
             </div>
             <div class="modal-footer border-0">
-                <button class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Hủy</button>
-                <button class="btn btn-primary rounded-pill px-4" data-bs-dismiss="modal">Lưu Cài Đặt</button>
+                <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Hủy</button>
+                <button type="submit" class="btn btn-primary rounded-pill px-4">Lưu Cài Đặt</button>
             </div>
-        </div>
+        </form>
     </div>
 </div>
 
