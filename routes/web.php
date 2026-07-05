@@ -133,17 +133,38 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 Route::get('/check-favicon', function() {
     $favicon = \App\Models\Setting::get('favicon_path');
     $publicHtmlPath = base_path('../public_html');
+    
+    $isDirPublicHtml = false;
+    try {
+        $isDirPublicHtml = is_dir($publicHtmlPath);
+    } catch (\Throwable $e) {
+        $isDirPublicHtml = 'Error: ' . $e->getMessage();
+    }
+    
     $documentRoot = $_SERVER['DOCUMENT_ROOT'] ?? 'Not set';
+    $isDirDocRoot = false;
+    try {
+        $isDirDocRoot = is_dir($documentRoot);
+    } catch (\Throwable $e) {
+        $isDirDocRoot = 'Error: ' . $e->getMessage();
+    }
+    
+    $realpath = false;
+    try {
+        $realpath = realpath(base_path() . '/../public_html');
+    } catch (\Throwable $e) {
+        $realpath = 'Error: ' . $e->getMessage();
+    }
+    
     return [
         'public_path' => public_path(),
         'favicon_path_in_db' => $favicon,
         'file_exists_in_public_path' => file_exists(public_path($favicon)),
         'base_path' => base_path(),
         'public_html_path' => $publicHtmlPath,
-        'is_dir_public_html_path' => is_dir($publicHtmlPath),
+        'is_dir_public_html_path' => $isDirPublicHtml,
         'document_root' => $documentRoot,
-        'is_dir_document_root' => is_dir($documentRoot),
-        'realpath_public_html' => realpath(base_path() . '/../public_html'),
-        'file_exists_in_document_root' => file_exists($documentRoot . '/' . $favicon),
+        'is_dir_document_root' => $isDirDocRoot,
+        'realpath_public_html' => $realpath,
     ];
 });
