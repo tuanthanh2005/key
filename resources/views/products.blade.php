@@ -329,6 +329,9 @@ if ($brandInfo) {
                 @endforeach
             </div>
 
+            <!-- Pagination Container -->
+            <div class="d-flex justify-content-center mt-4" id="paginationContainer"></div>
+
             <!-- Empty State -->
             <div id="emptyState" class="empty-state d-none">
                 <div class="empty-state-icon"><i class="bi bi-search"></i></div>
@@ -346,6 +349,9 @@ if ($brandInfo) {
 
 @section('extra_js')
 <script>
+let currentPage = 1;
+const itemsPerPage = 9;
+
 function resetFilters() {
     document.querySelectorAll('.brand-filter, .duration-filter').forEach(cb => cb.checked = false);
     const searchInput = document.getElementById('productSearch');
@@ -355,7 +361,7 @@ function resetFilters() {
     const priceDisplay = document.getElementById('priceDisplay');
     if (priceDisplay) priceDisplay.textContent = '2.000.000đ trở xuống';
     
-    applyFilters();
+    applyFilters(true);
 }
 
 function updateCount() {
@@ -366,11 +372,18 @@ function updateCount() {
     if (empty) empty.classList.toggle('d-none', visible > 0);
 }
 
-function applyFilters() {
+function applyFilters(resetPage = true) {
+    if (resetPage) {
+        currentPage = 1;
+    }
+
     const searchQuery = (document.getElementById('productSearch')?.value || '').toLowerCase().trim();
     const selectedBrands = Array.from(document.querySelectorAll('.brand-filter:checked')).map(c => c.dataset.brand);
     const selectedDurations = Array.from(document.querySelectorAll('.duration-filter:checked')).map(c => c.dataset.duration);
     const maxPrice = parseFloat(document.getElementById('priceRange')?.value || 2000000);
+
+    let matchedCount = 0;
+    const matchedElements = [];
 
     document.querySelectorAll('.product-card-wrap').forEach(el => {
         const name = el.dataset.name || '';
@@ -385,28 +398,93 @@ function applyFilters() {
         const matchesPrice = price <= maxPrice;
 
         if (matchesSearch && matchesBrand && matchesDuration && matchesPrice) {
+            matchedElements.push(el);
+            matchedCount++;
+        } else {
+            el.style.display = 'none';
+        }
+    });
+
+    const elCount = document.getElementById('productCount');
+    if (elCount) elCount.textContent = matchedCount;
+    const empty = document.getElementById('emptyState');
+    if (empty) empty.classList.toggle('d-none', matchedCount > 0);
+
+    renderPagination(matchedElements);
+}
+
+function renderPagination(matchedElements) {
+    const totalItems = matchedElements.length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    
+    if (currentPage > totalPages) {
+        currentPage = Math.max(1, totalPages);
+    }
+
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+
+    matchedElements.forEach((el, index) => {
+        if (index >= startIndex && index < endIndex) {
             el.style.display = '';
         } else {
             el.style.display = 'none';
         }
     });
-    updateCount();
+
+    const container = document.getElementById('paginationContainer');
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (totalPages <= 1) return;
+
+    let html = '<nav aria-label="Page navigation"><ul class="pagination pagination-custom d-flex gap-2 align-items-center mb-0" style="list-style:none; padding:0; margin:0;">';
+    
+    // Prev Button
+    html += `<li class="page-item">
+        <button type="button" class="page-link shadow-sm d-flex align-items-center justify-content-center" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''} style="width:36px; height:36px; border-radius:8px; border:1px solid #e2e8f0; background:${currentPage === 1 ? '#f8fafc' : '#fff'}; color:${currentPage === 1 ? '#cbd5e1' : 'var(--gray-700)'}; font-weight:600; cursor:${currentPage === 1 ? 'not-allowed' : 'pointer'};"><i class="bi bi-chevron-left"></i></button>
+    </li>`;
+
+    // Page Numbers
+    for (let i = 1; i <= totalPages; i++) {
+        const isActive = i === currentPage;
+        html += `<li class="page-item">
+            <button type="button" class="page-link shadow-sm d-flex align-items-center justify-content-center" onclick="changePage(${i})" style="width:36px; height:36px; border-radius:8px; border:1px solid ${isActive ? '#2563eb' : '#e2e8f0'}; background:${isActive ? '#2563eb' : '#fff'}; color:${isActive ? '#fff' : 'var(--gray-700)'}; font-weight:700; cursor:pointer;">${i}</button>
+        </li>`;
+    }
+
+    // Next Button
+    html += `<li class="page-item">
+        <button type="button" class="page-link shadow-sm d-flex align-items-center justify-content-center" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''} style="width:36px; height:36px; border-radius:8px; border:1px solid #e2e8f0; background:${currentPage === totalPages ? '#f8fafc' : '#fff'}; color:${currentPage === totalPages ? '#cbd5e1' : 'var(--gray-700)'}; font-weight:600; cursor:${currentPage === totalPages ? 'not-allowed' : 'pointer'};"><i class="bi bi-chevron-right"></i></button>
+    </li>`;
+
+    html += '</ul></nav>';
+    container.innerHTML = html;
+}
+
+function changePage(page) {
+    currentPage = page;
+    applyFilters(false);
+    document.getElementById('productsGrid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 // Bind events
 document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('productSearch')?.addEventListener('input', applyFilters);
-    document.querySelectorAll('.brand-filter').forEach(cb => cb.addEventListener('change', applyFilters));
-    document.querySelectorAll('.duration-filter').forEach(cb => cb.addEventListener('change', applyFilters));
+    document.getElementById('productSearch')?.addEventListener('input', () => applyFilters(true));
+    document.querySelectorAll('.brand-filter').forEach(cb => cb.addEventListener('change', () => applyFilters(true)));
+    document.querySelectorAll('.duration-filter').forEach(cb => cb.addEventListener('change', () => applyFilters(true)));
     
     const priceRange = document.getElementById('priceRange');
     if (priceRange) {
         priceRange.addEventListener('input', function() {
             const display = document.getElementById('priceDisplay');
             if (display) display.textContent = formatCurrency(parseInt(this.value)) + ' trở xuống';
-            applyFilters();
+            applyFilters(true);
         });
     }
+    
+    // Initial call
+    applyFilters(true);
 });
 
 // View toggle
