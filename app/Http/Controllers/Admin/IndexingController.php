@@ -24,12 +24,14 @@ class IndexingController extends Controller
     {
         $isConfigured = $this->indexingService->isConfigured();
 
-        // Lấy thông tin tài khoản từ settings (nếu cấu hình rồi)
+        // Lấy thông tin tài khoản từ public_path (nếu cấu hình rồi)
         $clientEmail = '';
         if ($isConfigured) {
-            $jsonStr = Setting::get('google_service_account_json');
-            $creds = json_decode($jsonStr, true);
-            $clientEmail = $creds['client_email'] ?? '';
+            $path = public_path('google-service-account.json');
+            if (file_exists($path)) {
+                $creds = json_decode(file_get_contents($path), true);
+                $clientEmail = $creds['client_email'] ?? '';
+            }
         }
 
         // Đồng bộ và lấy hạn ngạch hôm nay

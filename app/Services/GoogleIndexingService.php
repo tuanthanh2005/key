@@ -12,9 +12,9 @@ class GoogleIndexingService
 
     public function __construct()
     {
-        $jsonStr = \App\Models\Setting::get('google_service_account_json');
-        if (!empty($jsonStr)) {
-            $creds = json_decode($jsonStr, true);
+        $path = public_path('google-service-account.json');
+        if (file_exists($path)) {
+            $creds = json_decode(file_get_contents($path), true);
             $this->clientEmail = $creds['client_email'] ?? null;
             $this->privateKey = $creds['private_key'] ?? null;
         }

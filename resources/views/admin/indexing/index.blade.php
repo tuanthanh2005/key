@@ -122,7 +122,7 @@
                             <div>
                                 <h6 class="fw-700 mb-1" style="font-size: 13.5px;">Chưa cấu hình</h6>
                                 <p class="text-muted mb-0" style="font-size: 12px;">
-                                    Vui lòng liên hệ kỹ thuật để tải lên file key dịch vụ <code class="text-danger">google-service-account.json</code> vào thư mục storage.
+                                    Vui lòng tải lên file key dịch vụ <code class="text-danger">google-service-account.json</code> vào thư mục <code class="text-dark fw-700">public_html</code> (hoặc thư mục <code class="text-dark fw-700">public</code>).
                                 </p>
                             </div>
                         @endif
