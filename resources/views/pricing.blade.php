@@ -142,15 +142,15 @@
             @foreach($vpns as $vpn)
             <div class="col-lg-4 col-md-6">
                 <div class="pricing-card {{ !empty($vpn['featured']) ? 'featured' : '' }}">
-                    @if(!empty($vpn['image_path']))
-                    <div class="pricing-brand-icon" style="background: none; display: flex; align-items: center; justify-content: center;">
-                        <img src="{{ asset($vpn['image_path']) }}" alt="{{ $vpn['name'] }}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                    <div class="product-card-img mb-4" style="border-radius: 12px; height: 180px;">
+                        @if(!empty($vpn['image_path']))
+                            <img src="{{ asset($vpn['image_path']) }}" alt="{{ $vpn['name'] }}">
+                        @else
+                            <div class="product-brand-logo" style="background:linear-gradient(135deg,{{ $vpn['color'] }},{{ $vpn['color'] }}99)">
+                                <i class="bi bi-shield-lock-fill"></i>
+                            </div>
+                        @endif
                     </div>
-                    @else
-                    <div class="pricing-brand-icon" style="background:linear-gradient(135deg,{{ $vpn['color'] }},{{ $vpn['color'] }}99)">
-                        <i class="bi bi-shield-lock-fill text-white" style="font-size:28px"></i>
-                    </div>
-                    @endif
                     <h3 class="fw-800 mb-1 font-poppins" style="font-size:20px;color:var(--gray-900)">{{ $vpn['name'] }}</h3>
                     <div style="font-size:12.5px;color:var(--gray-400)" class="mb-3">
                         {{ $vpn['servers'] }} máy chủ · {{ $vpn['countries'] }} quốc gia
