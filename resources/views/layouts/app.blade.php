@@ -3,10 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="@yield('meta_description', $settings['meta_description'] ?? 'VPNStore - Chuyên cung cấp VPN chính hãng với giá tốt nhất. Bảo hành 30 ngày, hỗ trợ 24/7.')">
-    <meta name="keywords" content="@yield('meta_keywords', 'vpn gia re, mua vpn, nordvpn, expressvpn, surfshark, hma vpn, cyberghost, protonvpn, ipvanish, purevpn')">
+    @if(!empty($settings['google_site_verification']))
+    <meta name="google-site-verification" content="{{ $settings['google_site_verification'] }}">
+    @endif
+    <meta name="description" content="@yield('meta_description', $settings['meta_description'] ?? 'VPNStore - Chuyên cung cấp VPN & Proxy chính hãng với giá tốt nhất. Bảo hành 30 ngày, hỗ trợ 24/7.')">
+    <meta name="keywords" content="@yield('meta_keywords', $settings['meta_keywords'] ?? 'vpn gia re, proxy gia re, mua vpn, mua proxy, key vpn ban quyen')">
     <meta name="robots" content="index, follow">
-    <title>@yield('title', ($settings['store_name'] ?? 'VPNStore') . ' - Cửa Hàng VPN Chính Hãng')</title>
+    <title>@yield('title', $settings['seo_title'] ?? (($settings['store_name'] ?? 'VPNStore') . ' - Cửa Hàng VPN & Proxy Chính Hãng'))</title>
 
     <!-- Favicon -->
     <link rel="shortcut icon" href="{{ !empty($settings['favicon_path']) ? asset($settings['favicon_path']) : asset('favicon.ico') }}" type="image/x-icon">
@@ -18,16 +21,16 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="@yield('og_type', 'website')">
     <meta property="og:url" content="{{ request()->url() }}">
-    <meta property="og:title" content="@yield('title', 'VPNStore - Cửa Hàng VPN Chính Hãng')">
-    <meta property="og:description" content="@yield('meta_description', 'VPNStore - Chuyên cung cấp VPN chính hãng: HMA, Surfshark, NordVPN, ExpressVPN với giá tốt nhất. Bảo hành 30 ngày, hỗ trợ 24/7.')">
+    <meta property="og:title" content="@yield('title', $settings['seo_title'] ?? (($settings['store_name'] ?? 'VPNStore') . ' - Cửa Hàng VPN & Proxy Chính Hãng'))">
+    <meta property="og:description" content="@yield('meta_description', $settings['meta_description'] ?? 'VPNStore - Chuyên cung cấp VPN & Proxy chính hãng từ các thương hiệu uy tín hàng đầu thế giới.')">
     <meta property="og:image" content="@yield('og_image', !empty($settings['favicon_path']) ? asset($settings['favicon_path']) : asset('favicon.ico'))">
-    <meta property="og:site_name" content="VPNStore">
+    <meta property="og:site_name" content="{{ $settings['store_name'] ?? 'VPNStore' }}">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="{{ request()->url() }}">
-    <meta name="twitter:title" content="@yield('title', 'VPNStore - Cửa Hàng VPN Chính Hãng')">
-    <meta name="twitter:description" content="@yield('meta_description', 'VPNStore - Chuyên cung cấp VPN chính hãng: HMA, Surfshark, NordVPN, ExpressVPN với giá tốt nhất. Bảo hành 30 ngày, hỗ trợ 24/7.')">
+    <meta name="twitter:title" content="@yield('title', $settings['seo_title'] ?? (($settings['store_name'] ?? 'VPNStore') . ' - Cửa Hàng VPN & Proxy Chính Hãng'))">
+    <meta name="twitter:description" content="@yield('meta_description', $settings['meta_description'] ?? 'VPNStore - Chuyên cung cấp VPN & Proxy chính hãng từ các thương hiệu uy tín hàng đầu thế giới.')">
     <meta name="twitter:image" content="@yield('og_image', !empty($settings['favicon_path']) ? asset($settings['favicon_path']) : asset('favicon.ico'))">
 
     <!-- Bootstrap 5 -->

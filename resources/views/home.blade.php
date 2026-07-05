@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
-@section('title', 'VPNStore - Cửa Hàng VPN Chính Hãng Số 1 Việt Nam')
-@section('meta_description', 'Mua VPN chính hãng: NordVPN, ExpressVPN, Surfshark, HMA, CyberGhost với giá tốt nhất. Bảo hành 30 ngày, hỗ trợ 24/7.')
-@section('meta_keywords', 'vpn gia re, mua vpn, tai khoan nordvpn, tai khoan expressvpn, mua surfshark, key hma vpn, cyberghost gia re, gia vpn')
+@section('title', $settings['seo_title'] ?? 'VPNStore - Cửa Hàng VPN Chính Hãng Số 1 Việt Nam')
+@section('meta_description', $settings['meta_description'] ?? 'Mua VPN chính hãng: NordVPN, ExpressVPN, Surfshark, HMA, CyberGhost với giá tốt nhất. Bảo hành 30 ngày, hỗ trợ 24/7.')
+@section('meta_keywords', $settings['meta_keywords'] ?? 'vpn gia re, mua vpn, tai khoan nordvpn, tai khoan expressvpn, mua surfshark, key hma vpn, cyberghost gia re, gia vpn')
 
 @php
 $faqs = [

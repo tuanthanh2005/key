@@ -321,13 +321,28 @@
                     <div class="admin-card-title"><i class="bi bi-search text-primary"></i> SEO & Meta Description</div>
                 </div>
                 <div class="admin-card-body">
-                    <div class="setting-row">
+                    <div class="setting-row mb-3">
+                        <div class="setting-label">Tiêu Đề SEO Trang Chủ (SEO Title)</div>
+                        <input type="text" name="seo_title" class="form-control mt-1" value="{{ $settings['seo_title'] ?? '' }}" placeholder="Ví dụ: VPNStore - Cửa Hàng VPN & Proxy Bản Quyền Giá Rẻ">
+                        <div class="setting-hint">Tiêu đề xuất hiện trên tab trình duyệt và kết quả tìm kiếm Google của Trang chủ.</div>
+                    </div>
+                    <div class="setting-row mb-3">
+                        <div class="setting-label">Từ Khóa Meta (Meta Keywords)</div>
+                        <input type="text" name="meta_keywords" class="form-control mt-1" value="{{ $settings['meta_keywords'] ?? '' }}" placeholder="Ví dụ: vpn gia re, mua proxy, key vpn ban quyen, thue proxy">
+                        <div class="setting-hint">Phân cách các từ khóa bằng dấu phẩy. Giúp công cụ tìm kiếm nhận dạng chủ đề trang.</div>
+                    </div>
+                    <div class="setting-row mb-3">
                         <div class="setting-label">Meta Description Mặc Định</div>
                         <textarea name="meta_description" class="form-control mt-1" rows="3" maxlength="300">{{ $settings['meta_description'] ?? '' }}</textarea>
                         <div class="setting-hint d-flex justify-content-between">
                             <span>Mô tả hiển thị khi chia sẻ link trên mạng xã hội và Google. Tối đa 160 ký tự.</span>
                             <span id="metaCharCount" class="text-muted">0/160</span>
                         </div>
+                    </div>
+                    <div class="setting-row mb-3">
+                        <div class="setting-label">Mã Xác Minh Google (Google Site Verification)</div>
+                        <input type="text" name="google_site_verification" class="form-control mt-1" value="{{ $settings['google_site_verification'] ?? '' }}" placeholder="Ví dụ: google123456789abcdef">
+                        <div class="setting-hint">Nhập mã xác minh của Google Search Console để Google lập chỉ mục và hiển thị trang web trên tìm kiếm.</div>
                     </div>
                 </div>
             </div>
