@@ -290,12 +290,7 @@ $faqs = [
 
         <div class="row g-4">
             @php
-            $hotProducts = array_filter($allProducts ?? [], function($p) {
-                return in_array($p['plan'], ['1year', '2year']);
-            });
-            if (empty($hotProducts)) {
-                $hotProducts = $allProducts ?? [];
-            }
+            $hotProducts = $allProducts ?? [];
             shuffle($hotProducts);
             $hotProducts = array_slice($hotProducts, 0, 6);
             @endphp
