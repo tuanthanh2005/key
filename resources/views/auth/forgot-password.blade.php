@@ -33,7 +33,7 @@
                    value="{{ old('email') }}" required autofocus>
         </div>
         <div class="mt-2" style="font-size:12.5px;color:rgba(255,255,255,.4)">
-            <i class="bi bi-info-circle me-1"></i>Link đặt lại sẽ hết hạn sau 60 phút
+            <i class="bi bi-info-circle me-1"></i>Link đặt lại sẽ hết hạn sau 30 phút
         </div>
     </div>
 
