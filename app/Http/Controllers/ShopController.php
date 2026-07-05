@@ -381,7 +381,8 @@ class ShopController extends Controller
      */
     public function pricing()
     {
-        return view('pricing');
+        $activeProducts = \App\Models\Product::where('status', 'active')->get();
+        return view('pricing', compact('activeProducts'));
     }
 
     /**

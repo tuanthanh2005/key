@@ -23,6 +23,22 @@
     </div>
 </div>
 
+@if($activeProducts->isEmpty())
+<section class="section" style="background:var(--gray-50)">
+    <div class="container text-center py-5">
+        <div class="empty-state-icon mb-4" style="font-size:64px;color:var(--gray-300)">
+            <i class="bi bi-tag-fill"></i>
+        </div>
+        <h3 class="fw-800 text-dark mb-2 font-poppins">Hiện Chưa Có Bảng Giá</h3>
+        <p class="text-muted mx-auto mb-4" style="max-width:480px;font-size:14.5px">
+            Cửa hàng hiện chưa có sản phẩm VPN nào đang hoạt động. Vui lòng quay lại sau khi chúng tôi cập nhật sản phẩm mới!
+        </p>
+        <a href="{{ route('home') }}" class="btn btn-primary rounded-pill px-4 fw-600">
+            <i class="bi bi-arrow-left me-2"></i>Quay Lại Trang Chủ
+        </a>
+    </div>
+</section>
+@else
 <section class="section" style="background:var(--gray-50)">
     <div class="container">
         <!-- Period Toggle -->
@@ -40,40 +56,85 @@
         </div>
 
         @php
-        $vpns = [
-            ['name'=>'NordVPN','slug'=>'nordvpn','color'=>'#4687FF','featured'=>true,
-             'prices'=>['1month'=>120000,'6month'=>350000,'1year'=>599000,'2year'=>849000],
-             'old'   =>['1month'=>200000,'6month'=>700000,'1year'=>1200000,'2year'=>2400000],
-             'devices'=>6,'servers'=>'5,400+','countries'=>'60+','refund'=>30,
-             'features'=>[true,true,true,true,true,true,false]],
-            ['name'=>'ExpressVPN','slug'=>'expressvpn','color'=>'#DA3940',
-             'prices'=>['1month'=>160000,'6month'=>450000,'1year'=>799000,'2year'=>1099000],
-             'old'   =>['1month'=>260000,'6month'=>850000,'1year'=>1500000,'2year'=>2800000],
-             'devices'=>5,'servers'=>'3,000+','countries'=>'94+','refund'=>30,
-             'features'=>[true,true,true,true,true,true,false]],
-            ['name'=>'Surfshark','slug'=>'surfshark','color'=>'#10B981',
-             'prices'=>['1month'=>89000,'6month'=>279000,'1year'=>449000,'2year'=>699000],
-             'old'   =>['1month'=>180000,'6month'=>600000,'1year'=>1100000,'2year'=>1800000],
-             'devices'=>-1,'servers'=>'3,200+','countries'=>'100+','refund'=>30,
-             'features'=>[true,true,true,false,true,true,true]],
-            ['name'=>'HMA VPN','slug'=>'hma','color'=>'#F59E0B',
-             'prices'=>['1month'=>79000,'6month'=>230000,'1year'=>449000,'2year'=>649000],
-             'old'   =>['1month'=>150000,'6month'=>450000,'1year'=>900000,'2year'=>1800000],
-             'devices'=>5,'servers'=>'1,100+','countries'=>'190+','refund'=>30,
-             'features'=>[true,false,true,false,true,false,false]],
-            ['name'=>'CyberGhost','slug'=>'cyberghost','color'=>'#8B5CF6',
-             'prices'=>['1month'=>99000,'6month'=>250000,'1year'=>299000,'2year'=>399000],
-             'old'   =>['1month'=>190000,'6month'=>550000,'1year'=>700000,'2year'=>1100000],
-             'devices'=>7,'servers'=>'9,700+','countries'=>'91+','refund'=>45,
-             'features'=>[true,false,true,false,false,true,false]],
-            ['name'=>'ProtonVPN','slug'=>'protonvpn','color'=>'#6D28D9',
-             'prices'=>['1month'=>110000,'6month'=>320000,'1year'=>549000,'2year'=>799000],
-             'old'   =>['1month'=>200000,'6month'=>650000,'1year'=>1000000,'2year'=>2000000],
-             'devices'=>10,'servers'=>'3,000+','countries'=>'67+','refund'=>30,
-             'features'=>[true,true,true,true,false,false,false]],
-        ];
         $featureLabels = ['Không lưu log','Kill Switch','P2P/Torrent','Multi-hop','Ad Blocker','Streaming','Thiết bị không giới hạn'];
         $periods = ['1month','6month','1year','2year'];
+        
+        $vpns = [];
+        $grouped = $activeProducts->groupBy('brand');
+        
+        foreach ($grouped as $brandName => $products) {
+            $first = $products->first();
+            
+            // Build prices and old prices
+            $prices = [];
+            $oldPrices = [];
+            foreach ($products as $p) {
+                $prices[$p->plan] = $p->price;
+                if ($p->old_price) {
+                    $oldPrices[$p->plan] = $p->old_price;
+                }
+            }
+            
+            // Map DB features to boolean features array
+            $dbFeatures = $first->features ?: [];
+            $booleanFeatures = [];
+            foreach ($featureLabels as $label) {
+                $hasFeature = false;
+                foreach ($dbFeatures as $dbF) {
+                    $dbFLower = mb_strtolower($dbF);
+                    $labelLower = mb_strtolower($label);
+                    
+                    if ($label === 'Không lưu log' && (str_contains($dbFLower, 'no-log') || str_contains($dbFLower, 'không lưu') || str_contains($dbFLower, 'no log') || str_contains($dbFLower, 'nolog'))) {
+                        $hasFeature = true;
+                        break;
+                    }
+                    if ($label === 'Kill Switch' && (str_contains($dbFLower, 'kill') || str_contains($dbFLower, 'switch'))) {
+                        $hasFeature = true;
+                        break;
+                    }
+                    if ($label === 'P2P/Torrent' && (str_contains($dbFLower, 'p2p') || str_contains($dbFLower, 'torrent'))) {
+                        $hasFeature = true;
+                        break;
+                    }
+                    if ($label === 'Multi-hop' && (str_contains($dbFLower, 'multi') || str_contains($dbFLower, 'hop') || str_contains($dbFLower, 'double'))) {
+                        $hasFeature = true;
+                        break;
+                    }
+                    if ($label === 'Ad Blocker' && (str_contains($dbFLower, 'ad') || str_contains($dbFLower, 'block') || str_contains($dbFLower, 'chặn quảng cáo'))) {
+                        $hasFeature = true;
+                        break;
+                    }
+                    if ($label === 'Streaming' && (str_contains($dbFLower, 'stream') || str_contains($dbFLower, 'netflix') || str_contains($dbFLower, 'youtube'))) {
+                        $hasFeature = true;
+                        break;
+                    }
+                    if ($label === 'Thiết bị không giới hạn' && (str_contains($dbFLower, 'không giới hạn') || str_contains($dbFLower, 'unlimited') || $first->devices === -1 || $first->devices === '-1')) {
+                        $hasFeature = true;
+                        break;
+                    }
+                    
+                    if (str_contains($dbFLower, $labelLower) || str_contains($labelLower, $dbFLower)) {
+                        $hasFeature = true;
+                        break;
+                    }
+                }
+                $booleanFeatures[] = $hasFeature;
+            }
+            
+            $vpns[] = [
+                'name'      => $brandName,
+                'slug'      => $first->slug,
+                'color'     => $first->color ?: '#4687FF',
+                'featured'  => ($first->slug === 'nordvpn'),
+                'prices'    => $prices,
+                'old'       => $oldPrices,
+                'devices'   => $first->devices,
+                'servers'   => $first->servers ?: 'N/A',
+                'countries' => $first->countries ?: 'N/A',
+                'refund'    => str_replace([' ngày', 'ngày'], '', $first->refund) ?: '30',
+                'features'  => $booleanFeatures,
+            ];
+        }
         @endphp
 
         <div class="row g-4" id="pricingGrid">
@@ -93,6 +154,7 @@
                         <div class="pricing-period">
                             {{ ['1month'=>'1 Tháng','6month'=>'6 Tháng','1year'=>'1 Năm','2year'=>'2 Năm'][$period] }}
                         </div>
+                        @if(isset($vpn['prices'][$period]))
                         <div class="pricing-price mb-1">
                             <sup>đ</sup>{{ number_format($vpn['prices'][$period]) }}
                         </div>
@@ -104,6 +166,11 @@
                             Tiết kiệm {{ round(($vpn['old'][$period]-$vpn['prices'][$period])/$vpn['old'][$period]*100) }}%
                         </div>
                         @endif
+                        @else
+                        <div class="pricing-price mb-1" style="font-size:18px;color:var(--gray-400);padding:10px 0">
+                            Không hỗ trợ
+                        </div>
+                        @endif
                     </div>
                     @endforeach
 
@@ -112,7 +179,7 @@
                     <ul class="pricing-features">
                         <li>
                             <i class="bi bi-check-circle-fill" style="color:var(--success)"></i>
-                            {{ $vpn['devices'] === -1 ? 'Không giới hạn thiết bị' : $vpn['devices'].' thiết bị đồng thời' }}
+                            {{ $vpn['devices'] == -1 || $vpn['devices'] === 'Không giới hạn' ? 'Không giới hạn thiết bị' : $vpn['devices'].' thiết bị đồng thời' }}
                         </li>
                         @foreach($featureLabels as $fi => $flabel)
                         <li>
@@ -166,7 +233,7 @@
                     </tr>
                     <tr>
                         <td class="fw-600" style="color:var(--gray-600)">Thiết bị đồng thời</td>
-                        @foreach($vpns as $vpn)<td class="text-center fw-600">{{ $vpn['devices'] === -1 ? '∞' : $vpn['devices'] }}</td>@endforeach
+                        @foreach($vpns as $vpn)<td class="text-center fw-600">{{ $vpn['devices'] == -1 || $vpn['devices'] === 'Không giới hạn' ? '∞' : $vpn['devices'] }}</td>@endforeach
                     </tr>
                     <tr>
                         <td class="fw-600" style="color:var(--gray-600)">Hoàn tiền</td>
@@ -190,7 +257,9 @@
                         <td class="fw-700" style="color:var(--gray-800)">Giá 1 Năm</td>
                         @foreach($vpns as $vpn)
                         <td class="text-center">
-                            <div class="fw-800 text-primary font-poppins" style="font-size:15px">{{ number_format($vpn['prices']['1year']) }}đ</div>
+                            <div class="fw-800 text-primary font-poppins" style="font-size:15px">
+                                {{ isset($vpn['prices']['1year']) ? number_format($vpn['prices']['1year']) . 'đ' : 'N/A' }}
+                            </div>
                         </td>
                         @endforeach
                     </tr>
@@ -209,6 +278,7 @@
         </div>
     </div>
 </section>
+@endif
 
 @endsection
 
