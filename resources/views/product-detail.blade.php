@@ -302,15 +302,20 @@ $curReviews = intval($defaultPlan['reviews'] ?? 120);
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
                         <div class="text-muted" style="font-size:12.5px;font-weight:600;text-decoration:line-through">
-                            {{ number_format($plans[2]['old']) }}đ
+                            {{ number_format($defaultPlan['old'] ?? 0) }}đ
                         </div>
                         <div class="d-flex align-items-baseline gap-2">
-                            <span class="font-poppins fw-800" style="font-size:36px;color:var(--primary)" id="selected-price">{{ number_format($plans[2]['price']) }}đ</span>
-                            <span class="text-muted" style="font-size:14px" id="selected-period">/ 1 năm</span>
+                            <span class="font-poppins fw-800" style="font-size:36px;color:var(--primary)" id="selected-price">{{ number_format($defaultPlan['price'] ?? 0) }}đ</span>
+                            <span class="text-muted" style="font-size:14px" id="selected-period">/ {{ $defaultPlan['label'] ?? 'năm' }}</span>
                         </div>
                         <div class="text-success small fw-600">
                             <i class="bi bi-tag-fill me-1"></i>
-                            Tiết kiệm {{ number_format($plans[2]['old'] - $plans[2]['price']) }}đ (58%)
+                            @php
+                            $oldPriceVal = floatval($defaultPlan['old'] ?? 0);
+                            $priceVal = floatval($defaultPlan['price'] ?? 0);
+                            $pctSaved = $oldPriceVal > 0 ? round(($oldPriceVal - $priceVal) / $oldPriceVal * 100) : 0;
+                            @endphp
+                            Tiết kiệm {{ number_format($oldPriceVal - $priceVal) }}đ ({{ $pctSaved }}%)
                         </div>
                     </div>
                     <div class="text-end">
@@ -340,16 +345,16 @@ $curReviews = intval($defaultPlan['reviews'] ?? 120);
             <!-- Action Buttons -->
             <div class="d-flex gap-3 mb-4 flex-wrap">
                 @php
-                    $isDefaultOutOfStock = ($plans[2]['stock'] ?? 0) <= 0;
+                    $isDefaultOutOfStock = ($defaultPlan['stock'] ?? 0) <= 0;
                 @endphp
                 <button class="btn-add-cart flex-grow-1 py-3 fs-6"
                     id="btn-main-add-cart"
                     data-add-cart
-                    data-id="detail_{{ $slug }}"
-                    data-name="{{ $brand['name'] }} 1 Năm"
+                    data-id="{{ $defaultPlan['id'] ?? '' }}"
+                    data-name="{{ $brand['name'] }} {{ $defaultPlan['label'] ?? '' }}"
                     data-brand="{{ $brand['name'] }}"
-                    data-plan="1year"
-                    data-price="{{ $plans[2]['price'] }}"
+                    data-plan="{{ $defaultPlan['key'] ?? '' }}"
+                    data-price="{{ $defaultPlan['price'] ?? 0 }}"
                     data-color="{{ $brand['color'] }}"
                     data-slug="{{ $slug }}"
                     @if($isDefaultOutOfStock)
