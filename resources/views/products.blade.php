@@ -55,7 +55,7 @@ if ($brandInfo) {
 </div>
 
 <!-- PAGE HEADER -->
-<div class="page-header">
+<div class="page-header pb-4">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-md-7">
@@ -64,7 +64,7 @@ if ($brandInfo) {
                         <i class="bi bi-shield-fill-check text-primary me-3"></i>
                         {{ $brandInfo['seo_title'] }}
                     </h1>
-                    <p class="text-muted mb-0" style="font-size: 15px; line-height: 1.6;">
+                    <p class="text-muted mb-3" style="font-size: 15px; line-height: 1.6;">
                         {{ $pageMetaDesc }}
                     </p>
                 @else
@@ -72,17 +72,34 @@ if ($brandInfo) {
                         <i class="bi bi-shield-fill-check text-primary me-3"></i>
                         Tất Cả Sản Phẩm VPN
                     </h1>
-                    <p class="text-muted mb-0">
+                    <p class="text-muted mb-3">
                         Hơn <strong>{{ count($allProducts ?? []) ?: 24 }} sản phẩm</strong> VPN chính hãng đang có sẵn với giá tốt nhất
                     </p>
                 @endif
             </div>
-            <div class="col-md-5 text-md-end mt-3 mt-md-0">
+            <div class="col-md-5 text-md-end mt-3 mt-md-0 mb-3">
                 <div class="alert-notice d-inline-flex">
                     <i class="bi bi-lightning-charge-fill text-warning"></i>
                     Flash Sale — Giảm đến 70% gói 2 năm!
                 </div>
             </div>
+        </div>
+
+        <!-- Tag Cloud of 8 Main VPNs -->
+        <div class="d-flex flex-wrap gap-2 mt-3 pt-3 border-top" style="border-color: rgba(226, 232, 240, 0.6) !important;">
+            @foreach($brandMap as $slug => $info)
+                <a href="{{ route('products') }}?brand={{ $slug }}" 
+                   class="btn btn-sm rounded-pill px-3 py-2 fw-600 d-inline-flex align-items-center gap-2 transition-all {{ $selectedBrandSlug === $slug ? 'btn-primary shadow-sm' : '' }}" 
+                   style="font-size: 13px; text-decoration: none; {{ $selectedBrandSlug !== $slug ? 'background: #fff; color: var(--gray-700); border: 1px solid #e2e8f0;' : '' }}">
+                    <span style="width: 7px; height: 7px; background: {{ ['nordvpn'=>'#4687FF','expressvpn'=>'#DA3940','surfshark'=>'#10B981','hma'=>'#F59E0B','cyberghost'=>'#8B5CF6','purevpn'=>'#EF4444','ipvanish'=>'#0EA5E9','protonvpn'=>'#6D28D9'][$slug] ?? '#64748b' }}; border-radius: 50%;"></span>
+                    {{ $info['name'] }}
+                </a>
+            @endforeach
+            @if($selectedBrandSlug)
+                <a href="{{ route('products') }}" class="btn btn-sm btn-outline-danger rounded-pill px-3 py-2 fw-600 d-inline-flex align-items-center gap-1.5" style="font-size: 13px; text-decoration: none;">
+                    <i class="bi bi-x-circle-fill"></i> Xóa Bộ Lọc
+                </a>
+            @endif
         </div>
     </div>
 </div>
