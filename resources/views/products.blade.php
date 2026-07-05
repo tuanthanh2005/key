@@ -1,7 +1,44 @@
+@php
+$brandMap = [
+    'nordvpn' => ['name' => 'NordVPN Premium', 'seo_title' => 'Mua tài khoản NordVPN Premium giá rẻ'],
+    'expressvpn' => ['name' => 'ExpressVPN', 'seo_title' => 'Mua tài khoản ExpressVPN giá rẻ'],
+    'surfshark' => ['name' => 'Surfshark VPN', 'seo_title' => 'Mua tài khoản Surfshark VPN giá rẻ'],
+    'hma' => ['name' => 'Key HMA VPN', 'seo_title' => 'Mua tài khoản Key HMA VPN giá rẻ'],
+    'cyberghost' => ['name' => 'CyberGhost VPN', 'seo_title' => 'Mua tài khoản CyberGhost VPN giá rẻ'],
+    'purevpn' => ['name' => 'PureVPN', 'seo_title' => 'Mua tài khoản PureVPN giá rẻ'],
+    'ipvanish' => ['name' => 'IPVanish VPN', 'seo_title' => 'Mua tài khoản IPVanish VPN giá rẻ'],
+    'protonvpn' => ['name' => 'ProtonVPN', 'seo_title' => 'Mua tài khoản ProtonVPN giá rẻ'],
+];
+
+$selectedBrandSlug = request('brand', '');
+$brandInfo = null;
+if ($selectedBrandSlug) {
+    $normalizedSlug = strtolower($selectedBrandSlug);
+    if (isset($brandMap[$normalizedSlug])) {
+        $brandInfo = $brandMap[$normalizedSlug];
+    } else {
+        $displayName = ucwords(str_replace('-', ' ', $selectedBrandSlug));
+        $brandInfo = [
+            'name' => $displayName,
+            'seo_title' => 'Mua tài khoản ' . $displayName . ' giá rẻ'
+        ];
+    }
+}
+
+$storeName = $settings['store_name'] ?? 'VPNStore';
+if ($brandInfo) {
+    $pageTitle = $brandInfo['seo_title'] . ' - ' . $storeName;
+    $pageMetaDesc = 'Danh sách tài khoản ' . $brandInfo['name'] . ' giá rẻ và các gói ' . $brandInfo['name'] . ' đang bán tại ' . $storeName . ', giá tốt, giao nhanh, hỗ trợ đầy đủ.';
+} else {
+    $pageTitle = 'Sản Phẩm VPN - ' . $storeName;
+    $pageMetaDesc = 'Danh sách tất cả VPN chính hãng: NordVPN, ExpressVPN, Surfshark, HMA, CyberGhost, PureVPN, IPVanish, ProtonVPN giá tốt nhất Việt Nam.';
+}
+@endphp
+
 @extends('layouts.app')
 
-@section('title', 'Sản Phẩm VPN - VPNStore')
-@section('meta_description', 'Danh sách tất cả VPN chính hãng: NordVPN, ExpressVPN, Surfshark, HMA, CyberGhost, PureVPN, IPVanish, ProtonVPN giá tốt nhất Việt Nam.')
+@section('title', $pageTitle)
+@section('meta_description', $pageMetaDesc)
 
 @section('content')
 
@@ -22,13 +59,23 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col-md-7">
-                <h1 class="section-title mb-2">
-                    <i class="bi bi-shield-fill-check text-primary me-3"></i>
-                    Tất Cả Sản Phẩm VPN
-                </h1>
-                <p class="text-muted mb-0">
-                    Hơn <strong>{{ count($allProducts ?? []) ?: 24 }} sản phẩm</strong> VPN chính hãng đang có sẵn với giá tốt nhất
-                </p>
+                @if($brandInfo)
+                    <h1 class="section-title mb-2" style="font-size: 28px;">
+                        <i class="bi bi-shield-fill-check text-primary me-3"></i>
+                        {{ $brandInfo['seo_title'] }}
+                    </h1>
+                    <p class="text-muted mb-0" style="font-size: 15px; line-height: 1.6;">
+                        {{ $pageMetaDesc }}
+                    </p>
+                @else
+                    <h1 class="section-title mb-2">
+                        <i class="bi bi-shield-fill-check text-primary me-3"></i>
+                        Tất Cả Sản Phẩm VPN
+                    </h1>
+                    <p class="text-muted mb-0">
+                        Hơn <strong>{{ count($allProducts ?? []) ?: 24 }} sản phẩm</strong> VPN chính hãng đang có sẵn với giá tốt nhất
+                    </p>
+                @endif
             </div>
             <div class="col-md-5 text-md-end mt-3 mt-md-0">
                 <div class="alert-notice d-inline-flex">
