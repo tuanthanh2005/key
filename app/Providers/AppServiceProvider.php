@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
+use Illuminate\Auth\Notifications\ResetPassword;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -39,6 +41,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Dùng route đặt lại mật khẩu tùy chỉnh thay vì route mặc định của Laravel
+        ResetPassword::createUrlUsing(function ($notifiable, string $token) {
+            return route('auth.reset-password', [
+                'token' => $token,
+                'email' => $notifiable->getEmailForPasswordReset(),
+            ]);
+        });
         // Share settings + coupons tới mọi view
         // Dùng View::composer để tránh lỗi khi migrate (table chưa tồn tại)
         View::composer('*', function ($view) {
