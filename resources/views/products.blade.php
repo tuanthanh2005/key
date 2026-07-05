@@ -58,7 +58,7 @@ if ($brandInfo) {
 <div class="page-header pb-4">
     <div class="container">
         <div class="row align-items-center">
-            <div class="col-md-7">
+            <div class="col-12">
                 @if($brandInfo)
                     <h1 class="section-title mb-2" style="font-size: 28px;">
                         <i class="bi bi-shield-fill-check text-primary me-3"></i>
@@ -76,12 +76,6 @@ if ($brandInfo) {
                         Hơn <strong>{{ count($allProducts ?? []) ?: 24 }} sản phẩm</strong> VPN chính hãng đang có sẵn với giá tốt nhất
                     </p>
                 @endif
-            </div>
-            <div class="col-md-5 text-md-end mt-3 mt-md-0 mb-3">
-                <div class="alert-notice d-inline-flex">
-                    <i class="bi bi-lightning-charge-fill text-warning"></i>
-                    Flash Sale — Giảm đến 70% gói 2 năm!
-                </div>
             </div>
         </div>
 
