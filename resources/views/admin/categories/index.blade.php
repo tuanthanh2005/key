@@ -31,6 +31,13 @@
                         <input type="text" name="name" class="form-control" placeholder="Ví dụ: VPN Giá Rẻ" required style="border-radius:10px;">
                     </div>
                     <div class="mb-3">
+                        <label class="form-label fw-600 text-dark" style="font-size:13px;">Loại Danh Mục <span class="text-danger">*</span></label>
+                        <select name="type" class="form-select" required style="border-radius:10px;">
+                            <option value="vpn">VPN</option>
+                            <option value="proxy">Proxy</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
                         <label class="form-label fw-600 text-dark" style="font-size:13px;">Đường Dẫn Slug <small class="text-muted">(Để trống tự sinh)</small></label>
                         <input type="text" name="slug" class="form-control" placeholder="Ví dụ: vpn-gia-re" style="border-radius:10px;">
                     </div>
@@ -69,6 +76,7 @@
                             <tr class="table-light" style="font-weight:700;">
                                 <th class="ps-4 py-3" style="width: 50px;">ID</th>
                                 <th class="py-3">Tên Danh Mục</th>
+                                <th class="py-3">Loại</th>
                                 <th class="py-3">Slug</th>
                                 <th class="py-3 text-center">Số Sản Phẩm</th>
                                 <th class="py-3 text-end pe-4" style="width: 150px;">Hành Động</th>
@@ -87,6 +95,9 @@
                                     @endif
                                 </td>
                                 <td>
+                                    <span class="badge {{ $cat->type === 'proxy' ? 'bg-info-subtle text-info' : 'bg-primary-subtle text-primary' }} fw-700" style="font-size:11px; border-radius:6px; text-transform:uppercase; padding: 4px 8px;">{{ $cat->type }}</span>
+                                </td>
+                                <td>
                                     <span class="badge bg-secondary-subtle text-secondary" style="font-size:11.5px; border-radius:6px;">{{ $cat->slug }}</span>
                                 </td>
                                 <td class="text-center fw-700 text-primary">{{ $cat->products_count }}</td>
@@ -94,6 +105,7 @@
                                     <button class="btn btn-sm btn-outline-primary border-0 me-1 edit-cat-btn" 
                                             data-id="{{ $cat->id }}" 
                                             data-name="{{ $cat->name }}" 
+                                            data-type="{{ $cat->type }}"
                                             data-slug="{{ $cat->slug }}"
                                             data-title="{{ $cat->seo_title }}"
                                             data-desc="{{ $cat->seo_description }}"
@@ -144,6 +156,13 @@
                         <input type="text" name="name" id="edit_name" class="form-control" required style="border-radius:10px;">
                     </div>
                     <div class="mb-3">
+                        <label class="form-label fw-600 text-dark" style="font-size:13px;">Loại Danh Mục <span class="text-danger">*</span></label>
+                        <select name="type" id="edit_type" class="form-select" required style="border-radius:10px;">
+                            <option value="vpn">VPN</option>
+                            <option value="proxy">Proxy</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
                         <label class="form-label fw-600 text-dark" style="font-size:13px;">Đường Dẫn Slug</label>
                         <input type="text" name="slug" id="edit_slug" class="form-control" style="border-radius:10px;">
                     </div>
@@ -174,12 +193,14 @@ document.addEventListener('DOMContentLoaded', function() {
         btn.addEventListener('click', function() {
             const id = this.getAttribute('data-id');
             const name = this.getAttribute('data-name');
+            const type = this.getAttribute('data-type');
             const slug = this.getAttribute('data-slug');
             const title = this.getAttribute('data-title');
             const desc = this.getAttribute('data-desc');
 
             editForm.action = `/admin/categories/${id}`;
             document.getElementById('edit_name').value = name;
+            document.getElementById('edit_type').value = type;
             document.getElementById('edit_slug').value = slug;
             document.getElementById('edit_seo_title').value = title || '';
             document.getElementById('edit_seo_description').value = desc || '';

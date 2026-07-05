@@ -183,13 +183,13 @@
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle {{ request()->routeIs('products*') ? 'active' : '' }}" href="#" data-bs-toggle="dropdown">
-                        <i class="bi bi-grid me-1"></i>Sản Phẩm
+                        <i class="bi bi-shield-fill-check me-1"></i>VPN
                     </a>
                     <ul class="dropdown-menu dropdown-menu-vpn">
                         <li><a class="dropdown-item" href="{{ route('products') }}"><i class="bi bi-shield-fill-check text-primary me-2"></i>Tất Cả VPN</a></li>
-                        @if(isset($sharedCategories) && $sharedCategories->isNotEmpty())
+                        @if(isset($sharedVpnCategories) && $sharedVpnCategories->isNotEmpty())
                             <li><hr class="dropdown-divider"></li>
-                            @foreach($sharedCategories as $cat)
+                            @foreach($sharedVpnCategories as $cat)
                                 @php
                                     $dotClass = match($cat->slug) {
                                         'nordvpn' => 'nord',
@@ -230,11 +230,28 @@
                             <li><a class="dropdown-item" href="{{ route('products', ['brand' => 'nordvpn']) }}"><span class="brand-dot nord me-2"></span>NordVPN</a></li>
                             <li><a class="dropdown-item" href="{{ route('products', ['brand' => 'expressvpn']) }}"><span class="brand-dot express me-2"></span>ExpressVPN</a></li>
                             <li><a class="dropdown-item" href="{{ route('products', ['brand' => 'surfshark']) }}"><span class="brand-dot surf me-2"></span>Surfshark</a></li>
-                            <li><a class="dropdown-item" href="{{ route('products', ['brand' => 'hma']) }}"><span class="brand-dot hma me-2"></span>HMA VPN</a></li>
-                            <li><a class="dropdown-item" href="{{ route('products', ['brand' => 'cyberghost']) }}"><span class="brand-dot cyber me-2"></span>CyberGhost</a></li>
-                            <li><a class="dropdown-item" href="{{ route('products', ['brand' => 'purevpn']) }}"><span class="brand-dot pure me-2"></span>PureVPN</a></li>
-                            <li><a class="dropdown-item" href="{{ route('products', ['brand' => 'ipvanish']) }}"><span class="brand-dot ipv me-2"></span>IPVanish</a></li>
-                            <li><a class="dropdown-item" href="{{ route('products', ['brand' => 'protonvpn']) }}"><span class="brand-dot proton me-2"></span>ProtonVPN</a></li>
+                        @endif
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                        <i class="bi bi-globe me-1"></i>Proxy
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-vpn">
+                        <li><a class="dropdown-item" href="{{ route('products') }}"><i class="bi bi-globe text-primary me-2"></i>Tất Cả Proxy</a></li>
+                        @if(isset($sharedProxyCategories) && $sharedProxyCategories->isNotEmpty())
+                            <li><hr class="dropdown-divider"></li>
+                            @foreach($sharedProxyCategories as $cat)
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('products', ['brand' => $cat->slug]) }}">
+                                        <span class="brand-dot me-2" style="background: #0ea5e9;"></span>
+                                        {{ $cat->name }}
+                                    </a>
+                                </li>
+                            @endforeach
+                        @else
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#"><span class="brand-dot me-2" style="background: #64748b;"></span>Đang cập nhật...</a></li>
                         @endif
                     </ul>
                 </li>

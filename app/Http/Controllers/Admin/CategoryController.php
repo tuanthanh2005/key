@@ -20,6 +20,7 @@ class CategoryController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'slug' => 'nullable|string|max:255|unique:categories,slug',
+            'type' => 'required|string|in:vpn,proxy',
             'seo_title' => 'nullable|string|max:255',
             'seo_description' => 'nullable|string',
         ]);
@@ -36,6 +37,7 @@ class CategoryController extends Controller
         Category::create([
             'name' => $request->name,
             'slug' => $slug,
+            'type' => $request->type,
             'seo_title' => $request->seo_title,
             'seo_description' => $request->seo_description,
         ]);
@@ -50,6 +52,7 @@ class CategoryController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'slug' => 'nullable|string|max:255|unique:categories,slug,' . $id,
+            'type' => 'required|string|in:vpn,proxy',
             'seo_title' => 'nullable|string|max:255',
             'seo_description' => 'nullable|string',
         ]);
@@ -65,6 +68,7 @@ class CategoryController extends Controller
         $category->update([
             'name' => $request->name,
             'slug' => $slug,
+            'type' => $request->type,
             'seo_title' => $request->seo_title,
             'seo_description' => $request->seo_description,
         ]);
