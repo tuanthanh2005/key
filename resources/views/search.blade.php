@@ -43,7 +43,7 @@
                     @if($prod['price'] < ($prod['old_price'] ?? 0))<span class="badge-sale">Sale</span>@endif
                     @if($prod['plan'] === '1year' || $prod['plan'] === '2year')<span class="badge-hot"><i class="bi bi-fire"></i> Hot</span>@endif
                 </div>
-                <div class="product-card-img">
+                <a href="{{ route('product.detail', $prod['slug']) }}" class="product-card-img" style="text-decoration: none; display: flex; justify-content: center; align-items: center;">
                     @if(!empty($prod['image_path']))
                         <img src="{{ asset($prod['image_path']) }}" alt="{{ $prod['name'] }}" style="max-height: 80px; max-width: 80%; object-fit: contain;">
                     @else
@@ -51,13 +51,17 @@
                             <i class="bi bi-shield-lock-fill"></i>
                         </div>
                     @endif
-                </div>
+                </a>
                 <div class="product-card-body">
                     <div class="product-brand-tag" style="color:{{ $prod['color'] }}">
                         <span style="width:8px;height:8px;background:{{ $prod['color'] }};border-radius:50%;display:inline-block"></span>
                         {{ $prod['brand'] }}
                     </div>
-                    <div class="product-title">{{ $prod['name'] }}</div>
+                    <div class="product-title">
+                        <a href="{{ route('product.detail', $prod['slug']) }}" style="color: inherit; text-decoration: none;">
+                            {{ $prod['name'] }}
+                        </a>
+                    </div>
                     <ul class="product-features">
                         @foreach(array_slice($prod['features'],0,3) as $feat)
                         <li><i class="bi bi-check-circle-fill"></i>{{ $feat }}</li>

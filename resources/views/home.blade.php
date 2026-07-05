@@ -285,7 +285,7 @@
                     </div>
 
                     <!-- Image -->
-                    <div class="product-card-img">
+                    <a href="{{ route('product.detail', $prod['slug']) }}" class="product-card-img" style="text-decoration: none; display: flex; justify-content: center; align-items: center;">
                         @if(!empty($prod['image_path']))
                             <img src="{{ asset($prod['image_path']) }}" alt="{{ $prod['name'] }}" style="max-height: 80px; max-width: 80%; object-fit: contain;">
                         @else
@@ -293,7 +293,7 @@
                                 <i class="bi bi-shield-lock-fill"></i>
                             </div>
                         @endif
-                    </div>
+                    </a>
 
                     <!-- Body -->
                     <div class="product-card-body">
@@ -301,7 +301,11 @@
                             <span style="width:8px;height:8px;background:{{ $prod['color'] }};border-radius:50%;display:inline-block"></span>
                             {{ $prod['brand'] }}
                         </div>
-                        <div class="product-title">{{ $prod['name'] }}</div>
+                        <div class="product-title">
+                            <a href="{{ route('product.detail', $prod['slug']) }}" style="color: inherit; text-decoration: none;">
+                                {{ $prod['name'] }}
+                            </a>
+                        </div>
                         <ul class="product-features">
                             @foreach($prod['features'] as $feat)
                             <li><i class="bi bi-check-circle-fill"></i>{{ $feat }}</li>
