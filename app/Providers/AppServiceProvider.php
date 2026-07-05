@@ -32,12 +32,30 @@ class AppServiceProvider extends ServiceProvider
         // Share settings + coupons tới mọi view
         // Dùng View::composer để tránh lỗi khi migrate (table chưa tồn tại)
         View::composer('*', function ($view) {
-            if (Schema::hasTable('settings')) {
-                $settings = Setting::getAllKeyed();
+            static $settings = null;
+            static $publicCoupons = null;
+            static $checkedSettingsTable = null;
+            static $checkedCouponsTable = null;
+
+            if ($checkedSettingsTable === null) {
+                $checkedSettingsTable = Schema::hasTable('settings');
+            }
+
+            if ($checkedSettingsTable) {
+                if ($settings === null) {
+                    $settings = Setting::getAllKeyed();
+                }
                 $view->with('settings', $settings);
             }
-            if (Schema::hasTable('coupons')) {
-                $publicCoupons = Coupon::getValidForJs();
+
+            if ($checkedCouponsTable === null) {
+                $checkedCouponsTable = Schema::hasTable('coupons');
+            }
+
+            if ($checkedCouponsTable) {
+                if ($publicCoupons === null) {
+                    $publicCoupons = Coupon::getValidForJs();
+                }
                 $view->with('publicCoupons', $publicCoupons);
             }
         });
