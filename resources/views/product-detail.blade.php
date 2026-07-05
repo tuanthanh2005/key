@@ -404,7 +404,7 @@ $curReviews = intval($defaultPlan['reviews'] ?? 120);
             </li>
             <li class="nav-item">
                 <button class="nav-link fw-600" data-bs-toggle="tab" data-bs-target="#tab-reviews">
-                    <i class="bi bi-chat-square-text me-2"></i>Đánh Giá ({{ number_format($curReviews) }})
+                    <i class="bi bi-chat-square-text me-2"></i>Đánh Giá
                 </button>
             </li>
         </ul>
