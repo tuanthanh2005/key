@@ -77,10 +77,9 @@ class ShopController extends Controller
                 'Huỳnh Ngọc Diệp', 'Đỗ Minh Khang', 'Lê Cát Tường', 'Nguyễn Bích Liên', 'Phạm Hùng Dũng'
             ];
 
-            $poolComments = [
+            $pool5Star = [
                 'Mua key :brand ở đây kích hoạt nhanh thật sự, giao dịch tự động trong 5 phút. Tốc độ ổn định và load phim 4K vi vu.',
                 'Shop uy tín, hỗ trợ kích hoạt qua Zalo siêu nhiệt tình và nhanh chóng. Giá rẻ hơn nhiều so với mua trực tiếp trên trang chủ.',
-                'Sản phẩm hoạt động tốt, dùng mượt mà trên cả điện thoại và PC. Trừ 1 sao vì lúc thanh toán chờ quét mã hơi lâu chút nhưng vẫn ổn.',
                 'Đã mua gói 1 năm :brand, key hoạt động chuẩn. Chạy mượt mà, đổi IP nhanh chóng và giúp mình làm việc remote an toàn.',
                 'Dịch vụ tuyệt vời. Key bị lỗi nhỏ được shop đổi mới ngay lập tức trong 2 phút. Rất hài lòng với chế độ bảo hành chu đáo.',
                 'Được bạn giới thiệu mua ở đây. Giao diện web trực quan, thanh toán tiện lợi và chất lượng key :brand hoàn hảo không có gì để chê.',
@@ -91,27 +90,36 @@ class ShopController extends Controller
                 'Giao diện thân thiện, dễ cài đặt và kết nối cực kỳ nhanh. Rất khuyên dùng dịch vụ của bên shop này nha mọi người.',
                 'Support tận tình hết mức, 12h đêm vẫn online hướng dẫn mình setup trên router. Vote 5 sao nhiệt tình.',
                 'Tốc độ download không bị bóp băng thông nhiều, dùng làm việc và giải trí đều mượt. Rất đáng mua.',
-                'Tiết kiệm được một khoản tiền khá lớn so với mua trực tiếp. Dịch vụ chăm sóc khách hàng ở đây rất tốt.',
-                'Mua cho cả nhà dùng chung, mọi người đều khen kết nối ổn định và an tâm bảo mật hơn hẳn.',
                 'Đăng nhập phát ăn ngay, chuẩn tài khoản premium luôn. Giá rẻ mà chất lượng đỉnh thế này thì quá tốt rồi.',
                 'Đã mua lần thứ 3 ở shop và chưa bao giờ làm mình thất vọng. Chúc shop luôn buôn may bán đắt!',
-                'Khá ấn tượng với tốc độ phản hồi của admin, xử lý đơn hàng chuyên nghiệp và thân thiện.',
-                'Gói cước đa dạng phù hợp nhu cầu, mình dùng gói 6 tháng thấy rất vừa vặn và tiết kiệm.',
                 'Trải nghiệm tuyệt vời, không còn lo bị chặn các trang web nước ngoài nữa. Cực kỳ hài lòng.',
                 'Key kích hoạt cực kỳ nhanh, dùng cho máy tính và điện thoại cùng lúc đều ổn định, không lỗi lầm gì.',
-                'Shop bảo hành 1 đổi 1 làm mình thấy rất yên tâm khi mua sắm. Cảm ơn đội ngũ support!',
-                'Sử dụng để lướt web an toàn ở quán cafe công cộng quá chuẩn bài. Key chất lượng cao, giá lại sinh viên.',
-                'Quá nhanh quá nguy hiểm, vừa thanh toán xong là nhận được key liền. Sẽ giới thiệu cho bạn bè mua chung.',
                 'Mọi tính năng hoạt động hoàn hảo, tốc độ vượt trội hơn hẳn so với mấy bên VPN miễn phí.',
-                'Kết nối đến server Singapore hay Nhật Bản đều ping thấp, chơi game online cực thích luôn.',
-                'Đã giới thiệu cho đồng nghiệp cùng mua và ai cũng hài lòng. Dịch vụ hậu mãi rất đáng tin cậy.',
-                'Hệ thống thanh toán tự động rất chuyên nghiệp, giao dịch chỉ mất chưa đầy 3 phút là xong.',
                 'Tài khoản dùng ổn định suốt mấy tháng nay chưa phải bảo hành lần nào. Chất lượng tuyệt đối!',
-                'Đơn giản, dễ sử dụng, bảo mật tốt mà giá cả lại phải chăng. Rất hài lòng với dịch vụ :brand tại đây.'
+                'Đơn giản, dễ sử dụng, bảo mật tốt mà giá cả lại phải chăng. Rất hài lòng với dịch vụ :brand tại đây.',
+                'Giao dịch an toàn, uy tín. Nhận hàng sau 1 phút. Cảm ơn shop rất nhiều nhé.'
+            ];
+
+            $pool4Star = [
+                'Sản phẩm hoạt động tốt, dùng mượt mà trên cả điện thoại và PC. Trừ 1 sao vì lúc thanh toán chờ quét mã hơi lâu chút nhưng vẫn ổn.',
+                'Mua cho cả nhà dùng chung, mọi người đều khen kết nối ổn định. Chỉ tiếc là không có hướng dẫn chi tiết cho SmartTV đời cũ.',
+                'Khá ấn tượng với tốc độ phản hồi của admin, xử lý đơn hàng chuyên nghiệp. Tốc độ kết nối ở vài server Châu Á hơi chậm một tí vào giờ cao điểm.',
+                'Gói cước đa dạng phù hợp nhu cầu. Dùng tốt nhưng thi thoảng bị tự động log out trên app điện thoại, phải đăng nhập lại.',
+                'Tiết kiệm được một khoản tiền khá lớn so với mua trực tiếp. Nói chung là chất lượng ổn áp, thỉnh thoảng giật nhẹ lúc chuyển server.',
+                'Shop bảo hành 1 đổi 1 làm mình thấy rất yên tâm khi mua sắm. Kết nối thi thoảng bị drop nhưng bật lại là được ngay.'
+            ];
+
+            $pool3Star = [
+                'Lúc đầu mua về key bị lỗi không kích hoạt được, nhắn tin Zalo support hỗ trợ đổi key khác thì mới dùng được. Hơi mất thời gian tí nhưng được cái hỗ trợ nhiệt tình.',
+                'Dùng tạm ổn. Nhưng tốc độ kết nối VPN của :brand lúc đứt cáp quang biển bị chậm thấy rõ, load web hơi oải. Hết đứt cáp thì bình thường.',
+                'Tài khoản thi thoảng bị quá số thiết bị đăng nhập làm mình bị out ra. Phải nhờ shop reset lại thiết bị. Hy vọng shop khắc phục lỗi chia sẻ tài khoản này.',
+                'Setup trên hệ điều hành Linux hơi phức tạp, tự làm không được phải nhờ kỹ thuật ultraview giúp. Giao diện app trên Win thì dễ dùng hơn.'
             ];
 
             shuffle($poolNames);
-            shuffle($poolComments);
+            shuffle($pool5Star);
+            shuffle($pool4Star);
+            shuffle($pool3Star);
 
             $countToDisplay = rand(6, 10);
             
@@ -126,8 +134,20 @@ class ShopController extends Controller
                     $dateText = '1 tháng trước';
                 }
 
-                $rating = (rand(1, 100) <= 85) ? 5 : 4;
-                $commentText = str_replace(':brand', $brandName, $poolComments[$i]);
+                // Star distribution: 75% for 5-star, 18% for 4-star, 7% for 3-star
+                $randVal = rand(1, 100);
+                if ($randVal <= 75) {
+                    $rating = 5;
+                    $rawComment = $pool5Star[$i % count($pool5Star)];
+                } elseif ($randVal <= 93) {
+                    $rating = 4;
+                    $rawComment = $pool4Star[$i % count($pool4Star)];
+                } else {
+                    $rating = 3;
+                    $rawComment = $pool3Star[$i % count($pool3Star)];
+                }
+
+                $commentText = str_replace(':brand', $brandName, $rawComment);
 
                 $realReviews[] = [
                     'name' => $poolNames[$i],
