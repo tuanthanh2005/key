@@ -328,7 +328,7 @@
             <div class="modal-body p-4">
                 <div class="search-modal-header mb-3">
                     <h5 class="mb-1"><i class="bi bi-search me-2 text-primary"></i>Tìm Kiếm Sản Phẩm</h5>
-                    <p class="text-muted small mb-0">Tìm kiếm theo tên VPN, tính năng...</p>
+                    <p class="text-muted small mb-0">Tìm kiếm theo tên VPN, Proxy, tính năng...</p>
                 </div>
                 <form action="{{ route('search') }}" method="GET">
                     <div class="input-group input-group-lg search-input-group">
@@ -336,7 +336,7 @@
                             <i class="bi bi-search text-muted"></i>
                         </span>
                         <input type="text" name="q" class="form-control border-start-0 ps-0"
-                            placeholder="Nhập tên VPN (NordVPN, ExpressVPN...)"
+                            placeholder="Nhập tên sản phẩm (NordVPN, Proxy...)"
                             id="search-input" autocomplete="off">
                         <button class="btn btn-primary px-4" type="submit">Tìm</button>
                     </div>
@@ -377,7 +377,7 @@
                             <span class="footer-logo-text">VPN<span class="text-primary">Store</span></span>
                         </div>
                         <p class="footer-desc">
-                            Chuyên cung cấp các gói VPN chính hãng từ các thương hiệu uy tín hàng đầu thế giới.
+                            Chuyên cung cấp các gói VPN & Proxy chính hãng từ các thương hiệu uy tín hàng đầu thế giới.
                             Cam kết 100% bản quyền, giá tốt nhất thị trường.
                         </p>
                         <div class="d-flex gap-2 mt-3">

@@ -40,8 +40,8 @@ if ($brandInfo) {
     $pageTitle = $brandInfo['seo_title'] . ' - ' . $storeName;
     $pageMetaDesc = 'Mua tài khoản ' . $brandInfo['name'] . ' bản quyền chính hãng tại ' . $storeName . '. Cung cấp các gói ' . $brandInfo['name'] . ' giá tốt nhất thị trường, cam kết kích hoạt nhanh, hỗ trợ kỹ thuật trọn đời và bảo hành uy tín 1 đổi 1.';
 } else {
-    $pageTitle = 'Sản Phẩm VPN - ' . $storeName;
-    $pageMetaDesc = 'Danh sách tất cả VPN chính hãng: NordVPN, ExpressVPN, Surfshark, HMA, CyberGhost, PureVPN, IPVanish, ProtonVPN giá tốt nhất Việt Nam.';
+    $pageTitle = 'Sản Phẩm - ' . $storeName;
+    $pageMetaDesc = 'Danh sách tất cả VPN & Proxy chính hãng: NordVPN, ExpressVPN, Surfshark, HMA, CyberGhost, PureVPN, IPVanish, ProtonVPN giá tốt nhất Việt Nam.';
 }
 @endphp
 
@@ -58,7 +58,7 @@ if ($brandInfo) {
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb mb-0">
                 <li class="breadcrumb-item"><a href="{{ route('home') }}"><i class="bi bi-house me-1"></i>Trang Chủ</a></li>
-                <li class="breadcrumb-item active">Sản Phẩm VPN</li>
+                <li class="breadcrumb-item active">Sản Phẩm</li>
             </ol>
         </nav>
     </div>
@@ -80,10 +80,10 @@ if ($brandInfo) {
                 @else
                     <h1 class="section-title mb-2">
                         <i class="bi bi-shield-fill-check text-primary me-3"></i>
-                        Tất Cả Sản Phẩm VPN
+                        Tất Cả Sản Phẩm
                     </h1>
                     <p class="text-muted mb-3">
-                        Hơn <strong>{{ count($allProducts ?? []) ?: 24 }} sản phẩm</strong> VPN chính hãng đang có sẵn với giá tốt nhất
+                        Hơn <strong>{{ count($allProducts ?? []) ?: 24 }} sản phẩm</strong> đang có sẵn với giá tốt nhất
                     </p>
                 @endif
             </div>
@@ -127,7 +127,7 @@ if ($brandInfo) {
                     <div class="filter-section-title">Tìm Kiếm</div>
                     <div class="input-group input-group-sm">
                         <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
-                        <input type="text" id="productSearch" class="form-control border-start-0 ps-0" placeholder="Tên VPN...">
+                        <input type="text" id="productSearch" class="form-control border-start-0 ps-0" placeholder="Tên sản phẩm...">
                     </div>
                 </div>
 
