@@ -57,6 +57,11 @@
         .border-dashed {
             border-style: dashed !important;
         }
+        @media (min-width: 992px) {
+            .navbar-nav {
+                gap: 16px !important;
+            }
+        }
     </style>
 
     <!-- JSON-LD Structured Data -->
