@@ -70,9 +70,9 @@ $curReviews = intval($defaultPlan['reviews'] ?? 120);
 
 @extends('layouts.app')
 
-@section('title', $brand['name'] . ' Giá Rẻ Bản Quyền Chính Hãng — VPNStore')
-@section('meta_description', $brand['name'] . ' chính hãng giá tốt nhất. Mua tài khoản/key ' . $brand['name'] . ' bảo hành uy tín 30 ngày, đổi trả tức thì. Nhận key trong 5 phút.')
-@section('meta_keywords', strtolower($brand['name']) . ' gia re, mua ' . strtolower($brand['name']) . ', tai khoan ' . strtolower($brand['name']) . ', key ' . strtolower($brand['name']) . ' ban quyen, vpn store')
+@section('title', 'Tài Khoản ' . $brand['name'] . ' Bản Quyền Chính Hãng — ' . ($settings['store_name'] ?? 'VPNStore'))
+@section('meta_description', 'Mua tài khoản / key ' . $brand['name'] . ' bản quyền chính hãng tại ' . ($settings['store_name'] ?? 'VPNStore') . ' với giá tốt nhất thị trường. Giao key tự động nhanh chóng, hỗ trợ kích hoạt miễn phí và bảo hành uy tín 1 đổi 1.')
+@section('meta_keywords', strtolower($brand['name']) . ' ban quyen, mua ' . strtolower($brand['name']) . ', tai khoan ' . strtolower($brand['name']) . ' chinh hang, key ' . strtolower($brand['name']) . ' gia tot, ' . strtolower($settings['store_name'] ?? 'vpnstore'))
 
 @section('json_ld')
 <script type="application/ld+json">
