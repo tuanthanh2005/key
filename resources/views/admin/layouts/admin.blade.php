@@ -84,6 +84,10 @@
             <i class="bi bi-gear-fill"></i>
             <span>Cài Đặt</span>
         </a>
+        <a href="{{ route('admin.indexing.index') }}" class="sidebar-link {{ request()->routeIs('admin.indexing.*') ? 'active' : '' }}">
+            <i class="bi bi-google"></i>
+            <span>Lập Chỉ Mục Google</span>
+        </a>
         <a href="{{ route('admin.coupons.index') }}" class="sidebar-link {{ request()->routeIs('admin.coupons.*') ? 'active' : '' }}">
             <i class="bi bi-tags-fill"></i>
             <span>Mã Coupon</span>

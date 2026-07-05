@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\CouponController;
+use App\Http\Controllers\Admin\IndexingController;
    
 /*
 |--------------------------------------------------------------------------
@@ -128,6 +129,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::put('/{user}', [UserController::class, 'update'])->name('update');
         Route::patch('/{user}/khoa', [UserController::class, 'toggleStatus'])->name('toggle-status');
         Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
+    });
+
+    // Lập chỉ mục Google
+    Route::prefix('lap-chi-muc')->name('indexing.')->group(function () {
+        Route::get('/', [IndexingController::class, 'index'])->name('index');
+        Route::post('/gui', [IndexingController::class, 'submit'])->name('submit');
     });
 });
 
