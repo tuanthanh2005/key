@@ -309,7 +309,13 @@ class ShopController extends Controller
             $couponDiscount = 0;
 
             if ($coupon) {
-                $couponModel = Coupon::valid()->where('code', strtoupper($coupon))->first();
+                $couponModel = Coupon::valid()
+                    ->where('code', strtoupper($coupon))
+                    ->where(function ($q) {
+                        $q->whereNull('user_id')
+                          ->orWhere('user_id', auth()->id());
+                    })
+                    ->first();
                 if ($couponModel && $subtotal >= $couponModel->min_order) {
                     $couponDiscount = $couponModel->calculateDiscount($subtotal);
                     $couponModel->increment('used_count');

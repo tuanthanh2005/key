@@ -54,9 +54,17 @@ class AppServiceProvider extends ServiceProvider
 
             if ($checkedCouponsTable) {
                 if ($publicCoupons === null) {
-                    $publicCoupons = Coupon::getValidForJs();
+                    $publicCoupons = Coupon::getValidForJs(auth()->id());
                 }
                 $view->with('publicCoupons', $publicCoupons);
+
+                static $userCoupons = null;
+                if ($userCoupons === null) {
+                    $userCoupons = auth()->check()
+                        ? Coupon::valid()->where('user_id', auth()->id())->get()
+                        : collect();
+                }
+                $view->with('userCoupons', $userCoupons);
             }
         });
     }

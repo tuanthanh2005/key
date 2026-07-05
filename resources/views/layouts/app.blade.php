@@ -39,6 +39,22 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('css/app.css') }}?v=1.22">
     @yield('extra_css')
+    <style>
+        @keyframes gift-wiggle {
+            0%, 100% { transform: rotate(0deg); }
+            15% { transform: rotate(-15deg); }
+            30% { transform: rotate(10deg); }
+            45% { transform: rotate(-10deg); }
+            60% { transform: rotate(5deg); }
+            75% { transform: rotate(-5deg); }
+        }
+        .animate-gift {
+            animation: gift-wiggle 1.5s infinite;
+        }
+        .border-dashed {
+            border-style: dashed !important;
+        }
+    </style>
 
     <!-- JSON-LD Structured Data -->
     @yield('json_ld')
@@ -90,12 +106,17 @@
             </div>
         </a>
 
-        <!-- Mobile Quick Icons (visible on mobile, next to toggler) -->
         <div class="d-flex align-items-center gap-2 ms-auto me-2 d-lg-none">
             <!-- Search -->
             <button class="btn btn-icon" data-bs-toggle="modal" data-bs-target="#searchModal">
                 <i class="bi bi-search"></i>
             </button>
+            <!-- Gift Icon (Mobile) -->
+            @if(auth()->check() && !empty($userCoupons) && $userCoupons->isNotEmpty())
+            <button class="btn btn-icon text-warning animate-gift" data-bs-toggle="modal" data-bs-target="#giftCouponModal" title="Mã giảm giá dành riêng cho bạn!">
+                <i class="bi bi-gift-fill" style="font-size: 20px;"></i>
+            </button>
+            @endif
             <!-- Cart -->
             <a href="{{ route('cart') }}" class="btn btn-cart position-relative">
                 <i class="bi bi-bag"></i>
@@ -205,6 +226,12 @@
                 <button class="btn btn-icon" data-bs-toggle="modal" data-bs-target="#searchModal" id="search-btn">
                     <i class="bi bi-search"></i>
                 </button>
+                <!-- Gift Icon (Desktop) -->
+                @if(auth()->check() && !empty($userCoupons) && $userCoupons->isNotEmpty())
+                <button class="btn btn-icon text-warning animate-gift" data-bs-toggle="modal" data-bs-target="#giftCouponModal" title="Mã giảm giá dành riêng cho bạn!">
+                    <i class="bi bi-gift-fill" style="font-size: 20px;"></i>
+                </button>
+                @endif
                 <!-- Cart -->
                 <a href="{{ route('cart') }}" class="btn btn-cart position-relative" id="cart-btn">
                     <i class="bi bi-bag"></i>
@@ -439,6 +466,83 @@
         </div>
     </div>
 </div>
+
+@auth
+    @if(!empty($userCoupons) && $userCoupons->isNotEmpty())
+    <!-- Gift Coupon Modal -->
+    <div class="modal fade" id="giftCouponModal" tabindex="-1" aria-labelledby="giftCouponModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius:20px; border:none; background: linear-gradient(135deg, #ffffff 0%, #fff9f9 100%); overflow: hidden;">
+                <div class="modal-header border-0 pb-0" style="position: relative;">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; right: 15px; top: 15px; z-index: 10;"></button>
+                </div>
+                <div class="modal-body text-center pt-4 px-4 pb-5">
+                    <div class="mb-3 text-warning animate-gift" style="font-size: 64px; display: inline-block;">
+                        <i class="bi bi-gift-fill"></i>
+                    </div>
+                    <h4 class="fw-800 mb-2 font-poppins text-dark" id="giftCouponModalLabel">Mã Khuyến Mãi Dành Cho Bạn!</h4>
+                    <p class="text-muted small mb-4">Các mã giảm giá đặc biệt bên dưới dành riêng cho bạn. Hãy sao chép và áp dụng ngay!</p>
+                    
+                    <div class="d-flex flex-column gap-3">
+                        @foreach($userCoupons as $coupon)
+                        <div class="card p-3 border-dashed d-flex flex-row align-items-center justify-content-between" style="border: 2px dashed #ffc107; background: #fffdf5; border-radius: 12px; margin-bottom: 0;">
+                            <div class="text-start">
+                                <div class="fw-bold text-dark font-monospace" style="font-size:18px; letter-spacing:1px;">{{ $coupon->code }}</div>
+                                <div class="text-success fw-bold mt-1" style="font-size:13px;">
+                                    @if($coupon->discount_type === 'percent')
+                                        Giảm {{ $coupon->discount_value }}%
+                                    @else
+                                        Giảm {{ number_format($coupon->discount_value) }}đ
+                                    @endif
+                                    (Đơn tối thiểu: {{ number_format($coupon->min_order) }}đ)
+                                </div>
+                                @if($coupon->description)
+                                <div class="text-muted small mt-1" style="font-size:11.5px;">{{ $coupon->description }}</div>
+                                @endif
+                                @if($coupon->expires_at)
+                                <div class="text-danger mt-1" style="font-size: 11px; font-weight: 600;">
+                                    <i class="bi bi-clock-fill me-1"></i>Hạn dùng: {{ $coupon->expires_at->format('H:i d/m/Y') }}
+                                </div>
+                                @endif
+                            </div>
+                            <div>
+                                <button class="btn btn-warning rounded-pill px-3 py-1 fw-bold text-white btn-sm" onclick="copyCouponCode('{{ $coupon->code }}', this)">
+                                    Sao chép
+                                </button>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script to copy coupon code -->
+    <script>
+    function copyCouponCode(code, btn) {
+        navigator.clipboard.writeText(code).then(() => {
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="bi bi-check-lg"></i> Đã chép';
+            btn.classList.remove('btn-warning');
+            btn.classList.add('btn-success');
+            
+            if (typeof showToast === 'function') {
+                showToast('Đã sao chép mã: ' + code, 'success');
+            } else {
+                alert('Đã sao chép mã: ' + code);
+            }
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.classList.remove('btn-success');
+                btn.classList.add('btn-warning');
+            }, 2000);
+        });
+    }
+    </script>
+    @endif
+@endauth
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

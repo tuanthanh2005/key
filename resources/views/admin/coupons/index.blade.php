@@ -68,6 +68,18 @@
                         <input type="text" name="description" class="form-control" placeholder="Giảm 10% cho tất cả..." value="{{ old('description') }}">
                     </div>
                     <div class="mb-3">
+                        <label class="form-label fw-600" style="font-size:13px">Gán Cho Người Dùng (Tùy chọn)</label>
+                        <select name="user_id" class="form-select">
+                            <option value="">-- Tất cả người dùng (Công khai) --</option>
+                            @foreach($users as $user)
+                                <option value="{{ $user->id }}" {{ old('user_id') == $user->id ? 'selected' : '' }}>
+                                    {{ $user->name }} ({{ $user->email }})
+                                </option>
+                            @endforeach
+                        </select>
+                        <div class="text-muted" style="font-size: 11px; margin-top: 3px;">Nếu chọn, mã này sẽ chỉ hiển thị ở hộp quà của người dùng đó.</div>
+                    </div>
+                    <div class="mb-3">
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" name="active" value="1" id="activeCheck" {{ old('active', true) ? 'checked' : '' }}>
                             <label class="form-check-label fw-600" for="activeCheck" style="font-size:13px">Kích Hoạt Ngay</label>
@@ -113,6 +125,9 @@
                                 <span class="coupon-badge">{{ $coupon->code }}</span>
                                 @if($coupon->description)
                                 <div class="text-muted mt-1" style="font-size:11.5px">{{ $coupon->description }}</div>
+                                @endif
+                                @if($coupon->user_id)
+                                <div class="text-warning mt-1" style="font-size:11px"><i class="bi bi-person-fill me-1"></i>Chỉ: {{ $coupon->user->name ?? 'User' }}</div>
                                 @endif
                             </td>
                             <td>
@@ -214,6 +229,15 @@
                         <label class="form-label fw-600" style="font-size:13px">Mô Tả</label>
                         <input type="text" name="description" id="editDescription" class="form-control">
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-600" style="font-size:13px">Gán Cho Người Dùng</label>
+                        <select name="user_id" id="editUserId" class="form-select">
+                            <option value="">-- Tất cả người dùng (Công khai) --</option>
+                            @foreach($users as $user)
+                                <option value="{{ $user->id }}">{{ $user->name }} ({{ $user->email }})</option>
+                            @endforeach
+                        </select>
+                    </div>
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="active" value="1" id="editActive">
                         <label class="form-check-label fw-600" for="editActive" style="font-size:13px">Kích Hoạt</label>
@@ -246,6 +270,7 @@ function editCoupon(id, data) {
     document.getElementById('editMaxUses').value = data.max_uses || '';
     document.getElementById('editExpiresAt').value = data.expires_at ? data.expires_at.substring(0, 10) : '';
     document.getElementById('editDescription').value = data.description || '';
+    document.getElementById('editUserId').value = data.user_id || '';
     document.getElementById('editActive').checked = data.active;
     new bootstrap.Modal(document.getElementById('editCouponModal')).show();
 }

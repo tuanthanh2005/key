@@ -16,6 +16,7 @@ class Coupon extends Model
         'active',
         'expires_at',
         'description',
+        'user_id',
     ];
 
     protected $casts = [
@@ -25,7 +26,16 @@ class Coupon extends Model
         'used_count'     => 'integer',
         'active'         => 'boolean',
         'expires_at'     => 'datetime',
+        'user_id'        => 'integer',
     ];
+
+    /**
+     * Liên kết tới người dùng
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     /**
      * Chỉ lấy coupon đang active và chưa hết hạn
@@ -63,9 +73,19 @@ class Coupon extends Model
     /**
      * Lấy tất cả coupon hợp lệ dạng [code => percent_value] để tương thích với JS cũ
      */
-    public static function getValidForJs(): array
+    public static function getValidForJs(?int $userId = null): array
     {
-        return self::valid()->get()->mapWithKeys(function ($coupon) {
+        $query = self::valid();
+        if ($userId !== null) {
+            $query->where(function ($q) use ($userId) {
+                $q->whereNull('user_id')
+                  ->orWhere('user_id', $userId);
+            });
+        } else {
+            $query->whereNull('user_id');
+        }
+
+        return $query->get()->mapWithKeys(function ($coupon) {
             // JS CartManager dùng giá trị %, chỉ hỗ trợ percent type cho tương thích
             if ($coupon->discount_type === 'percent') {
                 return [$coupon->code => $coupon->discount_value];

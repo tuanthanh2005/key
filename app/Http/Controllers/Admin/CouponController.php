@@ -11,7 +11,8 @@ class CouponController extends Controller
     public function index()
     {
         $coupons = Coupon::latest()->get();
-        return view('admin.coupons.index', compact('coupons'));
+        $users = \App\Models\User::orderBy('name')->get();
+        return view('admin.coupons.index', compact('coupons', 'users'));
     }
 
     public function store(Request $request)
@@ -25,6 +26,7 @@ class CouponController extends Controller
             'expires_at'     => 'nullable|date|after:today',
             'description'    => 'nullable|string|max:255',
             'active'         => 'nullable|boolean',
+            'user_id'        => 'nullable|exists:users,id',
         ]);
 
         Coupon::create([
@@ -36,6 +38,7 @@ class CouponController extends Controller
             'expires_at'     => $request->expires_at,
             'description'    => $request->description,
             'active'         => $request->boolean('active', true),
+            'user_id'        => $request->user_id ?: null,
         ]);
 
         return redirect()->route('admin.coupons.index')
@@ -53,6 +56,7 @@ class CouponController extends Controller
             'expires_at'     => 'nullable|date',
             'description'    => 'nullable|string|max:255',
             'active'         => 'nullable|boolean',
+            'user_id'        => 'nullable|exists:users,id',
         ]);
 
         $coupon->update([
@@ -64,6 +68,7 @@ class CouponController extends Controller
             'expires_at'     => $request->expires_at ?: null,
             'description'    => $request->description,
             'active'         => $request->boolean('active', true),
+            'user_id'        => $request->user_id ?: null,
         ]);
 
         return redirect()->route('admin.coupons.index')
@@ -85,7 +90,13 @@ class CouponController extends Controller
         $code    = strtoupper($request->code ?? '');
         $subtotal = floatval($request->subtotal ?? 0);
 
-        $coupon = Coupon::valid()->where('code', $code)->first();
+        $coupon = Coupon::valid()
+            ->where('code', $code)
+            ->where(function ($q) {
+                $q->whereNull('user_id')
+                  ->orWhere('user_id', auth()->id());
+            })
+            ->first();
 
         if (!$coupon) {
             return response()->json(['valid' => false, 'message' => 'Mã giảm giá không hợp lệ hoặc đã hết hạn.']);

@@ -48,15 +48,6 @@
                 <button class="btn btn-outline-primary fw-600 px-4" onclick="applyCoupon()">
                     <i class="bi bi-tag me-1"></i>Áp Dụng
                 </button>
-                <div class="ms-auto d-none d-md-flex align-items-center gap-2 text-muted" style="font-size:13px">
-                    <i class="bi bi-info-circle text-primary"></i>
-                @php $firstCoupon = array_key_first($publicCoupons ?? []); @endphp
-                @if($firstCoupon)
-                <small class="text-muted" style="font-size:11.5px">
-                    Dùng mã <strong class="text-primary">{{ $firstCoupon }}</strong> giảm thêm {{ $publicCoupons[$firstCoupon] }}%
-                </small>
-                @endif
-                </div>
             </div>
 
             <!-- Cart Items Container -->
