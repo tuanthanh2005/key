@@ -342,16 +342,20 @@ $faqs = [
                             <span class="ms-2 text-muted" style="font-size:11.5px">• Đã bán {{ \App\Models\Setting::get('sales_' . strtolower($prod['slug']), '100+') }}</span>
                         </div>
                         <div class="product-price-wrap">
-                            <div class="product-price-old">{{ number_format($prod['old_price']) }}đ</div>
+                            @if(($prod['old_price'] ?? 0) > $prod['price'])
+                                <div class="product-price-old">{{ number_format($prod['old_price']) }}đ</div>
+                            @endif
                             <div class="d-flex align-items-baseline gap-1">
                                 <div class="product-price">{{ number_format($prod['price']) }}đ</div>
                                 <span class="product-price-unit">/{{ $prod['plan'] === '1year' ? '1 năm' : '2 năm' }}</span>
                             </div>
-                            <div class="text-success small fw-600 mt-1">
-                                <i class="bi bi-arrow-down-short"></i>
-                                Tiết kiệm {{ number_format($prod['old_price'] - $prod['price']) }}đ
-                                ({{ round(($prod['old_price']-$prod['price'])/$prod['old_price']*100) }}%)
-                            </div>
+                            @if(($prod['old_price'] ?? 0) > $prod['price'])
+                                <div class="text-success small fw-600 mt-1">
+                                    <i class="bi bi-arrow-down-short"></i>
+                                    Tiết kiệm {{ number_format($prod['old_price'] - $prod['price']) }}đ
+                                    ({{ round(($prod['old_price'] - $prod['price']) / $prod['old_price'] * 100) }}%)
+                                </div>
+                            @endif
                         </div>
                         <div class="product-actions">
                             <a href="{{ route('product.detail', $prod['slug']) }}" class="btn-add-cart" style="text-decoration:none">

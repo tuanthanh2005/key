@@ -70,7 +70,9 @@
                         <span class="rating-count ms-1">({{ $prod['reviews'] }})</span>
                     </div>
                     <div class="product-price-wrap">
-                        <div class="product-price-old">{{ number_format($prod['old_price']) }}đ</div>
+                        @if(($prod['old_price'] ?? 0) > $prod['price'])
+                            <div class="product-price-old">{{ number_format($prod['old_price']) }}đ</div>
+                        @endif
                         <div class="product-price">{{ number_format($prod['price']) }}đ</div>
                     </div>
                     <div class="product-actions">

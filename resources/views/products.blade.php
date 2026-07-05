@@ -255,7 +255,7 @@ if ($brandInfo) {
                     data-plan="{{ $prod['plan'] }}">
                     <div class="product-card">
                         <div class="product-card-badge">
-                            @if($prod['price'] < ($prod['old_price'] ?? 0))<span class="badge-sale">-{{ round((($prod['old_price'] ?? 0) - $prod['price']) / ($prod['old_price'] ?? 1) * 100) }}%</span>@endif
+                            @if(($prod['old_price'] ?? 0) > $prod['price'])<span class="badge-sale">-{{ round((($prod['old_price'] ?? 0) - $prod['price']) / ($prod['old_price'] ?: 1) * 100) }}%</span>@endif
                             @if($prod['plan'] === '1year' || $prod['plan'] === '2year')<span class="badge-hot"><i class="bi bi-fire"></i> Hot</span>@endif
                         </div>
                         <a href="{{ route('product.detail', $prod['slug']) }}" class="product-card-img" style="text-decoration: none; display: flex; justify-content: center; align-items: center;">
@@ -290,13 +290,15 @@ if ($brandInfo) {
                                 <span class="rating-count">({{ number_format($prod['reviews']) }} đánh giá)</span>
                                 <span class="ms-2 text-muted" style="font-size:11.5px">• Đã bán {{ \App\Models\Setting::get('sales_' . strtolower($prod['slug']), '100+') }}</span>
                             </div>
-                            <div class="product-price-wrap">
-                                <div class="product-price-old">{{ number_format($prod['old_price']) }}đ</div>
-                                <div class="d-flex align-items-baseline gap-1">
-                                    <div class="product-price">{{ number_format($prod['price']) }}đ</div>
-                                    <span class="product-price-unit">/{{ \App\Models\Product::formatPlanUnit($prod['plan']) }}</span>
-                                </div>
-                            </div>
+                             <div class="product-price-wrap">
+                                 @if(($prod['old_price'] ?? 0) > $prod['price'])
+                                     <div class="product-price-old">{{ number_format($prod['old_price']) }}đ</div>
+                                 @endif
+                                 <div class="d-flex align-items-baseline gap-1">
+                                     <div class="product-price">{{ number_format($prod['price']) }}đ</div>
+                                     <span class="product-price-unit">/{{ \App\Models\Product::formatPlanUnit($prod['plan']) }}</span>
+                                 </div>
+                             </div>
                             <div class="product-actions">
                                 <a href="{{ route('product.detail', $prod['slug']) }}" class="btn-add-cart" style="text-decoration:none;display:flex;align-items:center;justify-content:center;gap:8px">
                                     Xem Chi Tiết
