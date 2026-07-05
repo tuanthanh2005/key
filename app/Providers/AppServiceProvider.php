@@ -30,7 +30,7 @@ class AppServiceProvider extends ServiceProvider
             }
         }
 
-        $this->app->instance('path.public', $publicPath);
+        $this->app->usePublicPath($publicPath);
     }
 
     /**
