@@ -260,23 +260,35 @@
                     <div class="col-md-6">
                         <h6 class="fw-800 text-primary mb-3">Số Lượt Bán Giả Lập (Fake Sales)</h6>
                         <p class="text-muted small mb-3">Cấu hình hiển thị số lượng đã bán (ví dụ: 500+, 100+) hiển thị trên trang chủ và trang chi tiết sản phẩm.</p>
-                        @foreach([
-                            'sales_nordvpn' => 'NordVPN',
-                            'sales_expressvpn' => 'ExpressVPN',
-                            'sales_surfshark' => 'Surfshark',
-                            'sales_hma' => 'HMA VPN',
-                            'sales_cyberghost' => 'CyberGhost',
-                            'sales_purevpn' => 'PureVPN',
-                            'sales_ipvanish' => 'IPVanish',
-                            'sales_protonvpn' => 'ProtonVPN'
-                        ] as $key => $label)
-                        <div class="mb-2 row align-items-center">
-                            <label class="col-sm-5 col-form-label fw-600 small">{{ $label }}</label>
-                            <div class="col-sm-7">
-                                <input type="text" name="{{ $key }}" class="form-control form-control-sm" value="{{ \App\Models\Setting::get($key, '50+') }}" placeholder="Ví dụ: 100+">
+                        @if(isset($sharedCategories) && $sharedCategories->isNotEmpty())
+                            @foreach($sharedCategories as $cat)
+                            @php $key = 'sales_' . strtolower($cat->slug); @endphp
+                            <div class="mb-2 row align-items-center">
+                                <label class="col-sm-5 col-form-label fw-600 small">{{ $cat->name }}</label>
+                                <div class="col-sm-7">
+                                    <input type="text" name="{{ $key }}" class="form-control form-control-sm" value="{{ \App\Models\Setting::get($key, '50+') }}" placeholder="Ví dụ: 100+">
+                                </div>
                             </div>
-                        </div>
-                        @endforeach
+                            @endforeach
+                        @else
+                            @foreach([
+                                'sales_nordvpn' => 'NordVPN',
+                                'sales_expressvpn' => 'ExpressVPN',
+                                'sales_surfshark' => 'Surfshark',
+                                'sales_hma' => 'HMA VPN',
+                                'sales_cyberghost' => 'CyberGhost',
+                                'sales_purevpn' => 'PureVPN',
+                                'sales_ipvanish' => 'IPVanish',
+                                'sales_protonvpn' => 'ProtonVPN'
+                            ] as $key => $label)
+                            <div class="mb-2 row align-items-center">
+                                <label class="col-sm-5 col-form-label fw-600 small">{{ $label }}</label>
+                                <div class="col-sm-7">
+                                    <input type="text" name="{{ $key }}" class="form-control form-control-sm" value="{{ \App\Models\Setting::get($key, '50+') }}" placeholder="Ví dụ: 100+">
+                                </div>
+                            </div>
+                            @endforeach
+                        @endif
                     </div>
                 </div>
             </div>
