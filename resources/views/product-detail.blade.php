@@ -479,9 +479,9 @@ $curReviews = intval($defaultPlan['reviews'] ?? 120);
 
             <!-- Reviews Tab -->
             <div class="tab-pane fade" id="tab-reviews">
-                <div class="row g-3">
+                <div class="row g-3" id="reviewsListGrid">
                     @foreach($realReviews as $rv)
-                    <div class="col-md-6">
+                    <div class="col-md-6 review-card-wrap">
                         <div class="testimonial-card">
                             <div class="d-flex align-items-center gap-2 mb-2">
                                 <div class="testimonial-avatar" style="background:linear-gradient(135deg,{{ $brand['color'] }},{{ $brand['color'] }}88)">
@@ -501,6 +501,8 @@ $curReviews = intval($defaultPlan['reviews'] ?? 120);
                     </div>
                     @endforeach
                 </div>
+                <!-- Pagination for Reviews -->
+                <div class="d-flex justify-content-center mt-4" id="reviewsPaginationContainer"></div>
             </div>
         </div>
     </div>
@@ -597,6 +599,77 @@ document.querySelectorAll('.plan-option').forEach(opt => {
             descEl.textContent = this.dataset.desc;
         }
     });
+});
+
+// Reviews pagination (4 reviews per page)
+document.addEventListener('DOMContentLoaded', function() {
+    let currentReviewPage = 1;
+    const reviewsPerPage = 4;
+    const reviewCards = document.querySelectorAll('.review-card-wrap');
+    
+    function showReviewPage(page) {
+        currentReviewPage = page;
+        const totalReviews = reviewCards.length;
+        const totalPages = Math.ceil(totalReviews / reviewsPerPage);
+        
+        const startIndex = (page - 1) * reviewsPerPage;
+        const endIndex = startIndex + reviewsPerPage;
+        
+        reviewCards.forEach((card, index) => {
+            if (index >= startIndex && index < endIndex) {
+                card.style.setProperty('display', 'block', 'important');
+            } else {
+                card.style.setProperty('display', 'none', 'important');
+            }
+        });
+        
+        renderReviewsPagination(totalPages);
+    }
+    
+    function renderReviewsPagination(totalPages) {
+        const container = document.getElementById('reviewsPaginationContainer');
+        if (!container) return;
+        container.innerHTML = '';
+        
+        if (totalPages <= 1) return;
+        
+        let html = '<nav aria-label="Page navigation"><ul class="pagination pagination-custom d-flex gap-2 align-items-center mb-0" style="list-style:none; padding:0; margin:0;">';
+        
+        // Prev Button
+        html += `<li class="page-item">
+            <button type="button" class="page-link shadow-sm d-flex align-items-center justify-content-center" data-page="${currentReviewPage - 1}" ${currentReviewPage === 1 ? 'disabled' : ''} style="width:32px; height:32px; border-radius:8px; border:1px solid #e2e8f0; background:${currentReviewPage === 1 ? '#f8fafc' : '#fff'}; color:${currentReviewPage === 1 ? '#cbd5e1' : 'var(--gray-700)'}; font-weight:600; cursor:${currentReviewPage === 1 ? 'not-allowed' : 'pointer'};"><i class="bi bi-chevron-left"></i></button>
+        </li>`;
+        
+        // Page Numbers
+        for (let i = 1; i <= totalPages; i++) {
+            const isActive = i === currentReviewPage;
+            html += `<li class="page-item">
+                <button type="button" class="page-link shadow-sm d-flex align-items-center justify-content-center" data-page="${i}" style="width:32px; height:32px; border-radius:8px; border:1px solid ${isActive ? '#2563eb' : '#e2e8f0'}; background:${isActive ? '#2563eb' : '#fff'}; color:${isActive ? '#fff' : 'var(--gray-700)'}; font-weight:700; cursor:pointer;">${i}</button>
+            </li>`;
+        }
+        
+        // Next Button
+        html += `<li class="page-item">
+            <button type="button" class="page-link shadow-sm d-flex align-items-center justify-content-center" data-page="${currentReviewPage + 1}" ${currentReviewPage === totalPages ? 'disabled' : ''} style="width:32px; height:32px; border-radius:8px; border:1px solid #e2e8f0; background:${currentReviewPage === totalPages ? '#f8fafc' : '#fff'}; color:${currentReviewPage === totalPages ? '#cbd5e1' : 'var(--gray-700)'}; font-weight:600; cursor:${currentReviewPage === totalPages ? 'not-allowed' : 'pointer'};"><i class="bi bi-chevron-right"></i></button>
+        </li>`;
+        
+        html += '</ul></nav>';
+        container.innerHTML = html;
+        
+        // Add click event listeners
+        container.querySelectorAll('button[data-page]').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const targetPage = parseInt(this.dataset.page);
+                if (targetPage > 0 && targetPage <= totalPages) {
+                    showReviewPage(targetPage);
+                }
+            });
+        });
+    }
+    
+    if (reviewCards.length > 0) {
+        showReviewPage(1);
+    }
 });
 </script>
 @endsection
