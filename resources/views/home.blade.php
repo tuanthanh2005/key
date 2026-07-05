@@ -4,6 +4,16 @@
 @section('meta_description', 'Mua VPN chính hãng: NordVPN, ExpressVPN, Surfshark, HMA, CyberGhost với giá tốt nhất. Bảo hành 30 ngày, hỗ trợ 24/7.')
 @section('meta_keywords', 'vpn gia re, mua vpn, tai khoan nordvpn, tai khoan expressvpn, mua surfshark, key hma vpn, cyberghost gia re, gia vpn')
 
+@php
+$faqs = [
+    ['q'=>'VPN chính hãng khác gì VPN crack/fake?','a'=>'VPN chính hãng là key mua trực tiếp từ nhà cung cấp, đảm bảo hoạt động ổn định, đầy đủ tính năng và được hỗ trợ cập nhật. VPN crack/fake thường bị block, mất tính năng và tiềm ẩn nguy cơ bảo mật.'],
+    ['q'=>'Tôi nhận key như thế nào sau khi thanh toán?','a'=>'Sau khi thanh toán thành công, key VPN sẽ được gửi tự động qua email trong vòng 5-15 phút. Bạn cũng có thể liên hệ Telegram/Zalo của chúng tôi để nhận hỗ trợ ngay lập tức.'],
+    ['q'=>'Có hỗ trợ cài đặt và kích hoạt không?','a'=>'Có! Chúng tôi hỗ trợ hướng dẫn cài đặt và kích hoạt miễn phí qua Telegram, Zalo hoặc email. Đội ngũ hỗ trợ 24/7 sẵn sàng giúp bạn.'],
+    ['q'=>'Nếu key lỗi có được đổi không?','a'=>'Có, chúng tôi bảo hành 100% key lỗi. Nếu key không hoạt động do lỗi từ phía chúng tôi, sẽ được đổi key mới ngay lập tức hoặc hoàn tiền trong vòng 24h.'],
+    ['q'=>'Có thể dùng VPN cho mấy thiết bị?','a'=>'Tùy theo gói VPN bạn mua. NordVPN cho phép 6 thiết bị, Surfshark không giới hạn thiết bị, ExpressVPN 5 thiết bị. Thông tin chi tiết có trong mỗi sản phẩm.'],
+];
+@endphp
+
 @section('json_ld')
 <script type="application/ld+json">
 {
@@ -12,7 +22,7 @@
     {
       "@@type": "Organization",
       "@@id": "{{ route('home') }}#organization",
-      "name": "VPNStore",
+      "name": "{{ $settings['store_name'] ?? 'VPNStore' }}",
       "url": "{{ route('home') }}",
       "logo": "{{ !empty($settings['favicon_path']) ? asset($settings['favicon_path']) : asset('favicon.ico') }}",
       "sameAs": [
@@ -21,7 +31,7 @@
       "contactPoint": [
         {
           "@@type": "ContactPoint",
-          "telephone": "+84708910952",
+          "telephone": "{{ $settings['contact_phone'] ?? '+84708910952' }}",
           "contactType": "customer support",
           "areaServed": "VN",
           "availableLanguage": "Vietnamese"
@@ -32,8 +42,8 @@
       "@@type": "WebSite",
       "@@id": "{{ route('home') }}#website",
       "url": "{{ route('home') }}",
-      "name": "VPNStore",
-      "description": "Mua VPN chính hãng: NordVPN, ExpressVPN, Surfshark, HMA, CyberGhost với giá tốt nhất. Bảo hành 30 ngày, hỗ trợ 24/7.",
+      "name": "{{ $settings['store_name'] ?? 'VPNStore' }}",
+      "description": "{{ !empty($settings['meta_description']) ? $settings['meta_description'] : 'VPNStore - Chuyên cung cấp VPN chính hãng với giá tốt nhất. Bảo hành 30 ngày, hỗ trợ 24/7.' }}",
       "publisher": {
         "@@id": "{{ route('home') }}#organization"
       },
@@ -42,6 +52,21 @@
         "target": "{{ route('search') }}?q={search_term_string}",
         "query-input": "required name=search_term_string"
       }
+    },
+    {
+      "@@type": "FAQPage",
+      "mainEntity": [
+        @foreach($faqs as $fi => $faq)
+        {
+          "@@type": "Question",
+          "name": "{{ $faq['q'] }}",
+          "acceptedAnswer": {
+            "@@type": "Answer",
+            "text": "{{ $faq['a'] }}"
+          }
+        }{{ $fi < count($faqs) - 1 ? ',' : '' }}
+        @endforeach
+      ]
     }
   ]
 }
@@ -532,15 +557,6 @@
                     <h2 class="section-title mt-2">Câu Hỏi Thường Gặp</h2>
                 </div>
                 <div class="accordion" id="faqAccordion">
-                    @php
-                    $faqs = [
-                        ['q'=>'VPN chính hãng khác gì VPN crack/fake?','a'=>'VPN chính hãng là key mua trực tiếp từ nhà cung cấp, đảm bảo hoạt động ổn định, đầy đủ tính năng và được hỗ trợ cập nhật. VPN crack/fake thường bị block, mất tính năng và tiềm ẩn nguy cơ bảo mật.'],
-                        ['q'=>'Tôi nhận key như thế nào sau khi thanh toán?','a'=>'Sau khi thanh toán thành công, key VPN sẽ được gửi tự động qua email trong vòng 5-15 phút. Bạn cũng có thể liên hệ Telegram/Zalo của chúng tôi để nhận hỗ trợ ngay lập tức.'],
-                        ['q'=>'Có hỗ trợ cài đặt và kích hoạt không?','a'=>'Có! Chúng tôi hỗ trợ hướng dẫn cài đặt và kích hoạt miễn phí qua Telegram, Zalo hoặc email. Đội ngũ hỗ trợ 24/7 sẵn sàng giúp bạn.'],
-                        ['q'=>'Nếu key lỗi có được đổi không?','a'=>'Có, chúng tôi bảo hành 100% key lỗi. Nếu key không hoạt động do lỗi từ phía chúng tôi, sẽ được đổi key mới ngay lập tức hoặc hoàn tiền trong vòng 24h.'],
-                        ['q'=>'Có thể dùng VPN cho mấy thiết bị?','a'=>'Tùy theo gói VPN bạn mua. NordVPN cho phép 6 thiết bị, Surfshark không giới hạn thiết bị, ExpressVPN 5 thiết bị. Thông tin chi tiết có trong mỗi sản phẩm.'],
-                    ];
-                    @endphp
                     @foreach($faqs as $fi => $faq)
                     <div class="accordion-item border border-gray-200 mb-2 rounded" style="border-radius:var(--radius)!important;overflow:hidden">
                         <h2 class="accordion-header">
