@@ -67,7 +67,9 @@ class ProductController extends Controller
             'reviews' => 'nullable|integer|min:0',
         ]);
 
-        $slug  = strtolower(str_replace(' ', '', $request->brand));
+        $category = \App\Models\Category::where('name', $request->brand)->first();
+        $categoryId = $category ? $category->id : null;
+        $slug = $category ? $category->slug : strtolower(str_replace(' ', '', $request->brand));
         // Màu: lấy từ product.color nếu có, không hardcode theo brand
         $color = '#4687FF'; // fallback mặc định
 
@@ -92,7 +94,7 @@ class ProductController extends Controller
         }
 
         Product::create([
-            'category_id' => $request->category_id,
+            'category_id' => $categoryId,
             'name' => $request->name,
             'brand' => $request->brand,
             'slug' => $slug,
@@ -156,7 +158,9 @@ class ProductController extends Controller
             'reviews' => 'nullable|integer|min:0',
         ]);
 
-        $slug  = strtolower(str_replace(' ', '', $request->brand));
+        $category = \App\Models\Category::where('name', $request->brand)->first();
+        $categoryId = $category ? $category->id : null;
+        $slug = $category ? $category->slug : strtolower(str_replace(' ', '', $request->brand));
         // Giữ nguyên color từ product, hoặc fallback
         $color = $product->color ?: '#4687FF';
 
@@ -188,7 +192,7 @@ class ProductController extends Controller
         }
 
         $product->update([
-            'category_id' => $request->category_id,
+            'category_id' => $categoryId,
             'name' => $request->name,
             'brand' => $request->brand,
             'slug' => $slug,

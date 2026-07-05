@@ -18,29 +18,15 @@
                 <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="row g-3">
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <label class="form-label fw-600 text-dark">Thương Hiệu VPN <span class="text-danger">*</span></label>
                             <select name="brand" class="form-select" required style="border-radius: 10px;">
-                                <option value="NordVPN">NordVPN</option>
-                                <option value="ExpressVPN">ExpressVPN</option>
-                                <option value="Surfshark">Surfshark</option>
-                                <option value="HMA VPN">HMA VPN</option>
-                                <option value="CyberGhost">CyberGhost</option>
-                                <option value="ProtonVPN">ProtonVPN</option>
-                                <option value="PureVPN">PureVPN</option>
-                                <option value="IPVanish">IPVanish</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label fw-600 text-dark">Gán Danh Mục Hệ Thống</label>
-                            <select name="category_id" class="form-select" style="border-radius: 10px;">
-                                <option value="">-- Không gán --</option>
                                 @foreach($categories as $cat)
-                                    <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                                    <option value="{{ $cat->name }}">{{ $cat->name }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <label class="form-label fw-600 text-dark">Gói Thời Gian <span class="text-danger">*</span></label>
                             <input type="text" name="plan" class="form-control" placeholder="Ví dụ: 1month, 7day, 2year" required style="border-radius: 10px;">
                             <small class="text-muted" style="font-size:10.5px;">Cú pháp: [số][day/month/year]. Ví dụ: 7day, 15day, 3month...</small>

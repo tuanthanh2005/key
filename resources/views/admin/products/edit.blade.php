@@ -19,24 +19,15 @@
                     @csrf
                     @method('PUT')
                     <div class="row g-3">
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <label class="form-label fw-600 text-dark">Thương Hiệu VPN <span class="text-danger">*</span></label>
                             <select name="brand" class="form-select" required style="border-radius: 10px;">
-                                @foreach(['NordVPN', 'ExpressVPN', 'Surfshark', 'HMA VPN', 'CyberGhost', 'ProtonVPN', 'PureVPN', 'IPVanish'] as $brand)
-                                    <option value="{{ $brand }}" {{ $product->brand == $brand ? 'selected' : '' }}>{{ $brand }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label fw-600 text-dark">Gán Danh Mục Hệ Thống</label>
-                            <select name="category_id" class="form-select" style="border-radius: 10px;">
-                                <option value="">-- Không gán --</option>
                                 @foreach($categories as $cat)
-                                    <option value="{{ $cat->id }}" {{ $product->category_id == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
+                                    <option value="{{ $cat->name }}" {{ $product->brand == $cat->name ? 'selected' : '' }}>{{ $cat->name }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-6">
                             <label class="form-label fw-600 text-dark">Gói Thời Gian <span class="text-danger">*</span></label>
                             <input type="text" name="plan" class="form-control" value="{{ $product->plan }}" placeholder="Ví dụ: 1month, 7day, 2year" required style="border-radius: 10px;">
                             <small class="text-muted" style="font-size:10.5px;">Cú pháp: [số][day/month/year]. Ví dụ: 7day, 15day, 3month...</small>
