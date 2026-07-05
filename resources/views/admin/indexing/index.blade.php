@@ -174,9 +174,9 @@
                                 <div class="col-12 col-md-6 col-xxl-4">
                                     <div class="p-3 border rounded-3 d-flex align-items-start gap-2 hover-card" style="transition: all 0.2s; border-color:#e2e8f0!important;">
                                         <div class="form-check m-0">
-                                            <input class="form-check-input url-checkbox" type="checkbox" name="urls[]" value="{{ $url }}" id="static_{{ loop->index }}" style="cursor:pointer;">
+                                            <input class="form-check-input url-checkbox" type="checkbox" name="urls[]" value="{{ $url }}" id="static_{{ $loop->index }}" style="cursor:pointer;">
                                         </div>
-                                        <label for="static_{{ loop->index }}" style="cursor:pointer; flex: 1;">
+                                        <label for="static_{{ $loop->index }}" style="cursor:pointer; flex: 1;">
                                             <div class="fw-700 text-dark" style="font-size:13px">{{ $name }}</div>
                                             <div class="text-muted text-truncate" style="font-size:11.5px; max-width: 180px;">{{ $url }}</div>
                                         </label>
@@ -203,9 +203,9 @@
                                     <div class="col-12 col-md-6 col-xxl-4">
                                         <div class="p-3 border rounded-3 d-flex align-items-start gap-2 hover-card" style="transition: all 0.2s; border-color:#e2e8f0!important;">
                                             <div class="form-check m-0">
-                                                <input class="form-check-input url-checkbox" type="checkbox" name="urls[]" value="{{ $url }}" id="brand_{{ loop->index }}" style="cursor:pointer;">
+                                                <input class="form-check-input url-checkbox" type="checkbox" name="urls[]" value="{{ $url }}" id="brand_{{ $loop->index }}" style="cursor:pointer;">
                                             </div>
-                                            <label for="brand_{{ loop->index }}" style="cursor:pointer; flex: 1;">
+                                            <label for="brand_{{ $loop->index }}" style="cursor:pointer; flex: 1;">
                                                 <div class="fw-700 text-dark" style="font-size:13px">{{ strtoupper($brand) }}</div>
                                                 <div class="text-muted text-truncate" style="font-size:11.5px; max-width: 180px;">{{ $url }}</div>
                                             </label>
