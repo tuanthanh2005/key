@@ -142,6 +142,9 @@
                     <td style="font-size:12px;color:var(--admin-muted)">{{ $user->created_at->format('d/m/Y') }}</td>
                     <td>
                         <div class="d-flex gap-1">
+                            <a href="{{ route('admin.users.show', $user) }}" class="btn btn-sm btn-outline-info" style="border-radius:8px;width:30px;height:30px;padding:0;display:flex;align-items:center;justify-content:center" title="Xem Chi Tiết">
+                                <i class="bi bi-eye" style="font-size:12px"></i>
+                            </a>
                             <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-sm btn-outline-primary" style="border-radius:8px;width:30px;height:30px;padding:0;display:flex;align-items:center;justify-content:center" title="Sửa">
                                 <i class="bi bi-pencil" style="font-size:12px"></i>
                             </a>

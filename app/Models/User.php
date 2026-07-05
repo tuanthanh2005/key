@@ -58,4 +58,27 @@ class User extends Authenticatable
     {
         return strtoupper(substr($this->name, 0, 1));
     }
+
+    /**
+     * Model Events
+     */
+    protected static function booted()
+    {
+        static::created(function ($user) {
+            if ($user->role === 'user') {
+                $couponCode = 'NEW' . $user->id . strtoupper(\Illuminate\Support\Str::random(3));
+                \App\Models\Coupon::create([
+                    'code'           => $couponCode,
+                    'discount_type'  => 'percent',
+                    'discount_value' => 2,
+                    'min_order'      => 0,
+                    'max_uses'       => 1,
+                    'expires_at'     => now()->addDay(),
+                    'description'    => 'Quà tặng thành viên mới - Giảm 2% (Hạn dùng 24h)',
+                    'active'         => true,
+                    'user_id'        => $user->id,
+                ]);
+            }
+        });
+    }
 }

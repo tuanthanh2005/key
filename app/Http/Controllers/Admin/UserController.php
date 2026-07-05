@@ -68,6 +68,18 @@ class UserController extends Controller
         return redirect()->route('admin.users.index')->with('success', 'Tạo tài khoản thành công!');
     }
 
+    public function show(User $user)
+    {
+        $orders = \App\Models\Order::where(function ($query) use ($user) {
+            $query->where('user_id', $user->id)
+                  ->orWhere('customer_email', $user->email);
+        })->latest()->get();
+
+        $coupons = \App\Models\Coupon::where('user_id', $user->id)->latest()->get();
+
+        return view('admin.users.show', compact('user', 'orders', 'coupons'));
+    }
+
     public function edit(User $user)
     {
         return view('admin.users.edit', compact('user'));

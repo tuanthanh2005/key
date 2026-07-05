@@ -122,6 +122,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::get('/', [UserController::class, 'index'])->name('index');
         Route::get('/them-moi', [UserController::class, 'create'])->name('create');
         Route::post('/', [UserController::class, 'store'])->name('store');
+        Route::get('/{user}', [UserController::class, 'show'])->name('show');
         Route::get('/{user}/sua', [UserController::class, 'edit'])->name('edit');
         Route::put('/{user}', [UserController::class, 'update'])->name('update');
         Route::patch('/{user}/khoa', [UserController::class, 'toggleStatus'])->name('toggle-status');
