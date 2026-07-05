@@ -327,7 +327,7 @@ $curReviews = intval($defaultPlan['reviews'] ?? 120);
                             <i class="bi bi-shield-check text-success me-1"></i>100% Chính Hãng
                         </div>
                         <div style="font-size:12px;color:var(--gray-500)" class="mt-1">
-                            <i class="bi bi-lightning-fill text-warning me-1"></i>Giao Key 5–15 phút
+                            <i class="bi bi-lightning-fill text-warning me-1"></i>Giao hàng 1–30 phút
                         </div>
                     </div>
                 </div>
@@ -445,7 +445,7 @@ $curReviews = intval($defaultPlan['reviews'] ?? 120);
                         <h6 class="fw-700 mb-4" style="color:var(--gray-800)">Hướng Dẫn Kích Hoạt {{ $brand['name'] }}</h6>
                         @php
                         $steps = [
-                            'Sau khi thanh toán, bạn sẽ nhận được email chứa key/tài khoản VPN trong vòng 5–15 phút.',
+                            'Sau khi thanh toán, bạn sẽ nhận được email chứa thông tin kích hoạt tài khoản trong vòng 1–30 phút.',
                             'Truy cập trang web chính thức của ' . $brand['name'] . ' và tải ứng dụng cho thiết bị của bạn.',
                             'Mở ứng dụng, chọn "Đăng Nhập" hoặc "Kích Hoạt" và nhập thông tin tài khoản được cung cấp.',
                             'Chọn máy chủ phù hợp (gần Việt Nam để tốc độ tốt nhất) và nhấn "Kết Nối".',

@@ -78,7 +78,7 @@
                 ['icon'=>'bi-currency-dollar','color'=>'#d97706','bg'=>'#fef3c7','title'=>'Giá Tốt Nhất','desc'=>'VPNStore cam kết mang đến giá VPN tốt nhất thị trường. Nếu bạn tìm thấy giá rẻ hơn cùng sản phẩm, chúng tôi sẽ hoàn tiền phần chênh lệch.'],
                 ['icon'=>'bi-headset','color'=>'#7c3aed','bg'=>'#f5f3ff','title'=>'Hỗ Trợ Tận Tâm','desc'=>'Đội ngũ hỗ trợ 24/7 luôn sẵn sàng giúp đỡ bạn qua Telegram, Zalo, Email và Hotline. Không để khách hàng chờ đợi quá 30 phút.'],
                 ['icon'=>'bi-arrow-repeat','color'=>'#0ea5e9','bg'=>'#f0f9ff','title'=>'Bảo Hành Rõ Ràng','desc'=>'Bảo hành 30 ngày cho tất cả sản phẩm. Nếu key lỗi do lỗi từ phía shop, đổi key mới ngay lập tức hoặc hoàn tiền 100% trong 24 giờ.'],
-                ['icon'=>'bi-lightning-fill','color'=>'#dc2626','bg'=>'#fef2f2','title'=>'Xử Lý Nhanh Chóng','desc'=>'Key VPN được gửi tự động qua email trong 5–15 phút sau thanh toán. Hệ thống xử lý 24/7, không cần chờ đợi ngay cả ban đêm hay ngày lễ.'],
+                ['icon'=>'bi-lightning-fill','color'=>'#dc2626','bg'=>'#fef2f2','title'=>'Xử Lý Nhanh Chóng','desc'=>'Thông tin kích hoạt tài khoản/key được gửi tự động qua email trong 1–30 phút sau thanh toán. Hệ thống xử lý 24/7, không cần chờ đợi.'],
             ];
             @endphp
             @foreach($values as $val)

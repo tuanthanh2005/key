@@ -7,7 +7,7 @@
 @php
 $faqs = [
     ['q'=>'VPN chính hãng khác gì VPN crack/fake?','a'=>'VPN chính hãng là key mua trực tiếp từ nhà cung cấp, đảm bảo hoạt động ổn định, đầy đủ tính năng và được hỗ trợ cập nhật. VPN crack/fake thường bị block, mất tính năng và tiềm ẩn nguy cơ bảo mật.'],
-    ['q'=>'Tôi nhận key như thế nào sau khi thanh toán?','a'=>'Sau khi thanh toán thành công, key VPN sẽ được gửi tự động qua email trong vòng 5-15 phút. Bạn cũng có thể liên hệ Telegram/Zalo của chúng tôi để nhận hỗ trợ ngay lập tức.'],
+    ['q'=>'Tôi nhận key như thế nào sau khi thanh toán?','a'=>'Sau khi thanh toán thành công, thông tin kích hoạt tài khoản/key sẽ được gửi tự động qua email trong vòng 1-30 phút. Bạn cũng có thể liên hệ Telegram/Zalo của chúng tôi để nhận hỗ trợ ngay lập tức.'],
     ['q'=>'Có hỗ trợ cài đặt và kích hoạt không?','a'=>'Có! Chúng tôi hỗ trợ hướng dẫn cài đặt và kích hoạt miễn phí qua Telegram, Zalo hoặc email. Đội ngũ hỗ trợ 24/7 sẵn sàng giúp bạn.'],
     ['q'=>'Nếu key lỗi có được đổi không?','a'=>'Có, chúng tôi bảo hành 100% key lỗi. Nếu key không hoạt động do lỗi từ phía chúng tôi, sẽ được đổi key mới ngay lập tức hoặc hoàn tiền trong vòng 24h.'],
     ['q'=>'Có thể dùng VPN cho mấy thiết bị?','a'=>'Tùy theo gói VPN bạn mua. NordVPN cho phép 6 thiết bị, Surfshark không giới hạn thiết bị, ExpressVPN 5 thiết bị. Thông tin chi tiết có trong mỗi sản phẩm.'],
@@ -119,7 +119,7 @@ $faqs = [
                     </div>
                     <div>
                         <div style="font-size:12.5px;font-weight:800;line-height:1.2">Giao Key Tức Thì</div>
-                        <div style="font-size:10.5px;color:rgba(255,255,255,.65);font-weight:400">Nhận key trong 5–15 phút</div>
+                        <div style="font-size:10.5px;color:rgba(255,255,255,.65);font-weight:400">Nhận key trong 1–30 phút</div>
                     </div>
                 </div>
             </div>
@@ -491,7 +491,7 @@ $faqs = [
                     </div>
                     <h4 class="font-poppins fw-700 mb-3" style="font-size: 17px; color: var(--gray-800);">3. Nhận Key Tự Động</h4>
                     <p class="text-muted mb-0" style="font-size: 13.5px; line-height: 1.6;">
-                        Giao dịch được xác nhận ngay sau 1-3 phút. Thông tin tài khoản/key kích hoạt sẽ lập tức gửi trực tiếp vào email của bạn và được lưu trong lịch sử đơn hàng.
+                        Giao dịch được xác nhận ngay sau 1-30 phút. Thông tin tài khoản/key kích hoạt sẽ lập tức gửi trực tiếp vào email của bạn và được lưu trong lịch sử đơn hàng.
                     </p>
                 </div>
             </div>

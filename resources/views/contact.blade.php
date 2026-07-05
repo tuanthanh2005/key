@@ -106,7 +106,7 @@
                     <h5 class="fw-800 mb-3 font-poppins" style="font-size:16px">Câu Hỏi Thường Gặp</h5>
                     @php
                     $quickFaqs = [
-                        ['q'=>'Bao lâu nhận được key?','a'=>'5–15 phút sau khi xác nhận thanh toán'],
+                        ['q'=>'Bao lâu nhận được key?','a'=>'1–30 phút sau khi xác nhận thanh toán'],
                         ['q'=>'Có hỗ trợ cài đặt không?','a'=>'Có, miễn phí qua Telegram/Zalo/Email'],
                         ['q'=>'Key lỗi có được đổi không?','a'=>'Có, đổi key mới hoặc hoàn tiền 100%'],
                         ['q'=>'Có thể thanh toán bằng gì?','a'=>'CK ngân hàng, Momo, ZaloPay, Crypto'],

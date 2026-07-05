@@ -37,7 +37,7 @@
                         <div style="width:28px;height:28px;background:var(--primary);border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0">1</div>
                         <div>
                             <div class="fw-600" style="font-size:13.5px">Kiểm tra Email</div>
-                            <div class="text-muted" style="font-size:12.5px">Key VPN sẽ được gửi về email trong 5–15 phút sau khi xác nhận thanh toán</div>
+                            <div class="text-muted" style="font-size:12.5px">Thông tin tài khoản/key kích hoạt sẽ được gửi về email trong 1–30 phút sau khi xác nhận thanh toán</div>
                         </div>
                     </div>
                     <div class="d-flex gap-3 mb-3">
