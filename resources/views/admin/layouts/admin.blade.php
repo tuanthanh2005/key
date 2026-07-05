@@ -72,7 +72,7 @@
         </a>
         <a href="{{ route('admin.products.index') }}" class="sidebar-link {{ request()->routeIs('admin.products.*') ? 'active' : '' }}">
             <i class="bi bi-shield-fill-check"></i>
-            <span>Sản Phẩm VPN</span>
+            <span>Sản Phẩm</span>
         </a>
         <a href="{{ route('admin.categories.index') }}" class="sidebar-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
             <i class="bi bi-folder-fill"></i>

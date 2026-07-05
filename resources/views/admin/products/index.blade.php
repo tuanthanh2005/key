@@ -78,7 +78,7 @@
     <div class="admin-card-header">
         <div class="admin-card-title">
             <i class="bi bi-grid-3x3-gap-fill text-primary"></i>
-            Danh Sách Sản Phẩm VPN
+            Danh Sách Sản Phẩm
         </div>
     </div>
     <div class="table-responsive">
