@@ -129,3 +129,15 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
     });
 });
+
+Route::get('/check-favicon', function() {
+    $favicon = \App\Models\Setting::get('favicon_path');
+    return [
+        'public_path' => public_path(),
+        'favicon_path_in_db' => $favicon,
+        'favicon_full_path' => public_path($favicon),
+        'file_exists_in_public_path' => file_exists(public_path($favicon)),
+        'file_exists_in_base_public' => file_exists(base_path('public/' . $favicon)),
+        'file_exists_in_base_public_html' => file_exists(base_path('../public_html/' . $favicon)),
+    ];
+});
