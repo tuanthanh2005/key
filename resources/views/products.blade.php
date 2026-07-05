@@ -1,13 +1,13 @@
 @php
 $brandMap = [
-    'nordvpn' => ['name' => 'NordVPN Premium', 'seo_title' => 'Mua tài khoản NordVPN Premium giá rẻ'],
-    'expressvpn' => ['name' => 'ExpressVPN', 'seo_title' => 'Mua tài khoản ExpressVPN giá rẻ'],
-    'surfshark' => ['name' => 'Surfshark VPN', 'seo_title' => 'Mua tài khoản Surfshark VPN giá rẻ'],
-    'hma' => ['name' => 'Key HMA VPN', 'seo_title' => 'Mua tài khoản Key HMA VPN giá rẻ'],
-    'cyberghost' => ['name' => 'CyberGhost VPN', 'seo_title' => 'Mua tài khoản CyberGhost VPN giá rẻ'],
-    'purevpn' => ['name' => 'PureVPN', 'seo_title' => 'Mua tài khoản PureVPN giá rẻ'],
-    'ipvanish' => ['name' => 'IPVanish VPN', 'seo_title' => 'Mua tài khoản IPVanish VPN giá rẻ'],
-    'protonvpn' => ['name' => 'ProtonVPN', 'seo_title' => 'Mua tài khoản ProtonVPN giá rẻ'],
+    'nordvpn' => ['name' => 'NordVPN Premium', 'seo_title' => 'Đăng Ký Tài Khoản NordVPN Premium Bản Quyền'],
+    'expressvpn' => ['name' => 'ExpressVPN', 'seo_title' => 'Mua Tài Khoản ExpressVPN Chính Hãng Giá Tốt'],
+    'surfshark' => ['name' => 'Surfshark VPN', 'seo_title' => 'Dịch Vụ Surfshark VPN Bản Quyền Giá Rẻ'],
+    'hma' => ['name' => 'Key HMA VPN', 'seo_title' => 'Mua Key HMA VPN Bản Quyền Kích Hoạt Nhanh'],
+    'cyberghost' => ['name' => 'CyberGhost VPN', 'seo_title' => 'Tài Khoản CyberGhost VPN Giá Rẻ Uy Tín'],
+    'purevpn' => ['name' => 'PureVPN', 'seo_title' => 'Mua Tài Khoản PureVPN Bản Quyền Giá Tốt'],
+    'ipvanish' => ['name' => 'IPVanish VPN', 'seo_title' => 'Đăng Ký IPVanish VPN Chính Hãng Giá Rẻ'],
+    'protonvpn' => ['name' => 'ProtonVPN', 'seo_title' => 'Mua Tài Khoản ProtonVPN Giá Rẻ Bảo Hành 1 Đổi 1'],
 ];
 
 $selectedBrandSlug = request('brand', '');
@@ -20,7 +20,7 @@ if ($selectedBrandSlug) {
         $displayName = ucwords(str_replace('-', ' ', $selectedBrandSlug));
         $brandInfo = [
             'name' => $displayName,
-            'seo_title' => 'Mua tài khoản ' . $displayName . ' giá rẻ'
+            'seo_title' => 'Mua Tài Khoản ' . $displayName . ' Bản Quyền Giá Rẻ'
         ];
     }
 }
@@ -28,7 +28,7 @@ if ($selectedBrandSlug) {
 $storeName = $settings['store_name'] ?? 'VPNStore';
 if ($brandInfo) {
     $pageTitle = $brandInfo['seo_title'] . ' - ' . $storeName;
-    $pageMetaDesc = 'Danh sách tài khoản ' . $brandInfo['name'] . ' giá rẻ và các gói ' . $brandInfo['name'] . ' đang bán tại ' . $storeName . ', giá tốt, giao nhanh, hỗ trợ đầy đủ.';
+    $pageMetaDesc = 'Mua tài khoản ' . $brandInfo['name'] . ' bản quyền chính hãng tại ' . $storeName . '. Cung cấp các gói ' . $brandInfo['name'] . ' giá tốt nhất thị trường, cam kết kích hoạt nhanh, hỗ trợ kỹ thuật trọn đời và bảo hành uy tín 1 đổi 1.';
 } else {
     $pageTitle = 'Sản Phẩm VPN - ' . $storeName;
     $pageMetaDesc = 'Danh sách tất cả VPN chính hãng: NordVPN, ExpressVPN, Surfshark, HMA, CyberGhost, PureVPN, IPVanish, ProtonVPN giá tốt nhất Việt Nam.';
