@@ -68,14 +68,74 @@ class ShopController extends Controller
 
         // Fake reviews: kiểm tra setting show_fake_reviews
         if (empty($realReviews) && Setting::get('show_fake_reviews', '1') == '1') {
-            $realReviews = [
-                ['name'=>'Trần Quốc Bảo','star'=>5,'date'=>'2 ngày trước','text'=>'Mua key ' . $brandName . ' ở đây kích hoạt nhanh thật sự, giao dịch tự động trong 5 phút. Tốc độ ổn định và load phim 4K vi vu.'],
-                ['name'=>'Nguyễn Minh Tuấn','star'=>5,'date'=>'5 ngày trước','text'=>'Shop uy tín, hỗ trợ kích hoạt qua Zalo siêu nhiệt tình và nhanh chóng. Giá rẻ hơn nhiều so với mua trực tiếp trên trang chủ.'],
-                ['name'=>'Phan Hoàng Long','star'=>4,'date'=>'1 tuần trước','text'=>'Sản phẩm hoạt động tốt, dùng mượt mà trên cả điện thoại và PC. Trừ 1 sao vì lúc thanh toán chờ quét mã hơi lâu chút nhưng vẫn ổn.'],
-                ['name'=>'Hoàng Thị Mai','star'=>5,'date'=>'2 tuần trước','text'=>'Đã mua gói 1 năm ' . $brandName . ', key hoạt động chuẩn. Chạy mượt mà, đổi IP nhanh chóng và giúp mình làm việc remote an toàn.'],
-                ['name'=>'Lê Thanh Hải','star'=>5,'date'=>'3 tuần trước','text'=>'Dịch vụ tuyệt vời. Key bị lỗi nhỏ được shop đổi mới ngay lập tức trong 2 phút. Rất hài lòng với chế độ bảo hành chu đáo.'],
-                ['name'=>'Đặng Phương Thảo','star'=>5,'date'=>'1 tháng trước','text'=>'Được bạn giới thiệu mua ở đây. Giao diện web trực quan, thanh toán tiện lợi và chất lượng key ' . $brandName . ' hoàn hảo không có gì để chê.'],
+            $poolNames = [
+                'Trần Quốc Bảo', 'Nguyễn Minh Tuấn', 'Phan Hoàng Long', 'Hoàng Thị Mai', 'Lê Thanh Hải',
+                'Đặng Phương Thảo', 'Phạm Minh Đức', 'Vũ Hoài Nam', 'Đỗ Thu Hà', 'Bùi Tiến Dũng',
+                'Ngô Anh Tú', 'Dương Khánh Linh', 'Hoàng Văn Quyết', 'Lâm Gia Bảo', 'Đinh Thị Thu',
+                'Lý Hải Đăng', 'Tạ Minh Quang', 'Trịnh Kim Chi', 'Phùng Xuân Tiến', 'Mai Quốc Khánh',
+                'Đặng Ngọc Anh', 'Bùi Hữu Phước', 'Cao Minh Triết', 'Nguyễn Nhật Nam', 'Trần Thế Vinh',
+                'Huỳnh Ngọc Diệp', 'Đỗ Minh Khang', 'Lê Cát Tường', 'Nguyễn Bích Liên', 'Phạm Hùng Dũng'
             ];
+
+            $poolComments = [
+                'Mua key :brand ở đây kích hoạt nhanh thật sự, giao dịch tự động trong 5 phút. Tốc độ ổn định và load phim 4K vi vu.',
+                'Shop uy tín, hỗ trợ kích hoạt qua Zalo siêu nhiệt tình và nhanh chóng. Giá rẻ hơn nhiều so với mua trực tiếp trên trang chủ.',
+                'Sản phẩm hoạt động tốt, dùng mượt mà trên cả điện thoại và PC. Trừ 1 sao vì lúc thanh toán chờ quét mã hơi lâu chút nhưng vẫn ổn.',
+                'Đã mua gói 1 năm :brand, key hoạt động chuẩn. Chạy mượt mà, đổi IP nhanh chóng và giúp mình làm việc remote an toàn.',
+                'Dịch vụ tuyệt vời. Key bị lỗi nhỏ được shop đổi mới ngay lập tức trong 2 phút. Rất hài lòng với chế độ bảo hành chu đáo.',
+                'Được bạn giới thiệu mua ở đây. Giao diện web trực quan, thanh toán tiện lợi và chất lượng key :brand hoàn hảo không có gì để chê.',
+                'Đã test thử vài ngày thấy kết nối rất ổn định, không bị ngắt kết nối giữa chừng. Chơi game server nước ngoài ping giảm đáng kể.',
+                'Giá quá hời cho một tài khoản chính hãng chất lượng cao. Sẽ tiếp tục gia hạn khi hết hạn gói.',
+                'Web giao hàng cực kỳ nhanh, thanh toán xong là thấy thông tin đăng nhập liền. Cảm ơn shop rất nhiều!',
+                'Dùng để xem Netflix kho Mỹ mượt mà, không hề bị giật lag gì luôn. Đáng đồng tiền bát gạo!',
+                'Giao diện thân thiện, dễ cài đặt và kết nối cực kỳ nhanh. Rất khuyên dùng dịch vụ của bên shop này nha mọi người.',
+                'Support tận tình hết mức, 12h đêm vẫn online hướng dẫn mình setup trên router. Vote 5 sao nhiệt tình.',
+                'Tốc độ download không bị bóp băng thông nhiều, dùng làm việc và giải trí đều mượt. Rất đáng mua.',
+                'Tiết kiệm được một khoản tiền khá lớn so với mua trực tiếp. Dịch vụ chăm sóc khách hàng ở đây rất tốt.',
+                'Mua cho cả nhà dùng chung, mọi người đều khen kết nối ổn định và an tâm bảo mật hơn hẳn.',
+                'Đăng nhập phát ăn ngay, chuẩn tài khoản premium luôn. Giá rẻ mà chất lượng đỉnh thế này thì quá tốt rồi.',
+                'Đã mua lần thứ 3 ở shop và chưa bao giờ làm mình thất vọng. Chúc shop luôn buôn may bán đắt!',
+                'Khá ấn tượng với tốc độ phản hồi của admin, xử lý đơn hàng chuyên nghiệp và thân thiện.',
+                'Gói cước đa dạng phù hợp nhu cầu, mình dùng gói 6 tháng thấy rất vừa vặn và tiết kiệm.',
+                'Trải nghiệm tuyệt vời, không còn lo bị chặn các trang web nước ngoài nữa. Cực kỳ hài lòng.',
+                'Key kích hoạt cực kỳ nhanh, dùng cho máy tính và điện thoại cùng lúc đều ổn định, không lỗi lầm gì.',
+                'Shop bảo hành 1 đổi 1 làm mình thấy rất yên tâm khi mua sắm. Cảm ơn đội ngũ support!',
+                'Sử dụng để lướt web an toàn ở quán cafe công cộng quá chuẩn bài. Key chất lượng cao, giá lại sinh viên.',
+                'Quá nhanh quá nguy hiểm, vừa thanh toán xong là nhận được key liền. Sẽ giới thiệu cho bạn bè mua chung.',
+                'Mọi tính năng hoạt động hoàn hảo, tốc độ vượt trội hơn hẳn so với mấy bên VPN miễn phí.',
+                'Kết nối đến server Singapore hay Nhật Bản đều ping thấp, chơi game online cực thích luôn.',
+                'Đã giới thiệu cho đồng nghiệp cùng mua và ai cũng hài lòng. Dịch vụ hậu mãi rất đáng tin cậy.',
+                'Hệ thống thanh toán tự động rất chuyên nghiệp, giao dịch chỉ mất chưa đầy 3 phút là xong.',
+                'Tài khoản dùng ổn định suốt mấy tháng nay chưa phải bảo hành lần nào. Chất lượng tuyệt đối!',
+                'Đơn giản, dễ sử dụng, bảo mật tốt mà giá cả lại phải chăng. Rất hài lòng với dịch vụ :brand tại đây.'
+            ];
+
+            shuffle($poolNames);
+            shuffle($poolComments);
+
+            $countToDisplay = rand(6, 10);
+            
+            for ($i = 0; $i < $countToDisplay; $i++) {
+                $days = rand(1, 30);
+                $dateText = ($days == 1) ? 'Hôm qua' : "{$days} ngày trước";
+                if ($days > 7) {
+                    $weeks = floor($days / 7);
+                    $dateText = "{$weeks} tuần trước";
+                }
+                if ($days > 28) {
+                    $dateText = '1 tháng trước';
+                }
+
+                $rating = (rand(1, 100) <= 85) ? 5 : 4;
+                $commentText = str_replace(':brand', $brandName, $poolComments[$i]);
+
+                $realReviews[] = [
+                    'name' => $poolNames[$i],
+                    'star' => $rating,
+                    'date' => $dateText,
+                    'text' => $commentText
+                ];
+            }
         }
 
         return view('product-detail', compact('slug', 'dbProducts', 'realReviews', 'category'));
