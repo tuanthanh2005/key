@@ -107,7 +107,7 @@ $curReviews = intval($defaultPlan['reviews'] ?? 120);
       "@@type": "Product",
       "@@id": "{{ request()->url() }}#product",
       "name": "{{ $brand['name'] }} — VPN Bản Quyền Chính Hãng",
-      "image": "{{ !empty($defaultPlan['image_path']) ? asset($defaultPlan['image_path']) : asset('favicon.ico') }}",
+      "image": "{{ !empty($defaultPlan['image_path']) ? asset($defaultPlan['image_path']) : (!empty($settings['favicon_path']) ? asset($settings['favicon_path']) : asset('favicon.ico')) }}",
       "description": "{{ strip_tags($brand['desc']) }}",
       "brand": {
         "@@type": "Brand",

@@ -14,7 +14,7 @@
       "@@id": "{{ route('home') }}#organization",
       "name": "VPNStore",
       "url": "{{ route('home') }}",
-      "logo": "{{ asset('favicon.ico') }}",
+      "logo": "{{ !empty($settings['favicon_path']) ? asset($settings['favicon_path']) : asset('favicon.ico') }}",
       "sameAs": [
         "https://t.me/specademy"
       ],

@@ -78,7 +78,7 @@
         </div>
         @endif
 
-        <form action="{{ route('admin.settings.update') }}" method="POST" id="settingsForm">
+        <form action="{{ route('admin.settings.update') }}" method="POST" id="settingsForm" enctype="multipart/form-data">
             @csrf
             @method('POST')
 
@@ -246,6 +246,18 @@
                         <div class="setting-label">Footer Copyright</div>
                         <input type="text" name="footer_copyright" class="form-control mt-1" value="{{ $settings['footer_copyright'] ?? 'VPNStore. Tất cả quyền được bảo lưu.' }}">
                     </div>
+                    <div class="setting-row">
+                        <div class="setting-label">Favicon (Biểu tượng trang web)</div>
+                        <div class="d-flex align-items-center gap-3 mt-2">
+                            <div class="favicon-preview border p-2 rounded d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; background: var(--admin-hover);">
+                                <img src="{{ !empty($settings['favicon_path']) ? asset($settings['favicon_path']) : asset('favicon.ico') }}" alt="Favicon" style="max-width: 100%; max-height: 100%; object-fit: contain;" id="favicon-preview-img">
+                            </div>
+                            <div class="flex-grow-1">
+                                <input type="file" name="favicon" class="form-control" accept="image/x-icon,image/png,image/jpeg,image/gif,image/svg+xml,image/webp" id="favicon-input">
+                                <div class="setting-hint">Hỗ trợ các định dạng .ico, .png, .jpg, .jpeg, .gif, .svg, .webp. Dung lượng tối đa 2MB.</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -356,6 +368,22 @@ if (metaArea && metaCount) {
     const update = () => metaCount.textContent = metaArea.value.length + '/160';
     metaArea.addEventListener('input', update);
     update();
+}
+
+// Favicon live preview
+const faviconInput = document.getElementById('favicon-input');
+const faviconPreviewImg = document.getElementById('favicon-preview-img');
+if (faviconInput && faviconPreviewImg) {
+    faviconInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                faviconPreviewImg.src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+        }
+    });
 }
 </script>
 @endsection

@@ -8,6 +8,10 @@
     <meta name="robots" content="index, follow">
     <title>@yield('title', ($settings['store_name'] ?? 'VPNStore') . ' - Cửa Hàng VPN Chính Hãng')</title>
 
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="{{ !empty($settings['favicon_path']) ? asset($settings['favicon_path']) : asset('favicon.ico') }}" type="image/x-icon">
+    <link rel="icon" href="{{ !empty($settings['favicon_path']) ? asset($settings['favicon_path']) : asset('favicon.ico') }}" type="image/x-icon">
+
     <!-- Canonical Link -->
     <link rel="canonical" href="{{ request()->url() }}">
 
@@ -16,7 +20,7 @@
     <meta property="og:url" content="{{ request()->url() }}">
     <meta property="og:title" content="@yield('title', 'VPNStore - Cửa Hàng VPN Chính Hãng')">
     <meta property="og:description" content="@yield('meta_description', 'VPNStore - Chuyên cung cấp VPN chính hãng: HMA, Surfshark, NordVPN, ExpressVPN với giá tốt nhất. Bảo hành 30 ngày, hỗ trợ 24/7.')">
-    <meta property="og:image" content="@yield('og_image', asset('favicon.ico'))">
+    <meta property="og:image" content="@yield('og_image', !empty($settings['favicon_path']) ? asset($settings['favicon_path']) : asset('favicon.ico'))">
     <meta property="og:site_name" content="VPNStore">
 
     <!-- Twitter -->
@@ -24,7 +28,7 @@
     <meta name="twitter:url" content="{{ request()->url() }}">
     <meta name="twitter:title" content="@yield('title', 'VPNStore - Cửa Hàng VPN Chính Hãng')">
     <meta name="twitter:description" content="@yield('meta_description', 'VPNStore - Chuyên cung cấp VPN chính hãng: HMA, Surfshark, NordVPN, ExpressVPN với giá tốt nhất. Bảo hành 30 ngày, hỗ trợ 24/7.')">
-    <meta name="twitter:image" content="@yield('og_image', asset('favicon.ico'))">
+    <meta name="twitter:image" content="@yield('og_image', !empty($settings['favicon_path']) ? asset($settings['favicon_path']) : asset('favicon.ico'))">
 
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">

@@ -22,7 +22,7 @@ class SettingController extends Controller
      */
     public function update(Request $request)
     {
-        $data = $request->except(['_token', '_method']);
+        $data = $request->except(['_token', '_method', 'favicon']);
 
         // Validate một số field quan trọng
         $request->validate([
@@ -31,11 +31,34 @@ class SettingController extends Controller
             'dashboard_max_days'      => 'nullable|integer|min:1|max:365',
             'dashboard_orders_per_page' => 'nullable|integer|min:5|max:100',
             'contact_email'           => 'nullable|email',
+            'favicon'                 => 'nullable|image|mimes:ico,png,jpg,jpeg,gif,svg,webp|max:2048',
         ], [
             'auto_discount_rate.max'     => 'Tỷ lệ giảm giá tối đa 100%.',
             'dashboard_max_days.max'     => 'Không được vượt quá 365 ngày.',
             'contact_email.email'        => 'Email không hợp lệ.',
+            'favicon.image'              => 'Favicon phải là một hình ảnh.',
+            'favicon.mimes'              => 'Favicon phải thuộc định dạng: ico, png, jpg, jpeg, gif, svg, webp.',
+            'favicon.max'                => 'Dung lượng favicon tối đa 2MB.',
         ]);
+
+        // Xử lý upload favicon
+        if ($request->hasFile('favicon')) {
+            $file = $request->file('favicon');
+            $filename = 'favicon_' . time() . '.' . $file->getClientOriginalExtension();
+            
+            if (!file_exists(public_path('uploads/settings'))) {
+                mkdir(public_path('uploads/settings'), 0777, true);
+            }
+
+            // Xóa favicon cũ nếu có
+            $oldFavicon = Setting::get('favicon_path');
+            if ($oldFavicon && file_exists(public_path($oldFavicon))) {
+                @unlink(public_path($oldFavicon));
+            }
+
+            $file->move(public_path('uploads/settings'), $filename);
+            Setting::set('favicon_path', 'uploads/settings/' . $filename);
+        }
 
         foreach ($data as $key => $value) {
             Setting::set($key, $value);
