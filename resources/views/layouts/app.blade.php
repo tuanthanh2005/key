@@ -184,23 +184,55 @@
                     </a>
                     <ul class="dropdown-menu dropdown-menu-vpn">
                         <li><a class="dropdown-item" href="{{ route('products') }}"><i class="bi bi-shield-fill-check text-primary me-2"></i>Tất Cả VPN</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="{{ route('products', ['brand' => 'nordvpn']) }}">
-                            <span class="brand-dot nord me-2"></span>NordVPN</a></li>
-                        <li><a class="dropdown-item" href="{{ route('products', ['brand' => 'expressvpn']) }}">
-                            <span class="brand-dot express me-2"></span>ExpressVPN</a></li>
-                        <li><a class="dropdown-item" href="{{ route('products', ['brand' => 'surfshark']) }}">
-                            <span class="brand-dot surf me-2"></span>Surfshark</a></li>
-                        <li><a class="dropdown-item" href="{{ route('products', ['brand' => 'hma']) }}">
-                            <span class="brand-dot hma me-2"></span>HMA VPN</a></li>
-                        <li><a class="dropdown-item" href="{{ route('products', ['brand' => 'cyberghost']) }}">
-                            <span class="brand-dot cyber me-2"></span>CyberGhost</a></li>
-                        <li><a class="dropdown-item" href="{{ route('products', ['brand' => 'purevpn']) }}">
-                            <span class="brand-dot pure me-2"></span>PureVPN</a></li>
-                        <li><a class="dropdown-item" href="{{ route('products', ['brand' => 'ipvanish']) }}">
-                            <span class="brand-dot ipv me-2"></span>IPVanish</a></li>
-                        <li><a class="dropdown-item" href="{{ route('products', ['brand' => 'protonvpn']) }}">
-                            <span class="brand-dot proton me-2"></span>ProtonVPN</a></li>
+                        @if(isset($sharedCategories) && $sharedCategories->isNotEmpty())
+                            <li><hr class="dropdown-divider"></li>
+                            @foreach($sharedCategories as $cat)
+                                @php
+                                    $dotClass = match($cat->slug) {
+                                        'nordvpn' => 'nord',
+                                        'expressvpn' => 'express',
+                                        'surfshark' => 'surf',
+                                        'hma' => 'hma',
+                                        'cyberghost' => 'cyber',
+                                        'purevpn' => 'pure',
+                                        'ipvanish' => 'ipv',
+                                        'protonvpn' => 'proton',
+                                        default => ''
+                                    };
+                                    $dotColor = match($cat->slug) {
+                                        'nordvpn' => '#4687FF',
+                                        'expressvpn' => '#DA3940',
+                                        'surfshark' => '#10B981',
+                                        'hma' => '#F59E0B',
+                                        'cyberghost' => '#8B5CF6',
+                                        'purevpn' => '#EF4444',
+                                        'ipvanish' => '#0EA5E9',
+                                        'protonvpn' => '#6D28D9',
+                                        default => '#64748b'
+                                    };
+                                @endphp
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('products', ['brand' => $cat->slug]) }}">
+                                        @if($dotClass)
+                                            <span class="brand-dot {{ $dotClass }} me-2"></span>
+                                        @else
+                                            <span class="brand-dot me-2" style="background: {{ $dotColor }};"></span>
+                                        @endif
+                                        {{ $cat->name }}
+                                    </a>
+                                </li>
+                            @endforeach
+                        @else
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ route('products', ['brand' => 'nordvpn']) }}"><span class="brand-dot nord me-2"></span>NordVPN</a></li>
+                            <li><a class="dropdown-item" href="{{ route('products', ['brand' => 'expressvpn']) }}"><span class="brand-dot express me-2"></span>ExpressVPN</a></li>
+                            <li><a class="dropdown-item" href="{{ route('products', ['brand' => 'surfshark']) }}"><span class="brand-dot surf me-2"></span>Surfshark</a></li>
+                            <li><a class="dropdown-item" href="{{ route('products', ['brand' => 'hma']) }}"><span class="brand-dot hma me-2"></span>HMA VPN</a></li>
+                            <li><a class="dropdown-item" href="{{ route('products', ['brand' => 'cyberghost']) }}"><span class="brand-dot cyber me-2"></span>CyberGhost</a></li>
+                            <li><a class="dropdown-item" href="{{ route('products', ['brand' => 'purevpn']) }}"><span class="brand-dot pure me-2"></span>PureVPN</a></li>
+                            <li><a class="dropdown-item" href="{{ route('products', ['brand' => 'ipvanish']) }}"><span class="brand-dot ipv me-2"></span>IPVanish</a></li>
+                            <li><a class="dropdown-item" href="{{ route('products', ['brand' => 'protonvpn']) }}"><span class="brand-dot proton me-2"></span>ProtonVPN</a></li>
+                        @endif
                     </ul>
                 </li>
                 <li class="nav-item">

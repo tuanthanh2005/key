@@ -46,6 +46,19 @@ class AppServiceProvider extends ServiceProvider
             static $publicCoupons = null;
             static $checkedSettingsTable = null;
             static $checkedCouponsTable = null;
+            static $sharedCategories = null;
+            static $checkedCategoriesTable = null;
+
+            if ($checkedCategoriesTable === null) {
+                $checkedCategoriesTable = Schema::hasTable('categories');
+            }
+
+            if ($checkedCategoriesTable) {
+                if ($sharedCategories === null) {
+                    $sharedCategories = \App\Models\Category::all();
+                }
+                $view->with('sharedCategories', $sharedCategories);
+            }
 
             if ($checkedSettingsTable === null) {
                 $checkedSettingsTable = Schema::hasTable('settings');

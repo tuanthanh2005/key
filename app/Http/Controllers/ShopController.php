@@ -22,7 +22,7 @@ class ShopController extends Controller
      */
     public function products(Request $request)
     {
-        $allProducts = \App\Models\Product::where('status', 'active')->get()->toArray();
+        $allProducts = \App\Models\Product::with('category')->where('status', 'active')->get()->toArray();
         return view('products', compact('allProducts'));
     }
 

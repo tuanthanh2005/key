@@ -1,14 +1,24 @@
 @php
-$brandMap = [
-    'nordvpn' => ['name' => 'NordVPN Premium', 'seo_title' => 'Đăng Ký Tài Khoản NordVPN Premium Bản Quyền'],
-    'expressvpn' => ['name' => 'ExpressVPN', 'seo_title' => 'Mua Tài Khoản ExpressVPN Chính Hãng Giá Tốt'],
-    'surfshark' => ['name' => 'Surfshark VPN', 'seo_title' => 'Dịch Vụ Surfshark VPN Bản Quyền Giá Rẻ'],
-    'hma' => ['name' => 'Key HMA VPN', 'seo_title' => 'Mua Key HMA VPN Bản Quyền Kích Hoạt Nhanh'],
-    'cyberghost' => ['name' => 'CyberGhost VPN', 'seo_title' => 'Tài Khoản CyberGhost VPN Giá Rẻ Uy Tín'],
-    'purevpn' => ['name' => 'PureVPN', 'seo_title' => 'Mua Tài Khoản PureVPN Bản Quyền Giá Tốt'],
-    'ipvanish' => ['name' => 'IPVanish VPN', 'seo_title' => 'Đăng Ký IPVanish VPN Chính Hãng Giá Rẻ'],
-    'protonvpn' => ['name' => 'ProtonVPN', 'seo_title' => 'Mua Tài Khoản ProtonVPN Giá Rẻ Bảo Hành 1 Đổi 1'],
-];
+$brandMap = [];
+if (isset($sharedCategories) && $sharedCategories->isNotEmpty()) {
+    foreach ($sharedCategories as $cat) {
+        $brandMap[$cat->slug] = [
+            'name' => $cat->name,
+            'seo_title' => $cat->seo_title ?: ('Mua Tài Khoản ' . $cat->name . ' Bản Quyền Giá Rẻ')
+        ];
+    }
+} else {
+    $brandMap = [
+        'nordvpn' => ['name' => 'NordVPN Premium', 'seo_title' => 'Đăng Ký Tài Khoản NordVPN Premium Bản Quyền'],
+        'expressvpn' => ['name' => 'ExpressVPN', 'seo_title' => 'Mua Tài Khoản ExpressVPN Chính Hãng Giá Tốt'],
+        'surfshark' => ['name' => 'Surfshark VPN', 'seo_title' => 'Dịch Vụ Surfshark VPN Bản Quyền Giá Rẻ'],
+        'hma' => ['name' => 'Key HMA VPN', 'seo_title' => 'Mua Key HMA VPN Bản Quyền Kích Hoạt Nhanh'],
+        'cyberghost' => ['name' => 'CyberGhost VPN', 'seo_title' => 'Tài Khoản CyberGhost VPN Giá Rẻ Uy Tín'],
+        'purevpn' => ['name' => 'PureVPN', 'seo_title' => 'Mua Tài Khoản PureVPN Bản Quyền Giá Tốt'],
+        'ipvanish' => ['name' => 'IPVanish VPN', 'seo_title' => 'Đăng Ký IPVanish VPN Chính Hãng Giá Rẻ'],
+        'protonvpn' => ['name' => 'ProtonVPN', 'seo_title' => 'Mua Tài Khoản ProtonVPN Giá Rẻ Bảo Hành 1 Đổi 1'],
+    ];
+}
 
 $selectedBrandSlug = request('brand', '');
 $brandInfo = null;
@@ -125,16 +135,31 @@ if ($brandInfo) {
                 <div class="filter-section">
                     <div class="filter-section-title">Thương Hiệu</div>
                     @php
-                    $brands = [
-                        ['slug'=>'nordvpn','name'=>'NordVPN','count'=>6,'color'=>'#4687FF'],
-                        ['slug'=>'expressvpn','name'=>'ExpressVPN','count'=>4,'color'=>'#DA3940'],
-                        ['slug'=>'surfshark','name'=>'Surfshark','count'=>4,'color'=>'#10B981'],
-                        ['slug'=>'hma','name'=>'HMA VPN','count'=>3,'color'=>'#F59E0B'],
-                        ['slug'=>'cyberghost','name'=>'CyberGhost','count'=>3,'color'=>'#8B5CF6'],
-                        ['slug'=>'purevpn','name'=>'PureVPN','count'=>2,'color'=>'#EF4444'],
-                        ['slug'=>'ipvanish','name'=>'IPVanish','count'=>2,'color'=>'#0EA5E9'],
-                        ['slug'=>'protonvpn','name'=>'ProtonVPN','count'=>2,'color'=>'#6D28D9'],
-                    ];
+                    $brands = [];
+                    if (isset($sharedCategories) && $sharedCategories->isNotEmpty()) {
+                        foreach ($sharedCategories as $cat) {
+                            $count = collect($allProducts)->filter(function($p) use ($cat) {
+                                return ($p['category_id'] ?? null) == $cat->id || strtolower($p['slug']) == strtolower($cat->slug);
+                            })->count();
+                            $brands[] = [
+                                'slug' => $cat->slug,
+                                'name' => $cat->name,
+                                'count' => $count,
+                                'color' => ['nordvpn'=>'#4687FF','expressvpn'=>'#DA3940','surfshark'=>'#10B981','hma'=>'#F59E0B','cyberghost'=>'#8B5CF6','purevpn'=>'#EF4444','ipvanish'=>'#0EA5E9','protonvpn'=>'#6D28D9'][$cat->slug] ?? '#64748b'
+                            ];
+                        }
+                    } else {
+                        $brands = [
+                            ['slug'=>'nordvpn','name'=>'NordVPN','count'=>6,'color'=>'#4687FF'],
+                            ['slug'=>'expressvpn','name'=>'ExpressVPN','count'=>4,'color'=>'#DA3940'],
+                            ['slug'=>'surfshark','name'=>'Surfshark','count'=>4,'color'=>'#10B981'],
+                            ['slug'=>'hma','name'=>'HMA VPN','count'=>3,'color'=>'#F59E0B'],
+                            ['slug'=>'cyberghost','name'=>'CyberGhost','count'=>3,'color'=>'#8B5CF6'],
+                            ['slug'=>'purevpn','name'=>'PureVPN','count'=>2,'color'=>'#EF4444'],
+                            ['slug'=>'ipvanish','name'=>'IPVanish','count'=>2,'color'=>'#0EA5E9'],
+                            ['slug'=>'protonvpn','name'=>'ProtonVPN','count'=>2,'color'=>'#6D28D9'],
+                        ];
+                    }
                     $selectedBrand = request('brand','');
                     @endphp
                     @foreach($brands as $brand)
@@ -216,7 +241,7 @@ if ($brandInfo) {
                 // Filter by brand if set
                 $filterBrand = request('brand','');
                 if ($filterBrand) {
-                    $allProducts = array_filter($allProducts ?? [], fn($p) => $p['slug'] === $filterBrand);
+                    $allProducts = array_filter($allProducts ?? [], fn($p) => $p['slug'] === $filterBrand || ($p['category']['slug'] ?? '') === $filterBrand);
                 }
                 @endphp
 
@@ -226,7 +251,7 @@ if ($brandInfo) {
                     data-brand="{{ strtolower($prod['brand']) }}"
                     data-price="{{ $prod['price'] }}"
                     data-rating="{{ $prod['rating'] }}"
-                    data-slug="{{ $prod['slug'] }}"
+                    data-slug="{{ !empty($prod['category']) ? $prod['category']['slug'] : $prod['slug'] }}"
                     data-plan="{{ $prod['plan'] }}">
                     <div class="product-card">
                         <div class="product-card-badge">
