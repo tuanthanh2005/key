@@ -89,6 +89,10 @@
     <a href="{{ route('auth.login') }}" class="auth-link ms-1">Đăng Nhập</a>
 </div>
 
+@endsection
+
+@section('modals')
+
 <!-- Terms Modal -->
 <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
