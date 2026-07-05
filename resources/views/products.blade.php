@@ -235,7 +235,7 @@ if ($brandInfo) {
                         </div>
                         <a href="{{ route('product.detail', $prod['slug']) }}" class="product-card-img" style="text-decoration: none; display: flex; justify-content: center; align-items: center;">
                             @if(!empty($prod['image_path']))
-                                <img src="{{ asset($prod['image_path']) }}" alt="{{ $prod['name'] }}" style="max-height: 80px; max-width: 80%; object-fit: contain;">
+                                <img src="{{ asset($prod['image_path']) }}" alt="{{ $prod['name'] }}">
                             @else
                                 <div class="product-brand-logo" style="background:linear-gradient(135deg,{{ $prod['color'] }},{{ $prod['color'] }}99)">
                                     <i class="bi bi-shield-lock-fill"></i>
