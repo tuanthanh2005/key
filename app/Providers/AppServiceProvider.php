@@ -16,17 +16,18 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $publicPath = base_path('public');
-        if (isset($_SERVER['DOCUMENT_ROOT']) && is_dir($_SERVER['DOCUMENT_ROOT'])) {
-            $publicPath = $_SERVER['DOCUMENT_ROOT'];
-        } else {
-            $publicHtmlPath = base_path('../public_html');
-            if (is_dir($publicHtmlPath)) {
-                $publicPath = $publicHtmlPath;
-            } else {
-                $normalizedPath = realpath(base_path() . '/../public_html');
-                if ($normalizedPath && is_dir($normalizedPath)) {
-                    $publicPath = $normalizedPath;
-                }
+        
+        if (isset($_SERVER['SCRIPT_FILENAME'])) {
+            $scriptDir = dirname($_SERVER['SCRIPT_FILENAME']);
+            if (basename($scriptDir) === 'public_html') {
+                $publicPath = $scriptDir;
+            }
+        }
+        
+        if (basename($publicPath) !== 'public_html') {
+            $siblingPublicHtml = base_path('../public_html');
+            if (@file_exists($siblingPublicHtml) && @is_dir($siblingPublicHtml)) {
+                $publicPath = $siblingPublicHtml;
             }
         }
 
