@@ -68,6 +68,38 @@ class OrderController extends Controller
         return back()->with('success', 'Cập nhật đơn hàng #' . $order->order_code . ' thành công!');
     }
 
+    public function sendEmail(Request $request, Order $order)
+    {
+        $request->validate([
+            'subject'     => 'required|string',
+            'body'        => 'required|string',
+            'license_key' => 'nullable|string',
+        ]);
+
+        $order->update([
+            'license_key'    => $request->license_key,
+            'order_status'   => 'completed',
+            'payment_status' => 'paid',
+        ]);
+
+        try {
+            \Illuminate\Support\Facades\Mail::raw($request->body, function ($message) use ($order, $request) {
+                $message->to($order->customer_email)
+                        ->subject($request->subject);
+            });
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã gửi email key và cập nhật trạng thái đơn hàng thành công!'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gửi email thất bại: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function destroy(Order $order)
     {
         $order->delete();

@@ -104,6 +104,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::get('/', [OrderController::class, 'index'])->name('index');
         Route::get('/{order}', [OrderController::class, 'show'])->name('show');
         Route::put('/{order}/trang-thai', [OrderController::class, 'updateStatus'])->name('status');
+        Route::post('/{order}/gui-email', [OrderController::class, 'sendEmail'])->name('send-email');
         Route::delete('/{order}', [OrderController::class, 'destroy'])->name('destroy');
     });
 

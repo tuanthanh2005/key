@@ -217,7 +217,7 @@
 </div>
 
 {{-- =========================================================================
-     MODAL: NHẬP KEY → PREVIEW TEMPLATE → MỞ GMAIL GỬI NGAY
+     MODAL: NHẬP KEY → PREVIEW TEMPLATE → GỬI QUA SMTP TRỰC TIẾP
      ========================================================================= --}}
 <div class="modal fade" id="sendKeyModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered" style="max-width:680px">
@@ -230,7 +230,7 @@
                         <i class="bi bi-envelope-paper-fill me-2"></i>Gửi Key VPN Cho Khách
                     </h5>
                     <div style="color:rgba(255,255,255,.75);font-size:12.5px">
-                        Nhập key → Preview email template → Mở Gmail gửi ngay
+                        Nhập key → Tùy chỉnh tiêu đề & nội dung email → Gửi qua SMTP
                     </div>
                 </div>
                 <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="modal"></button>
@@ -290,22 +290,23 @@
                 {{-- Divider --}}
                 <div class="d-flex align-items-center gap-3 my-3">
                     <div style="flex:1;height:1px;background:#e5e7eb"></div>
-                    <span style="font-size:11.5px;color:#9ca3af;font-weight:600">PREVIEW EMAIL</span>
+                    <span style="font-size:11.5px;color:#9ca3af;font-weight:600">NỘI DUNG EMAIL GỬI KHÁCH HÀNG</span>
                     <div style="flex:1;height:1px;background:#e5e7eb"></div>
                 </div>
 
-                {{-- Preview Email --}}
+                {{-- Tiêu đề Email --}}
+                <div class="mb-3">
+                    <label class="form-label fw-700 mb-2" style="font-size:13px">Tiêu đề Email</label>
+                    <input type="text" id="emailSubject" class="form-control" 
+                           style="border-radius:10px;font-size:13px;border:2px solid #e5e7eb;font-weight:600;padding:8px 12px"
+                           placeholder="Tiêu đề email...">
+                </div>
+
+                {{-- Nội dung Email (Có thể chỉnh sửa) --}}
                 <div>
-                    <div class="d-flex align-items-center mb-2 gap-2">
-                        <i class="bi bi-eye text-primary" style="font-size:14px"></i>
-                        <span class="fw-700" style="font-size:12.5px">Nội dung email sẽ được gửi</span>
-                        <span class="badge rounded-pill ms-auto" style="background:#f0fdf4;color:#16a34a;font-size:10.5px;border:1px solid #bbf7d0">
-                            <i class="bi bi-arrow-repeat me-1"></i>Tự động cập nhật
-                        </span>
-                    </div>
-                    <div id="emailPreviewBox"
-                         style="background:#fafafa;border:1.5px dashed #d1d5db;border-radius:12px;padding:16px;font-size:12.5px;line-height:1.75;max-height:240px;overflow-y:auto;font-family:'Courier New',monospace;white-space:pre-wrap;color:#374151">
-                    </div>
+                    <label class="form-label fw-700 mb-2" style="font-size:13px">Nội dung Thư (Có thể chỉnh sửa)</label>
+                    <textarea id="emailBody" class="form-control" rows="10"
+                              style="border-radius:12px;font-family:'Courier New',monospace;font-size:12.5px;line-height:1.6;border:2px solid #e5e7eb;padding:12px;transition:border-color .2s"></textarea>
                 </div>
             </div>
 
@@ -316,7 +317,7 @@
                 </button>
                 <button type="button" class="btn rounded-pill px-5 fw-700" id="sendEmailBtn" onclick="sendEmailNow()"
                     style="background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;border:none;font-size:14px;letter-spacing:.3px">
-                    <i class="bi bi-send-fill me-2"></i>Mở Gmail & Gửi Ngay
+                    <i class="bi bi-send-fill me-2"></i>Gửi Email Ngay
                 </button>
             </div>
         </div>
@@ -327,8 +328,7 @@
 
 @section('extra_css')
 <style>
-#keyInput:focus { border-color: #2563eb !important; box-shadow: 0 0 0 3px rgba(37,99,235,.15); }
-#emailPreviewBox { transition: all .2s; }
+#keyInput:focus, #emailSubject:focus, #emailBody:focus { border-color: #2563eb !important; box-shadow: 0 0 0 3px rgba(37,99,235,.15); }
 </style>
 @endsection
 
@@ -336,6 +336,7 @@
 <script>
 // ─── Dữ liệu đơn hàng (server → JS) ─────────────────────────────────────────
 const ORDER = {
+    id:          @json($order->id),
     code:        @json($order->order_code),
     customer:    @json($order->customer_name),
     email:       @json($order->customer_email),
@@ -403,28 +404,21 @@ function buildSubject() {
 // ─── Cập nhật preview ────────────────────────────────────────────────────────
 function updateEmailPreview() {
     const keyVal  = document.getElementById('keyInput').value;
-    const box     = document.getElementById('emailPreviewBox');
-    const content = buildEmailTemplate(keyVal);
-
-    // Highlight key section
-    box.innerHTML = escapeHtml(content)
-        .replace(/(━+)/g, '<span style="color:#d1d5db">$1</span>')
-        .replace(/(🔑 KEY \/ TÀI KHOẢN VPN CỦA BẠN)/g, '<strong style="color:#2563eb;font-family:inherit">$1</strong>')
-        .replace(/(📦 THÔNG TIN ĐƠN HÀNG)/g, '<strong style="font-family:inherit">$1</strong>')
-        .replace(/(#[A-Z0-9]+)/g, '<strong style="color:#7c3aed">$1</strong>')
-        .replace(/\n/g, '<br>');
+    document.getElementById('emailSubject').value = buildSubject();
+    document.getElementById('emailBody').value = buildEmailTemplate(keyVal);
 }
 
-function escapeHtml(text) {
-    return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-// ─── Gửi email: mở Gmail compose với template đầy đủ ─────────────────────────
+// ─── Gửi email trực tiếp qua AJAX ───────────────────────────────────────────
 function sendEmailNow() {
     const keyInput = document.getElementById('keyInput');
-    const key      = keyInput.value.trim();
+    const subjectInput = document.getElementById('emailSubject');
+    const bodyInput = document.getElementById('emailBody');
 
-    // Validate
+    const key = keyInput.value.trim();
+    const subject = subjectInput.value.trim();
+    const body = bodyInput.value.trim();
+
+    // Validate key
     if (!key) {
         keyInput.style.borderColor = '#ef4444';
         keyInput.focus();
@@ -436,29 +430,64 @@ function sendEmailNow() {
     }
     keyInput.style.borderColor = '';
 
-    const subject = encodeURIComponent(buildSubject());
-    const body    = encodeURIComponent(buildEmailTemplate(key));
-    const to      = encodeURIComponent(ORDER.email);
+    if (!subject) {
+        subjectInput.style.borderColor = '#ef4444';
+        subjectInput.focus();
+        return;
+    }
+    subjectInput.style.borderColor = '';
 
-    // Mở Gmail compose
-    const gmailUrl = `https://mail.google.com/mail/?view=cm&to=${to}&su=${subject}&body=${body}`;
-    window.open(gmailUrl, '_blank', 'noopener');
+    if (!body) {
+        bodyInput.style.borderColor = '#ef4444';
+        bodyInput.focus();
+        return;
+    }
+    bodyInput.style.borderColor = '';
 
-    // UX feedback
     const btn = document.getElementById('sendEmailBtn');
-    btn.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i>Đang mở Gmail...';
-    btn.style.background = 'linear-gradient(135deg,#16a34a,#15803d)';
+    const originalHtml = btn.innerHTML;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Đang gửi...';
     btn.disabled = true;
 
-    setTimeout(() => {
-        btn.innerHTML = '<i class="bi bi-send-fill me-2"></i>Mở Gmail & Gửi Ngay';
-        btn.style.background = 'linear-gradient(135deg,#2563eb,#7c3aed)';
+    // Gửi email qua AJAX POST lên Laravel
+    fetch(`/admin/don-hang/${ORDER.id}/gui-email`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({
+            license_key: key,
+            subject: subject,
+            body: body
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => { throw new Error(err.message || 'Lỗi gửi email.'); });
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            btn.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i>Đã gửi thành công!';
+            btn.style.background = 'linear-gradient(135deg,#16a34a,#15803d)';
+            setTimeout(() => {
+                location.reload();
+            }, 1200);
+        } else {
+            throw new Error(data.message || 'Có lỗi xảy ra.');
+        }
+    })
+    .catch(error => {
+        alert(error.message);
+        btn.innerHTML = originalHtml;
         btn.disabled = false;
-        bootstrap.Modal.getInstance(document.getElementById('sendKeyModal')).hide();
-    }, 2000);
+    });
 }
 
 // ─── Tiện ích ─────────────────────────────────────────────────────────────────
+/* Escaped HTML logic removed since we now edit in standard inputs */
 function clearKey() {
     document.getElementById('keyInput').value = '';
     updateEmailPreview();
