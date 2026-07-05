@@ -15,6 +15,14 @@ $brandData = [
 $brand = $brandData[$slug] ?? $brandData['nordvpn'];
 
 $plans = [];
+$hasPopular = false;
+foreach ($dbProducts ?? [] as $dbProd) {
+    if ($dbProd->is_popular) {
+        $hasPopular = true;
+        break;
+    }
+}
+
 foreach ($dbProducts ?? [] as $dbProd) {
     $planKey = $dbProd->plan;
     $label = \App\Models\Product::formatPlanDuration($planKey);
@@ -30,7 +38,7 @@ foreach ($dbProducts ?? [] as $dbProd) {
         'price' => $dbProd->price,
         'old' => $dbProd->old_price ?: ($dbProd->price * 1.5),
         'save' => $save,
-        'popular' => ($planKey === '1year'),
+        'popular' => $hasPopular ? (bool) $dbProd->is_popular : ($planKey === '1year'),
         'image_path' => $dbProd->image_path,
         'color' => $dbProd->color,
         'servers' => $dbProd->servers ?: ($brand['servers'] ?? ''),

@@ -55,10 +55,16 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-600 text-dark">Trạng Thái Kinh Doanh</label>
-                            <select name="status" class="form-select" style="border-radius: 10px;">
-                                <option value="active">Đang Bán (Active)</option>
-                                <option value="inactive">Tạm Ẩn (Inactive)</option>
-                            </select>
+                            <div class="d-flex align-items-center gap-4">
+                                <select name="status" class="form-select" style="border-radius: 10px; width: 220px;">
+                                    <option value="active">Đang Bán (Active)</option>
+                                    <option value="inactive">Tạm Ẩn (Inactive)</option>
+                                </select>
+                                <div class="form-check form-switch mb-0">
+                                    <input class="form-check-input" type="checkbox" id="popularToggle" name="is_popular" value="1">
+                                    <label class="form-check-label fw-700 text-warning" for="popularToggle" style="font-size:13px"><i class="bi bi-star-fill text-warning me-1"></i>Gói Phổ Biến</label>
+                                </div>
+                            </div>
                         </div>
                         <div class="col-md-12">
                             <label class="form-label fw-600 text-dark">Tính Năng Nổi Bật <small class="text-muted">(Phân cách bằng dấu phẩy)</small></label>

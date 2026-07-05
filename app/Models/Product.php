@@ -34,6 +34,7 @@ class Product extends Model
         'founded',
         'refund',
         'description',
+        'is_popular',
     ];
 
     protected $casts = [
@@ -44,6 +45,7 @@ class Product extends Model
         'reviews' => 'integer',
         'stock' => 'integer',
         'sold' => 'integer',
+        'is_popular' => 'boolean',
     ];
 
     /**

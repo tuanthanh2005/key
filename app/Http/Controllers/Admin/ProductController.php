@@ -118,6 +118,7 @@ class ProductController extends Controller
             'founded' => $request->founded,
             'refund' => $request->refund,
             'description' => $request->description,
+            'is_popular' => $request->has('is_popular') ? 1 : 0,
         ]);
 
         return redirect()->route('admin.products.index')->with('success', 'Thêm gói VPN mới thành công!');
@@ -215,6 +216,7 @@ class ProductController extends Controller
             'founded' => $request->founded,
             'refund' => $request->refund,
             'description' => $request->description,
+            'is_popular' => $request->has('is_popular') ? 1 : 0,
         ]);
 
         return redirect()->route('admin.products.index')->with('success', 'Cập nhật gói VPN thành công!');
