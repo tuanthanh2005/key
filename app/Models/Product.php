@@ -125,4 +125,42 @@ class Product extends Model
         ];
         return $mappings[$planKey] ?? $planKey;
     }
+
+    /**
+     * Get deterministic pseudo-random reviews count if not set in DB
+     */
+    public function getReviewsAttribute($value)
+    {
+        if (!empty($value)) {
+            return (int) $value;
+        }
+
+        $reviewPool = [
+            87, 104, 118, 126, 95, 142, 115, 131, 99, 150, 
+            89, 112, 137, 108, 121, 145, 93, 119, 134, 128, 
+            102, 114, 91, 140, 123, 106, 139, 97, 125, 148
+        ];
+
+        $id = $this->id ?: 1;
+        return $reviewPool[$id % 30] ?? 120;
+    }
+
+    /**
+     * Get deterministic pseudo-random rating if not set in DB
+     */
+    public function getRatingAttribute($value)
+    {
+        if (!empty($value)) {
+            return (float) $value;
+        }
+
+        $ratingPool = [
+            4.8, 4.9, 4.7, 4.8, 4.9, 4.8, 4.7, 4.8, 4.9, 4.8,
+            4.9, 4.7, 4.8, 4.9, 4.8, 4.7, 4.8, 4.9, 4.8, 4.9,
+            4.7, 4.8, 4.9, 4.8, 4.7, 4.8, 4.9, 4.8, 4.9, 4.8
+        ];
+
+        $id = $this->id ?: 1;
+        return $ratingPool[$id % 30] ?? 4.8;
+    }
 }
