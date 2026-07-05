@@ -294,10 +294,10 @@ $faqs = [
                 return in_array($p['plan'], ['1year', '2year']);
             });
             if (empty($hotProducts)) {
-                $hotProducts = array_slice($allProducts ?? [], 0, 6);
-            } else {
-                $hotProducts = array_slice($hotProducts, 0, 6);
+                $hotProducts = $allProducts ?? [];
             }
+            shuffle($hotProducts);
+            $hotProducts = array_slice($hotProducts, 0, 6);
             @endphp
 
             @foreach($hotProducts as $prod)
