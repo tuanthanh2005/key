@@ -479,30 +479,37 @@ $curReviews = intval($defaultPlan['reviews'] ?? 120);
 
             <!-- Reviews Tab -->
             <div class="tab-pane fade" id="tab-reviews">
-                <div class="row g-3" id="reviewsListGrid">
-                    @foreach($realReviews as $rv)
-                    <div class="col-md-6 review-card-wrap">
-                        <div class="testimonial-card">
-                            <div class="d-flex align-items-center gap-2 mb-2">
-                                <div class="testimonial-avatar" style="background:linear-gradient(135deg,{{ $brand['color'] }},{{ $brand['color'] }}88)">
-                                    {{ strtoupper(mb_substr($rv['name'], 0, 1)) }}
+                @if(count($realReviews) > 0)
+                    <div class="row g-3" id="reviewsListGrid">
+                        @foreach($realReviews as $rv)
+                        <div class="col-md-6 review-card-wrap">
+                            <div class="testimonial-card">
+                                <div class="d-flex align-items-center gap-2 mb-2">
+                                    <div class="testimonial-avatar" style="background:linear-gradient(135deg,{{ $brand['color'] }},{{ $brand['color'] }}88)">
+                                        {{ strtoupper(mb_substr($rv['name'], 0, 1)) }}
+                                    </div>
+                                    <div>
+                                        <div class="testimonial-name">{{ $rv['name'] }}</div>
+                                        <div class="testimonial-tag">{{ $rv['date'] }}</div>
+                                    </div>
+                                    <div class="ms-auto rating-stars">
+                                        @for($s=1;$s<=$rv['star'];$s++)<i class="bi bi-star-fill" style="font-size:11.5px;color:#ffb300"></i>@endfor
+                                        @for($s=$rv['star']+1;$s<=5;$s++)<i class="bi bi-star" style="font-size:11.5px;color:#ccc"></i>@endfor
+                                    </div>
                                 </div>
-                                <div>
-                                    <div class="testimonial-name">{{ $rv['name'] }}</div>
-                                    <div class="testimonial-tag">{{ $rv['date'] }}</div>
-                                </div>
-                                <div class="ms-auto rating-stars">
-                                    @for($s=1;$s<=$rv['star'];$s++)<i class="bi bi-star-fill" style="font-size:11.5px;color:#ffb300"></i>@endfor
-                                    @for($s=$rv['star']+1;$s<=5;$s++)<i class="bi bi-star" style="font-size:11.5px;color:#ccc"></i>@endfor
-                                </div>
+                                <p class="testimonial-text mb-0">{{ $rv['text'] }}</p>
                             </div>
-                            <p class="testimonial-text mb-0">{{ $rv['text'] }}</p>
                         </div>
+                        @endforeach
                     </div>
-                    @endforeach
-                </div>
-                <!-- Pagination for Reviews -->
-                <div class="d-flex justify-content-center mt-4" id="reviewsPaginationContainer"></div>
+                    <!-- Pagination for Reviews -->
+                    <div class="d-flex justify-content-center mt-4" id="reviewsPaginationContainer"></div>
+                @else
+                    <div class="text-center py-5 text-muted">
+                        <i class="bi bi-chat-left-text display-6 mb-2 d-block text-gray-300"></i>
+                        Chưa có đánh giá nào cho sản phẩm này.
+                    </div>
+                @endif
             </div>
         </div>
     </div>
