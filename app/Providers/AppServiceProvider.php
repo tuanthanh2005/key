@@ -60,7 +60,7 @@ class AppServiceProvider extends ServiceProvider
 
                 static $userCoupons = null;
                 if ($userCoupons === null) {
-                    $userCoupons = auth()->check()
+                    $userCoupons = (auth()->check() && Schema::hasColumn('coupons', 'user_id'))
                         ? Coupon::valid()->where('user_id', auth()->id())->get()
                         : collect();
                 }

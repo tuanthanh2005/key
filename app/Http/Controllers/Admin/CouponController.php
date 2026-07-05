@@ -90,13 +90,14 @@ class CouponController extends Controller
         $code    = strtoupper($request->code ?? '');
         $subtotal = floatval($request->subtotal ?? 0);
 
-        $coupon = Coupon::valid()
-            ->where('code', $code)
-            ->where(function ($q) {
+        $coupon = Coupon::valid()->where('code', $code);
+        if (\Illuminate\Support\Facades\Schema::hasColumn('coupons', 'user_id')) {
+            $coupon->where(function ($q) {
                 $q->whereNull('user_id')
                   ->orWhere('user_id', auth()->id());
-            })
-            ->first();
+            });
+        }
+        $coupon = $coupon->first();
 
         if (!$coupon) {
             return response()->json(['valid' => false, 'message' => 'Mã giảm giá không hợp lệ hoặc đã hết hạn.']);

@@ -75,7 +75,10 @@ class UserController extends Controller
                   ->orWhere('customer_email', $user->email);
         })->latest()->get();
 
-        $coupons = \App\Models\Coupon::where('user_id', $user->id)->latest()->get();
+        $coupons = collect();
+        if (\Illuminate\Support\Facades\Schema::hasColumn('coupons', 'user_id')) {
+            $coupons = \App\Models\Coupon::where('user_id', $user->id)->latest()->get();
+        }
 
         return view('admin.users.show', compact('user', 'orders', 'coupons'));
     }

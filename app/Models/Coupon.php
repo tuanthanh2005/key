@@ -76,13 +76,17 @@ class Coupon extends Model
     public static function getValidForJs(?int $userId = null): array
     {
         $query = self::valid();
-        if ($userId !== null) {
-            $query->where(function ($q) use ($userId) {
-                $q->whereNull('user_id')
-                  ->orWhere('user_id', $userId);
-            });
-        } else {
-            $query->whereNull('user_id');
+        $hasUserId = \Illuminate\Support\Facades\Schema::hasColumn('coupons', 'user_id');
+
+        if ($hasUserId) {
+            if ($userId !== null) {
+                $query->where(function ($q) use ($userId) {
+                    $q->whereNull('user_id')
+                      ->orWhere('user_id', $userId);
+                });
+            } else {
+                $query->whereNull('user_id');
+            }
         }
 
         return $query->get()->mapWithKeys(function ($coupon) {

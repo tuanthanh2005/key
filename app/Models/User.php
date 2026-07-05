@@ -65,7 +65,7 @@ class User extends Authenticatable
     protected static function booted()
     {
         static::created(function ($user) {
-            if ($user->role === 'user') {
+            if ($user->role === 'user' && \Illuminate\Support\Facades\Schema::hasColumn('coupons', 'user_id')) {
                 $couponCode = 'NEW' . $user->id . strtoupper(\Illuminate\Support\Str::random(3));
                 \App\Models\Coupon::create([
                     'code'           => $couponCode,
