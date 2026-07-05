@@ -10,6 +10,7 @@ class Product extends Model
     use HasFactory;
 
     protected $fillable = [
+        'category_id',
         'name',
         'brand',
         'slug',
@@ -44,4 +45,82 @@ class Product extends Model
         'stock' => 'integer',
         'sold' => 'integer',
     ];
+
+    /**
+     * Sản phẩm thuộc về một danh mục
+     */
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    /**
+     * Định dạng nhãn thời gian gói vpn (Ví dụ: 1month -> 1 Tháng, 7day -> 7 Ngày, 2year -> 2 Năm)
+     */
+    public static function formatPlanDuration($planKey): string
+    {
+        if (empty($planKey)) {
+            return '';
+        }
+
+        if (preg_match('/^(\d+)\s*(day|month|year|d|m|y|week|w)s?$/i', trim($planKey), $matches)) {
+            $num = $matches[1];
+            $unit = strtolower($matches[2]);
+            $unitLabel = match($unit) {
+                'day', 'd' => 'Ngày',
+                'week', 'w' => 'Tuần',
+                'month', 'm' => 'Tháng',
+                'year', 'y' => 'Năm',
+                default => $unit
+            };
+            return "{$num} {$unitLabel}";
+        }
+        
+        $mappings = [
+            '1month' => '1 Tháng',
+            '6month' => '6 Tháng',
+            '1year' => '1 Năm',
+            '2year' => '2 Năm',
+            '3year' => '3 Năm',
+        ];
+        return $mappings[$planKey] ?? $planKey;
+    }
+
+    /**
+     * Định dạng đơn vị thời gian cho phần giá tiền (Ví dụ: 1month -> tháng, 2year -> 2 năm, 7day -> 7 ngày)
+     */
+    public static function formatPlanUnit($planKey): string
+    {
+        if (empty($planKey)) {
+            return '';
+        }
+
+        if (preg_match('/^(\d+)\s*(day|month|year|d|m|y|week|w)s?$/i', trim($planKey), $matches)) {
+            $num = $matches[1];
+            $unit = strtolower($matches[2]);
+            $unitLabel = match($unit) {
+                'day', 'd' => 'ngày',
+                'week', 'w' => 'tuần',
+                'month', 'm' => 'tháng',
+                'year', 'y' => 'năm',
+                default => $unit
+            };
+            if ($num == 1 && $unitLabel === 'năm') {
+                return 'năm';
+            }
+            if ($num == 1 && $unitLabel === 'tháng') {
+                return 'tháng';
+            }
+            return "{$num} {$unitLabel}";
+        }
+        
+        $mappings = [
+            '1month' => 'tháng',
+            '6month' => '6 tháng',
+            '1year' => 'năm',
+            '2year' => '2 năm',
+            '3year' => '3 năm',
+        ];
+        return $mappings[$planKey] ?? $planKey;
+    }
 }

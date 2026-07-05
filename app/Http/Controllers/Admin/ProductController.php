@@ -37,12 +37,14 @@ class ProductController extends Controller
 
     public function create()
     {
-        return view('admin.products.create');
+        $categories = \App\Models\Category::all();
+        return view('admin.products.create', compact('categories'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
+            'category_id' => 'nullable|exists:categories,id',
             'name' => 'required|string|max:255',
             'brand' => 'required|string|max:255',
             'plan' => 'required|string|max:50',
@@ -90,6 +92,7 @@ class ProductController extends Controller
         }
 
         Product::create([
+            'category_id' => $request->category_id,
             'name' => $request->name,
             'brand' => $request->brand,
             'slug' => $slug,
@@ -121,7 +124,8 @@ class ProductController extends Controller
     public function edit($id)
     {
         $product = Product::findOrFail($id);
-        return view('admin.products.edit', compact('product'));
+        $categories = \App\Models\Category::all();
+        return view('admin.products.edit', compact('product', 'categories'));
     }
 
     public function update(Request $request, $id)
@@ -129,6 +133,7 @@ class ProductController extends Controller
         $product = Product::findOrFail($id);
 
         $request->validate([
+            'category_id' => 'nullable|exists:categories,id',
             'name' => 'required|string|max:255',
             'brand' => 'required|string|max:255',
             'plan' => 'required|string|max:50',
@@ -183,6 +188,7 @@ class ProductController extends Controller
         }
 
         $product->update([
+            'category_id' => $request->category_id,
             'name' => $request->name,
             'brand' => $request->brand,
             'slug' => $slug,

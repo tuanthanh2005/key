@@ -74,6 +74,10 @@
             <i class="bi bi-shield-fill-check"></i>
             <span>Sản Phẩm VPN</span>
         </a>
+        <a href="{{ route('admin.categories.index') }}" class="sidebar-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
+            <i class="bi bi-folder-fill"></i>
+            <span>Danh Mục</span>
+        </a>
         <a href="{{ route('admin.users.index') }}" class="sidebar-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
             <i class="bi bi-people-fill"></i>
             <span>Người Dùng</span>

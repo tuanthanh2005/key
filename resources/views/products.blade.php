@@ -269,7 +269,7 @@ if ($brandInfo) {
                                 <div class="product-price-old">{{ number_format($prod['old_price']) }}đ</div>
                                 <div class="d-flex align-items-baseline gap-1">
                                     <div class="product-price">{{ number_format($prod['price']) }}đ</div>
-                                    <span class="product-price-unit">/{{ ['1month'=>'tháng','6month'=>'6 tháng','1year'=>'năm','2year'=>'2 năm','3year'=>'3 năm'][$prod['plan']] ?? $prod['plan'] }}</span>
+                                    <span class="product-price-unit">/{{ \App\Models\Product::formatPlanUnit($prod['plan']) }}</span>
                                 </div>
                             </div>
                             <div class="product-actions">

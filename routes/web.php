@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\IndexingController;
+use App\Http\Controllers\Admin\CategoryController;
    
 /*
 |--------------------------------------------------------------------------
@@ -118,6 +119,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::put('/{id}', [ProductController::class, 'update'])->name('update');
         Route::delete('/{id}', [ProductController::class, 'destroy'])->name('destroy');
     });
+
+    // Quản lý danh mục
+    Route::resource('categories', CategoryController::class)->except(['create', 'show', 'edit']);
 
     // Quản lý người dùng
     Route::prefix('nguoi-dung')->name('users.')->group(function () {

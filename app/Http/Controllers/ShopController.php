@@ -31,9 +31,16 @@ class ShopController extends Controller
      */
     public function productDetail($slug)
     {
-        $dbProducts = \App\Models\Product::where('status', 'active')
-            ->where('slug', $slug)
-            ->get();
+        $category = \App\Models\Category::where('slug', $slug)->first();
+        if ($category) {
+            $dbProducts = \App\Models\Product::where('status', 'active')
+                ->where('category_id', $category->id)
+                ->get();
+        } else {
+            $dbProducts = \App\Models\Product::where('status', 'active')
+                ->where('slug', $slug)
+                ->get();
+        }
 
         if ($dbProducts->isEmpty()) {
             abort(404, 'Sản phẩm không tồn tại');
@@ -71,7 +78,7 @@ class ShopController extends Controller
             ];
         }
 
-        return view('product-detail', compact('slug', 'dbProducts', 'realReviews'));
+        return view('product-detail', compact('slug', 'dbProducts', 'realReviews', 'category'));
     }
 
     /**

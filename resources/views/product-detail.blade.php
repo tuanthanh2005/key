@@ -17,14 +17,7 @@ $brand = $brandData[$slug] ?? $brandData['nordvpn'];
 $plans = [];
 foreach ($dbProducts ?? [] as $dbProd) {
     $planKey = $dbProd->plan;
-    $label = match($planKey) {
-        '1month' => '1 Tháng',
-        '6month' => '6 Tháng',
-        '1year' => '1 Năm',
-        '2year' => '2 Năm',
-        '3year' => '3 Năm',
-        default => $planKey
-    };
+    $label = \App\Models\Product::formatPlanDuration($planKey);
     $save = null;
     if ($dbProd->old_price && $dbProd->old_price > $dbProd->price) {
         $pct = round((1 - ($dbProd->price / $dbProd->old_price)) * 100);
@@ -70,8 +63,8 @@ $curReviews = intval($defaultPlan['reviews'] ?? 120);
 
 @extends('layouts.app')
 
-@section('title', 'Tài Khoản ' . $brand['name'] . ' Bản Quyền Chính Hãng — ' . ($settings['store_name'] ?? 'VPNStore'))
-@section('meta_description', 'Mua tài khoản / key ' . $brand['name'] . ' bản quyền chính hãng tại ' . ($settings['store_name'] ?? 'VPNStore') . ' với giá tốt nhất thị trường. Giao key tự động nhanh chóng, hỗ trợ kích hoạt miễn phí và bảo hành uy tín 1 đổi 1.')
+@section('title', isset($category) && !empty($category->seo_title) ? $category->seo_title : ('Tài Khoản ' . $brand['name'] . ' Bản Quyền Chính Hãng — ' . ($settings['store_name'] ?? 'VPNStore')))
+@section('meta_description', isset($category) && !empty($category->seo_description) ? $category->seo_description : ('Mua tài khoản / key ' . $brand['name'] . ' bản quyền chính hãng tại ' . ($settings['store_name'] ?? 'VPNStore') . ' với giá tốt nhất thị trường. Giao key tự động nhanh chóng, hỗ trợ kích hoạt miễn phí và bảo hành uy tín 1 đổi 1.'))
 @section('meta_keywords', strtolower($brand['name']) . ' ban quyen, mua ' . strtolower($brand['name']) . ', tai khoan ' . strtolower($brand['name']) . ' chinh hang, key ' . strtolower($brand['name']) . ' gia tot, ' . strtolower($settings['store_name'] ?? 'vpnstore'))
 
 @section('json_ld')
