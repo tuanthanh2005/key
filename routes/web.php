@@ -132,12 +132,18 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 
 Route::get('/check-favicon', function() {
     $favicon = \App\Models\Setting::get('favicon_path');
+    $publicHtmlPath = base_path('../public_html');
+    $documentRoot = $_SERVER['DOCUMENT_ROOT'] ?? 'Not set';
     return [
         'public_path' => public_path(),
         'favicon_path_in_db' => $favicon,
-        'favicon_full_path' => public_path($favicon),
         'file_exists_in_public_path' => file_exists(public_path($favicon)),
-        'file_exists_in_base_public' => file_exists(base_path('public/' . $favicon)),
-        'file_exists_in_base_public_html' => file_exists(base_path('../public_html/' . $favicon)),
+        'base_path' => base_path(),
+        'public_html_path' => $publicHtmlPath,
+        'is_dir_public_html_path' => is_dir($publicHtmlPath),
+        'document_root' => $documentRoot,
+        'is_dir_document_root' => is_dir($documentRoot),
+        'realpath_public_html' => realpath(base_path() . '/../public_html'),
+        'file_exists_in_document_root' => file_exists($documentRoot . '/' . $favicon),
     ];
 });

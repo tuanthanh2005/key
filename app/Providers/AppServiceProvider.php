@@ -16,9 +16,16 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind('path.public', function() {
+            if (isset($_SERVER['DOCUMENT_ROOT']) && is_dir($_SERVER['DOCUMENT_ROOT'])) {
+                return $_SERVER['DOCUMENT_ROOT'];
+            }
             $publicHtmlPath = base_path('../public_html');
             if (is_dir($publicHtmlPath)) {
                 return $publicHtmlPath;
+            }
+            $normalizedPath = realpath(base_path() . '/../public_html');
+            if ($normalizedPath && is_dir($normalizedPath)) {
+                return $normalizedPath;
             }
             return base_path('public');
         });
