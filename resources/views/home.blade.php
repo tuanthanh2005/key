@@ -453,44 +453,48 @@ $faqs = [
     </div>
 </section>
 
-<!-- TESTIMONIALS -->
+<!-- PURCHASE PROCESS -->
 <section class="section" style="background:#fff">
     <div class="container">
         <div class="text-center mb-5">
-            <span class="section-label">💬 Đánh Giá</span>
-            <h2 class="section-title mt-2">Khách Hàng Nói Gì?</h2>
-            <p class="section-subtitle mx-auto">Hàng nghìn khách hàng đã tin tưởng và hài lòng với dịch vụ của chúng tôi</p>
+            <span class="section-label" style="background: var(--primary-light); color: var(--primary-700); padding: 5px 12px; border-radius: 20px; font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">⚡ HƯỚNG DẪN MUA HÀNG</span>
+            <h2 class="section-title mt-3 font-poppins fw-800" style="font-size: 28px; color: var(--gray-900);">Quy Trình Mua Hàng Tự Động</h2>
+            <p class="section-subtitle mx-auto text-muted mt-2" style="max-width: 500px; font-size: 14.5px;">Sở hữu ngay tài khoản VPN & Proxy bản quyền chỉ với 3 bước cực kỳ đơn giản và nhanh chóng.</p>
         </div>
-        <div class="row g-4">
-            @php
-            $reviews = [
-                ['name'=>'Nguyễn Văn Minh','tag'=>'Kỹ sư phần mềm','star'=>5,'vpn'=>'NordVPN','text'=>'Mua NordVPN 1 năm giá siêu rẻ, kích hoạt ngay lập tức. Tốc độ ổn định, không bị drop. Sẽ mua lại lần sau!','init'=>'M'],
-                ['name'=>'Trần Thị Lan','tag'=>'Freelancer','star'=>5,'vpn'=>'ExpressVPN','text'=>'ExpressVPN chạy siêu mượt trên MacBook và iPhone. Dùng để làm việc remote rất ổn. Shop hỗ trợ nhiệt tình 24/7.','init'=>'L'],
-                ['name'=>'Lê Hoàng Nam','tag'=>'Game thủ','star'=>5,'vpn'=>'Surfshark','text'=>'Surfshark giá cực rẻ mà lại dùng được không giới hạn thiết bị. Cả gia đình dùng chung một tài khoản tiết kiệm lắm!','init'=>'N'],
-                ['name'=>'Phạm Thu Hà','tag'=>'Youtuber','star'=>5,'vpn'=>'CyberGhost','text'=>'CyberGhost có máy chủ streaming chuyên dụng, xem Netflix US cực mượt. Recommend cho ae nào cần xem phim nước ngoài.','init'=>'H'],
-                ['name'=>'Đỗ Quang Huy','tag'=>'Lập trình viên','star'=>5,'vpn'=>'ProtonVPN','text'=>'ProtonVPN bảo mật nhất market, trụ sở Thụy Sĩ không bị ảnh hưởng pháp lý. Giá shop tốt hơn mua trực tiếp nhiều.','init'=>'Q'],
-                ['name'=>'Nguyễn Kim Liên','tag'=>'Nhân viên văn phòng','star'=>4,'vpn'=>'HMA VPN','text'=>'HMA VPN đơn giản dễ dùng, phù hợp người mới. Giá rẻ, kích hoạt nhanh. Hỗ trợ rất nhiệt tình!','init'=>'K'],
-            ];
-            @endphp
-            @foreach($reviews as $i => $rv)
-            <div class="col-lg-4 col-md-6">
-                <div class="testimonial-card">
-                    <div class="d-flex align-items-center gap-3 mb-3">
-                        <div class="testimonial-avatar" style="background:linear-gradient(135deg,{{ ['#4687FF','#DA3940','#10B981','#8B5CF6','#6D28D9','#F59E0B'][$i] }},{{ ['#2563eb','#991b1b','#065f46','#4c1d95','#3b0764','#92400e'][$i] }})">
-                            {{ $rv['init'] }}
-                        </div>
-                        <div>
-                            <div class="testimonial-name">{{ $rv['name'] }}</div>
-                            <div class="testimonial-tag">{{ $rv['tag'] }} · Dùng {{ $rv['vpn'] }}</div>
-                        </div>
+        <div class="row g-4 mt-2">
+            <div class="col-lg-4">
+                <div class="text-center p-4 rounded-4" style="background: var(--gray-50); border: 1px solid var(--gray-100); transition: all 0.3s ease; height: 100%;">
+                    <div class="d-inline-flex align-items-center justify-content-center mb-4" style="width: 64px; height: 64px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); border-radius: 20px; color: #fff; font-size: 24px; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2);">
+                        <i class="bi bi-cart-plus-fill"></i>
                     </div>
-                    <div class="rating-stars mb-2">
-                        @for($s=1;$s<=$rv['star'];$s++)<i class="bi bi-star-fill"></i>@endfor
-                    </div>
-                    <p class="testimonial-text">{{ $rv['text'] }}</p>
+                    <h4 class="font-poppins fw-700 mb-3" style="font-size: 17px; color: var(--gray-800);">1. Chọn Gói Dịch Vụ</h4>
+                    <p class="text-muted mb-0" style="font-size: 13.5px; line-height: 1.6;">
+                        Khám phá danh sách VPN & Proxy cao cấp, chọn thương hiệu và gói cước phù hợp với nhu cầu sử dụng của bạn, sau đó tiến hành thanh toán.
+                    </p>
                 </div>
             </div>
-            @endforeach
+            <div class="col-lg-4">
+                <div class="text-center p-4 rounded-4" style="background: var(--gray-50); border: 1px solid var(--gray-100); transition: all 0.3s ease; height: 100%;">
+                    <div class="d-inline-flex align-items-center justify-content-center mb-4" style="width: 64px; height: 64px; background: linear-gradient(135deg, #10b981, #047857); border-radius: 20px; color: #fff; font-size: 24px; box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.2);">
+                        <i class="bi bi-qr-code-scan"></i>
+                    </div>
+                    <h4 class="font-poppins fw-700 mb-3" style="font-size: 17px; color: var(--gray-800);">2. Quét Mã QR Thanh Toán</h4>
+                    <p class="text-muted mb-0" style="font-size: 13.5px; line-height: 1.6;">
+                        Hệ thống tự động tạo mã QR thanh toán động đi kèm nội dung chuyển khoản chuẩn. Quét mã bằng app ngân hàng của bạn và chuyển khoản đúng số tiền.
+                    </p>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="text-center p-4 rounded-4" style="background: var(--gray-50); border: 1px solid var(--gray-100); transition: all 0.3s ease; height: 100%;">
+                    <div class="d-inline-flex align-items-center justify-content-center mb-4" style="width: 64px; height: 64px; background: linear-gradient(135deg, #f59e0b, #b45309); border-radius: 20px; color: #fff; font-size: 24px; box-shadow: 0 10px 15px -3px rgba(245, 158, 11, 0.2);">
+                        <i class="bi bi-envelope-check-fill"></i>
+                    </div>
+                    <h4 class="font-poppins fw-700 mb-3" style="font-size: 17px; color: var(--gray-800);">3. Nhận Key Tự Động</h4>
+                    <p class="text-muted mb-0" style="font-size: 13.5px; line-height: 1.6;">
+                        Giao dịch được xác nhận ngay sau 1-3 phút. Thông tin tài khoản/key kích hoạt sẽ lập tức gửi trực tiếp vào email của bạn và được lưu trong lịch sử đơn hàng.
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 </section>
