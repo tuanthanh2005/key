@@ -118,6 +118,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::get('/{id}/sua', [ProductController::class, 'edit'])->name('edit');
         Route::put('/{id}', [ProductController::class, 'update'])->name('update');
         Route::delete('/{id}', [ProductController::class, 'destroy'])->name('destroy');
+        Route::post('/{id}/clone', [ProductController::class, 'clone'])->name('clone');
     });
 
     // Quản lý danh mục

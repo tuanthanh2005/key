@@ -233,4 +233,31 @@ class ProductController extends Controller
 
         return redirect()->route('admin.products.index')->with('success', 'Xóa gói VPN thành công!');
     }
+
+    public function clone($id)
+    {
+        $product = Product::findOrFail($id);
+
+        $newImagePath = null;
+        if ($product->image_path && file_exists(public_path($product->image_path))) {
+            $info = pathinfo($product->image_path);
+            $newFilename = time() . '_' . uniqid() . '.' . ($info['extension'] ?? 'jpg');
+            
+            // Ensure directory exists
+            if (!file_exists(public_path('uploads/products'))) {
+                mkdir(public_path('uploads/products'), 0777, true);
+            }
+            
+            $newImagePath = 'uploads/products/' . $newFilename;
+            @copy(public_path($product->image_path), public_path($newImagePath));
+        }
+
+        // Replicate product model
+        $clone = $product->replicate();
+        $clone->name = $product->name . ' (Clone)';
+        $clone->image_path = $newImagePath;
+        $clone->save();
+
+        return redirect()->route('admin.products.index')->with('success', 'Nhân bản gói VPN thành công!');
+    }
 }

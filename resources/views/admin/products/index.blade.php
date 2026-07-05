@@ -137,6 +137,12 @@
                     </td>
                     <td>
                         <div class="d-flex gap-1 align-items-center">
+                            <form action="{{ route('admin.products.clone', $prod->id) }}" method="POST" style="display:inline-block;margin:0;">
+                                @csrf
+                                <button type="submit" class="btn btn-sm btn-outline-success" style="border-radius:8px;font-size:12px;padding:4px 10px;" title="Nhân bản sản phẩm bao gồm cả ảnh">
+                                    <i class="bi bi-copy me-1"></i>Clone
+                                </button>
+                            </form>
                             <a href="{{ route('admin.products.edit', $prod->id) }}" class="btn btn-sm btn-outline-primary" style="border-radius:8px;font-size:12px;padding:4px 10px">
                                 <i class="bi bi-pencil me-1"></i>Sửa
                             </a>
