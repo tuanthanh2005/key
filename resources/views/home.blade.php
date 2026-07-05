@@ -406,12 +406,11 @@ $faqs = [
                     <i class="bi bi-lightning-charge-fill text-warning me-1"></i>Ưu Đãi Đặc Biệt
                 </div>
                 <h2 class="font-poppins fw-800 text-white mb-3" style="font-size:32px;line-height:1.2">
-                    Mua Gói 2 Năm – Tiết Kiệm<br>
+                    Mua VPN & Proxy — Tiết Kiệm<br>
                     <span style="color:#fbbf24">Lên Đến 70%</span> So Với Lẻ
                 </h2>
                 <p style="color:rgba(255,255,255,.75);font-size:15px;line-height:1.7;max-width:480px">
-                    Đặc biệt khi mua gói dài hạn bạn sẽ được tặng thêm 3 tháng miễn phí
-                    và hỗ trợ kỹ thuật ưu tiên. Cơ hội không thể bỏ qua!
+                    Nhận ngay tài khoản VPN và Proxy bản quyền chính hãng với tốc độ cao, kết nối ổn định và cam kết hỗ trợ kỹ thuật trọn đời.
                 </p>
                 <div class="d-flex flex-column flex-sm-row gap-3 mt-4">
                     <a href="{{ route('products') }}" class="btn btn-warning fw-700 px-4 py-3 rounded-pill">
@@ -427,13 +426,13 @@ $faqs = [
                     <div class="col-6">
                         <div class="text-center p-3 rounded-3" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12)">
                             <div class="fw-800 text-white" style="font-size:28px;font-family:'Poppins',sans-serif">-70%</div>
-                            <div style="color:rgba(255,255,255,.65);font-size:13px">Gói 2 Năm</div>
+                            <div style="color:rgba(255,255,255,.65);font-size:13px">Tiết Kiệm Lớn</div>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="text-center p-3 rounded-3" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12)">
-                            <div class="fw-800 text-warning" style="font-size:28px;font-family:'Poppins',sans-serif">+3 Tháng</div>
-                            <div style="color:rgba(255,255,255,.65);font-size:13px">Miễn Phí</div>
+                            <div class="fw-800 text-warning" style="font-size:28px;font-family:'Poppins',sans-serif">100%</div>
+                            <div style="color:rgba(255,255,255,.65);font-size:13px">Bản Quyền</div>
                         </div>
                     </div>
                     <div class="col-6">
