@@ -18,7 +18,7 @@
 </div>
 @endif
 
-<form action="{{ route('admin.posts.store') }}" method="POST" enctype="multipart/form-data">
+<form action="{{ route('admin.posts.store') }}" method="POST" enctype="multipart/form-data" id="postForm">
     @csrf
     <div class="row g-4">
         <!-- Main Form Content -->
@@ -203,7 +203,7 @@
         });
 
         // 4. Form Submit handler: copy content
-        const form = document.querySelector('form');
+        const form = document.getElementById('postForm');
         const contentInput = document.getElementById('content-input');
 
         form.addEventListener('submit', function(e) {

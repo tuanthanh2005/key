@@ -18,7 +18,7 @@
 </div>
 @endif
 
-<form action="{{ route('admin.posts.update', $post->id) }}" method="POST" enctype="multipart/form-data">
+<form action="{{ route('admin.posts.update', $post->id) }}" method="POST" enctype="multipart/form-data" id="postForm">
     @csrf
     @method('PUT')
     <div class="row g-4">
@@ -185,7 +185,7 @@
         });
 
         // 4. Form Submit handler: copy content
-        const form = document.querySelector('form');
+        const form = document.getElementById('postForm');
         const contentInput = document.getElementById('content-input');
 
         form.addEventListener('submit', function(e) {
