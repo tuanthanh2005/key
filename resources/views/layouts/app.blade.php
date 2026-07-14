@@ -8,7 +8,11 @@
     @endif
     <meta name="description" content="@yield('meta_description', $settings['meta_description'] ?? 'VPNStore - Chuyên cung cấp VPN & Proxy chính hãng với giá tốt nhất. Bảo hành 30 ngày, hỗ trợ 24/7.')">
     <meta name="keywords" content="@yield('meta_keywords', $settings['meta_keywords'] ?? 'vpn gia re, proxy gia re, mua vpn, mua proxy, key vpn ban quyen')">
+    @if(request()->has('brand') || request()->has('q') || request()->has('page') || request()->has('sort'))
+    <meta name="robots" content="noindex, follow">
+    @else
     <meta name="robots" content="index, follow">
+    @endif
     <title>@yield('title', $settings['seo_title'] ?? (($settings['store_name'] ?? 'VPNStore') . ' - Cửa Hàng VPN & Proxy Chính Hãng'))</title>
 
     <!-- Favicon -->
