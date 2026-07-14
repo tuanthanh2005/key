@@ -358,7 +358,7 @@ class ShopController extends Controller
                           . "💳 *Phương thức*: " . ($order->payment_method === 'bank_transfer' ? 'Chuyển khoản ngân hàng' : $order->payment_method) . "\n"
                           . "📝 *Ghi chú*: " . ($order->note ?: 'Không có');
 
-                    \Illuminate\Support\Facades\Http::post("https://api.telegram.org/bot{$botToken}/sendMessage", [
+                    \Illuminate\Support\Facades\Http::timeout(3)->post("https://api.telegram.org/bot{$botToken}/sendMessage", [
                         'chat_id' => $chatId,
                         'text' => $text,
                         'parse_mode' => 'Markdown',
