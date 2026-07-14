@@ -44,7 +44,7 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}?v=1.22">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}?v=1.35">
     @yield('extra_css')
     <style>
         @keyframes gift-wiggle {
@@ -275,6 +275,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link {{ request()->is('tin-tuc*') || request()->is('bai-viet*') ? 'active' : '' }}" href="/tin-tuc">
+                        <i class="bi bi-journal-text me-1"></i>Bài Viết
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link {{ request()->routeIs('contact') ? 'active' : '' }}" href="{{ route('contact') }}">
                         <i class="bi bi-headset me-1"></i>Liên Hệ
                     </a>
@@ -306,9 +311,8 @@
                 <!-- Auth Actions -->
                 @auth
                     <div class="dropdown">
-                        <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 dropdown-toggle d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <button class="btn btn-icon" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-person-circle"></i>
-                            <span class="text-truncate" style="max-width: 80px;">{{ auth()->user()->name }}</span>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end shadow border-0" style="border-radius: 12px; margin-top: 10px;">
                             @if(auth()->user()->isAdmin())

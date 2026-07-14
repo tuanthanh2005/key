@@ -121,7 +121,7 @@ $faqs = [
 <!-- BRAND STRIP -->
 <div class="brand-strip">
     <div class="container">
-        <div class="d-flex flex-wrap justify-content-center align-items-center gap-4">
+        <div class="d-flex flex-wrap justify-content-center align-items-center gap-2 gap-sm-3 gap-md-4">
             <a href="{{ route('products', ['brand' => 'nordvpn']) }}" class="brand-strip-item">NordVPN</a>
             <a href="{{ route('products', ['brand' => 'expressvpn']) }}" class="brand-strip-item">ExpressVPN</a>
             <a href="{{ route('products', ['brand' => 'surfshark']) }}" class="brand-strip-item">Surfshark</a>
