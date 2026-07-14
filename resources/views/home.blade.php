@@ -109,7 +109,7 @@ $faqs = [
             <!-- Right Visual -->
             <div class="col-lg-6 d-none d-lg-block">
                 <div class="hero-visual text-center">
-                    <img src="{{ asset('uploads/vpn_security_hero.png') }}" alt="VPN Security" class="img-fluid hero-illustration" style="max-height: 400px; filter: drop-shadow(0 15px 35px rgba(37,99,235,0.12)); animation: float 6s ease-in-out infinite;">
+                    <img src="{{ asset('uploads/vpn_security_light.png') }}" alt="VPN Security" class="img-fluid hero-illustration" style="max-height: 400px; mix-blend-mode: multiply; animation: float 6s ease-in-out infinite;">
                 </div>
             </div>
         </div>
