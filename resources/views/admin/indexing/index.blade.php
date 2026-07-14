@@ -218,6 +218,36 @@
 
                         <hr class="my-4" style="border-color:#e2e8f0;">
 
+                        <!-- TAB 3: Bài Viết -->
+                        <div class="mb-4">
+                            <h6 class="fw-800 text-dark mb-3 d-flex align-items-center gap-2" style="font-size: 13.5px;">
+                                <i class="bi bi-journal-text text-indigo"></i>
+                                Lập Chỉ Mục Bài Viết
+                                <span class="badge bg-secondary-subtle text-secondary" style="font-size:10px">{{ count($postUrls) }} bài viết</span>
+                            </h6>
+                            @if(empty($postUrls))
+                                <p class="text-muted mb-0" style="font-size:12.5px">Không tìm thấy bài viết hoạt động nào trong cơ sở dữ liệu.</p>
+                            @else
+                                <div class="row g-2">
+                                    @foreach($postUrls as $title => $url)
+                                    <div class="col-12 col-md-6 col-xxl-4">
+                                        <div class="p-3 border rounded-3 d-flex align-items-start gap-2 hover-card" style="transition: all 0.2s; border-color:#e2e8f0!important;">
+                                            <div class="form-check m-0">
+                                                <input class="form-check-input url-checkbox" type="checkbox" name="urls[]" value="{{ $url }}" id="post_{{ $loop->index }}" style="cursor:pointer;">
+                                            </div>
+                                            <label for="post_{{ $loop->index }}" style="cursor:pointer; flex: 1;">
+                                                <div class="fw-700 text-dark text-truncate" style="font-size:13px; max-width: 180px;" title="{{ $title }}">{{ $title }}</div>
+                                                <div class="text-muted text-truncate" style="font-size:11.5px; max-width: 180px;">{{ $url }}</div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
+
+                        <hr class="my-4" style="border-color:#e2e8f0;">
+
                         <!-- TAB 3: Lập chỉ mục riêng lẻ -->
                         <div class="mb-2">
                             <h6 class="fw-800 text-dark mb-3 d-flex align-items-center justify-content-between" style="font-size: 13.5px;">

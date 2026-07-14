@@ -275,7 +275,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->is('tin-tuc*') || request()->is('bai-viet*') ? 'active' : '' }}" href="/tin-tuc">
+                    <a class="nav-link {{ request()->routeIs('posts.*') ? 'active' : '' }}" href="{{ route('posts.index') }}">
                         <i class="bi bi-journal-text me-1"></i>Bài Viết
                     </a>
                 </li>

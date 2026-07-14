@@ -68,12 +68,23 @@ class IndexingController extends Controller
             $brandUrls[$slug] = route('product.detail', $slug);
         }
 
+        // 3. Thu thập Bài viết
+        $posts = \App\Models\Post::published()
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $postUrls = [];
+        foreach ($posts as $post) {
+            $postUrls[$post->title] = route('posts.show', $post->slug);
+        }
+
         return view('admin.indexing.index', compact(
             'isConfigured',
             'clientEmail',
             'quotaUsed',
             'staticUrls',
-            'brandUrls'
+            'brandUrls',
+            'postUrls'
         ));
     }
 

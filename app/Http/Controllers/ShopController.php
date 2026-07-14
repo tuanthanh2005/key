@@ -434,4 +434,30 @@ class ShopController extends Controller
 
         return view('order-history', compact('orders'));
     }
+
+    /**
+     * Trang danh sách bài viết công khai
+     */
+    public function postList()
+    {
+        $posts = \App\Models\Post::published()->orderBy('created_at', 'desc')->paginate(9);
+        return view('posts.index', compact('posts'));
+    }
+
+    /**
+     * Trang chi tiết bài viết công khai
+     */
+    public function postDetail($slug)
+    {
+        $post = \App\Models\Post::published()->where('slug', $slug)->firstOrFail();
+        
+        // Bài viết liên quan / mới nhất khác
+        $recentPosts = \App\Models\Post::published()
+            ->where('id', '!=', $post->id)
+            ->orderBy('created_at', 'desc')
+            ->limit(5)
+            ->get();
+
+        return view('posts.detail', compact('post', 'recentPosts'));
+    }
 }

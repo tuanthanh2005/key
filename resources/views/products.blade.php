@@ -89,22 +89,71 @@ if ($brandInfo) {
             </div>
         </div>
 
-        <!-- Tag Cloud of 8 Main VPNs -->
-        <div class="d-flex flex-wrap gap-2 mt-3 pt-3 border-top" style="border-color: rgba(226, 232, 240, 0.6) !important;">
-            @foreach($brandMap as $slug => $info)
-                <a href="{{ route('products') }}?brand={{ $slug }}" 
-                   class="btn btn-sm rounded-pill px-3 py-2 fw-600 d-inline-flex align-items-center gap-2 transition-all {{ $selectedBrandSlug === $slug ? 'btn-primary shadow-sm' : '' }}" 
-                   style="font-size: 13px; text-decoration: none; {{ $selectedBrandSlug !== $slug ? 'background: #fff; color: var(--gray-700); border: 1px solid #e2e8f0;' : '' }}">
-                    <span style="width: 7px; height: 7px; background: {{ ['nordvpn'=>'#4687FF','expressvpn'=>'#DA3940','surfshark'=>'#10B981','hma'=>'#F59E0B','cyberghost'=>'#8B5CF6','purevpn'=>'#EF4444','ipvanish'=>'#0EA5E9','protonvpn'=>'#6D28D9'][$slug] ?? '#64748b' }}; border-radius: 50%;"></span>
-                    {{ $info['name'] }}
-                </a>
-            @endforeach
-            @if($selectedBrandSlug)
-                <a href="{{ route('products') }}" class="btn btn-sm btn-outline-danger rounded-pill px-3 py-2 fw-600 d-inline-flex align-items-center gap-1.5" style="font-size: 13px; text-decoration: none;">
-                    <i class="bi bi-x-circle-fill"></i> Xóa Bộ Lọc
-                </a>
-            @endif
+        <!-- Tag Cloud of Categories with expand option on mobile -->
+        <div class="brand-tags-wrapper" style="position: relative;">
+            <div id="brandTagsList" class="d-flex flex-wrap gap-2 mt-3 pt-3 border-top brand-tags-list" style="border-color: rgba(226, 232, 240, 0.6) !important;">
+                @foreach($brandMap as $slug => $info)
+                    <a href="{{ route('products') }}?brand={{ $slug }}" 
+                       class="btn btn-sm rounded-pill px-3 py-2 fw-600 d-inline-flex align-items-center gap-2 transition-all {{ $selectedBrandSlug === $slug ? 'btn-primary shadow-sm' : '' }}" 
+                       style="font-size: 13px; text-decoration: none; {{ $selectedBrandSlug !== $slug ? 'background: #fff; color: var(--gray-700); border: 1px solid #e2e8f0;' : '' }}">
+                        <span style="width: 7px; height: 7px; background: {{ ['nordvpn'=>'#4687FF','expressvpn'=>'#DA3940','surfshark'=>'#10B981','hma'=>'#F59E0B','cyberghost'=>'#8B5CF6','purevpn'=>'#EF4444','ipvanish'=>'#0EA5E9','protonvpn'=>'#6D28D9'][$slug] ?? '#64748b' }}; border-radius: 50%;"></span>
+                        {{ $info['name'] }}
+                    </a>
+                @endforeach
+                @if($selectedBrandSlug)
+                    <a href="{{ route('products') }}" class="btn btn-sm btn-outline-danger rounded-pill px-3 py-2 fw-600 d-inline-flex align-items-center gap-1.5" style="font-size: 13px; text-decoration: none;">
+                        <i class="bi bi-x-circle-fill"></i> Xóa Bộ Lọc
+                    </a>
+                @endif
+            </div>
+            
+            <!-- Toggle Button (only on Mobile) -->
+            <div class="text-center mt-2 d-md-none" id="brandTagsToggleContainer">
+                <button type="button" class="btn btn-link text-primary p-0 fw-700 text-decoration-none d-inline-flex align-items-center gap-1" id="btnToggleBrandTags" onclick="toggleBrandTags()" style="font-size: 12.5px;">
+                    Xem thêm <i class="bi bi-chevron-down" id="arrowToggleBrandTags" style="font-size: 11px;"></i>
+                </button>
+            </div>
         </div>
+
+        <style>
+            .brand-tags-list {
+                max-height: 88px;
+                overflow: hidden;
+                transition: max-height 0.3s ease-in-out;
+            }
+            @media (min-width: 768px) {
+                .brand-tags-list {
+                    max-height: none !important;
+                    overflow: visible !important;
+                }
+            }
+        </style>
+
+        <script>
+            function toggleBrandTags() {
+                var container = document.getElementById('brandTagsList');
+                var btn = document.getElementById('btnToggleBrandTags');
+                
+                if (container.style.maxHeight === '88px' || container.style.maxHeight === '') {
+                    container.style.maxHeight = '1000px';
+                    btn.innerHTML = 'Thu gọn <i class="bi bi-chevron-up" id="arrowToggleBrandTags" style="font-size: 11px;"></i>';
+                } else {
+                    container.style.maxHeight = '88px';
+                    btn.innerHTML = 'Xem thêm <i class="bi bi-chevron-down" id="arrowToggleBrandTags" style="font-size: 11px;"></i>';
+                }
+            }
+
+            document.addEventListener("DOMContentLoaded", function() {
+                var container = document.getElementById('brandTagsList');
+                var toggleContainer = document.getElementById('brandTagsToggleContainer');
+                if (container && toggleContainer) {
+                    // Hide toggle button if all tags already fit within 2 rows (<= 88px scrollHeight)
+                    if (container.scrollHeight <= 90) {
+                        toggleContainer.style.display = 'none';
+                    }
+                }
+            });
+        </script>
     </div>
 </div>
 

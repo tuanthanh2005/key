@@ -78,6 +78,10 @@
             <i class="bi bi-folder-fill"></i>
             <span>Danh Mục</span>
         </a>
+        <a href="{{ route('admin.posts.index') }}" class="sidebar-link {{ request()->routeIs('admin.posts.*') ? 'active' : '' }}">
+            <i class="bi bi-journal-text"></i>
+            <span>Bài Viết</span>
+        </a>
         <a href="{{ route('admin.users.index') }}" class="sidebar-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
             <i class="bi bi-people-fill"></i>
             <span>Người Dùng</span>

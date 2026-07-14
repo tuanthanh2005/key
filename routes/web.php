@@ -40,6 +40,8 @@ Route::get('/bang-gia', [ShopController::class, 'pricing'])->name('pricing');
 Route::get('/gioi-thieu', [ShopController::class, 'about'])->name('about');
 Route::get('/lien-he', [ShopController::class, 'contact'])->name('contact');
 Route::get('/tim-kiem', [ShopController::class, 'search'])->name('search');
+Route::get('/tin-tuc', [ShopController::class, 'postList'])->name('posts.index');
+Route::get('/tin-tuc/{slug}', [ShopController::class, 'postDetail'])->name('posts.show');
 
 // =============================================
 // XML Sitemap
@@ -51,7 +53,13 @@ Route::get('/sitemap.xml', function () {
         ->distinct()
         ->pluck('slug')
         ->toArray();
-    return response()->view('sitemap', compact('brands'))
+
+    // Lấy các bài viết đã xuất bản để thêm vào sitemap
+    $posts = \App\Models\Post::published()
+        ->orderBy('created_at', 'desc')
+        ->get(['slug', 'updated_at']);
+
+    return response()->view('sitemap', compact('brands', 'posts'))
         ->header('Content-Type', 'text/xml');
 })->name('sitemap');
 
@@ -140,6 +148,16 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     Route::prefix('lap-chi-muc')->name('indexing.')->group(function () {
         Route::get('/', [IndexingController::class, 'index'])->name('index');
         Route::post('/gui', [IndexingController::class, 'submit'])->name('submit');
+    });
+
+    // Quản lý bài viết
+    Route::prefix('bai-viet')->name('posts.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\PostController::class, 'index'])->name('index');
+        Route::get('/them-moi', [\App\Http\Controllers\Admin\PostController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Admin\PostController::class, 'store'])->name('store');
+        Route::get('/{id}/sua', [\App\Http\Controllers\Admin\PostController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [\App\Http\Controllers\Admin\PostController::class, 'update'])->name('update');
+        Route::delete('/{id}', [\App\Http\Controllers\Admin\PostController::class, 'destroy'])->name('destroy');
     });
 });
 
