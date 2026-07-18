@@ -36,6 +36,11 @@ Route::get('/debug-view', function() {
     ]);
 });
 
+Route::get('/debug-line/{start}/{end}', function($start, $end) {
+    $lines = explode("\n", file_get_contents(resource_path('views/product-detail.blade.php')));
+    return response(implode("\n", array_slice($lines, $start - 1, $end - $start + 1)), 200, ['Content-Type' => 'text/plain']);
+});
+
 // =============================================
 // TRANG CÔNG KHAI (SHOP)
 // =============================================
