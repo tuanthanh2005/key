@@ -31,7 +31,9 @@ Route::get('/clear-cache', function() {
 });
 
 Route::get('/debug-view', function() {
-    return response(file_get_contents(resource_path('views/product-detail.blade.php')), 200, ['Content-Type' => 'text/plain']);
+    return response()->json([
+        'content' => base64_encode(file_get_contents(resource_path('views/product-detail.blade.php')))
+    ]);
 });
 
 // =============================================
