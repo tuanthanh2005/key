@@ -38,7 +38,7 @@
             </div>
         </div>
 
-        <div style="display:grid; grid-template-columns:1fr 340px; gap:32px; align-items:start;" class="cart-page-layout">
+        <div class="cart-page-layout">
             
             {{-- ===== LEFT: ITEMS CONTAINER ===== --}}
             <div>

@@ -150,7 +150,7 @@ $curReviews = intval($defaultPlan['reviews'] ?? 120);
             <span style="color:var(--text-primary);">{{ $brand['name'] }}</span>
         </nav>
 
-        <div style="display:grid; grid-template-columns:1fr 400px; gap:48px; align-items:start;" class="product-detail-layout">
+        <div class="product-detail-layout">
 
             {{-- ===== LEFT: PRODUCT INFO ===== --}}
             <div>
@@ -177,7 +177,7 @@ $curReviews = intval($defaultPlan['reviews'] ?? 120);
                 {{-- Specs Grid --}}
                 <div class="card" style="padding:24px; margin-bottom:32px;">
                     <h2 style="font-size:1.1rem; font-weight:800; color:var(--text-primary); margin-bottom:16px;">Thông Số Kỹ Thuật</h2>
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;" class="specs-grid">
+                    <div class="specs-grid">
                         <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding-bottom:8px; font-size:0.875rem;">
                             <span style="color:var(--text-muted);">Máy chủ (Servers)</span>
                             <strong id="spec-servers">{{ $defaultPlan['servers'] }}</strong>
@@ -255,7 +255,7 @@ $curReviews = intval($defaultPlan['reviews'] ?? 120);
             </div>
 
             {{-- ===== RIGHT: PURCHASE BOX ===== --}}
-            <div style="position:sticky; top:88px;">
+            <div class="product-sidebar-sticky">
                 <div class="card" style="border-color:rgba(124,58,237,0.3); padding:24px;">
                     <span style="font-size:0.75rem; font-weight:800; color:var(--accent); text-transform:uppercase; letter-spacing:0.05em; display:block; margin-bottom:6px;">Premium Account</span>
                     <h1 style="font-size:1.6rem; font-weight:800; margin-bottom:16px; color:var(--text-primary);">{{ $brand['name'] }}</h1>

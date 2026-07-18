@@ -81,10 +81,10 @@
             </div>
         </div>
 
-        <div style="display:grid; grid-template-columns:220px 1fr; gap:32px; align-items:start;" class="products-main-layout">
+        <div class="products-main-layout">
 
             {{-- ===== SIDEBAR FILTERS ===== --}}
-            <aside style="position:sticky; top:88px; display:flex; flex-direction:column; gap:20px;">
+            <aside class="products-sidebar-sticky">
                 {{-- Search --}}
                 <div class="search-bar" style="max-width:100%; border:1px solid var(--border); border-radius:var(--radius); background:var(--bg-input); padding:10px 14px; display:flex; align-items:center; gap:8px;">
                     <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--text-muted);"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
