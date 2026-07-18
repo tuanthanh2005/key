@@ -72,17 +72,17 @@ $curReviews = intval($defaultPlan['reviews'] ?? 120);
 @if($defaultPlan)
 <script type="application/ld+json">
 {
-  "@context": "https://schema.org/",
-  "@type": "Product",
+  "@@context": "https://schema.org/",
+  "@@type": "Product",
   "name": "{{ $brand['name'] }} {{ $defaultPlan['label'] }}",
   "image": "{{ !empty($defaultPlan['image_path']) ? asset($defaultPlan['image_path']) : '' }}",
   "description": "{{ strip_tags($defaultPlan['description'] ?? $brand['desc']) }}",
   "brand": {
-    "@type": "Brand",
+    "@@type": "Brand",
     "name": "{{ $brand['name'] }}"
   },
   "offers": {
-    "@type": "Offer",
+    "@@type": "Offer",
     "url": "{{ url()->current() }}",
     "priceCurrency": "VND",
     "price": "{{ $defaultPlan['price'] }}",
@@ -90,7 +90,7 @@ $curReviews = intval($defaultPlan['reviews'] ?? 120);
     "availability": "{{ $defaultPlan['stock'] > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock' }}"
   },
   "aggregateRating": {
-    "@type": "AggregateRating",
+    "@@type": "AggregateRating",
     "ratingValue": "{{ $curRating }}",
     "reviewCount": "{{ $curReviews }}"
   }
