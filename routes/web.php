@@ -41,6 +41,16 @@ Route::get('/debug-line/{start}/{end}', function($start, $end) {
     return bin2hex(implode("\n", array_slice($lines, $start - 1, $end - $start + 1)));
 });
 
+Route::get('/debug-log', function() {
+    $logPath = storage_path('logs/laravel.log');
+    if (!file_exists($logPath)) {
+        return "Log file does not exist.";
+    }
+    $content = file_get_contents($logPath);
+    $lines = explode("\n", $content);
+    return response(implode("\n", array_slice($lines, -100)), 200, ['Content-Type' => 'text/plain']);
+});
+
 // =============================================
 // TRANG CÔNG KHAI (SHOP)
 // =============================================
