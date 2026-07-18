@@ -33,7 +33,7 @@ Route::get('/clear-cache', function() {
 Route::get('/', [ShopController::class, 'home'])->name('home');
 Route::get('/san-pham', [ShopController::class, 'products'])->name('products');
 Route::get('/san-pham/{slug}', [ShopController::class, 'productDetail'])
-    ->where('slug', '[a-z0-9\-]+')
+    ->where('slug', '[a-zA-Z0-9\-]+')
     ->name('product.detail');
 Route::get('/gio-hang', [ShopController::class, 'cart'])->name('cart');
 Route::get('/thanh-toan', [ShopController::class, 'checkout'])->name('checkout')->middleware('auth');
