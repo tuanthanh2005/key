@@ -1,134 +1,134 @@
 @extends('layouts.app')
 
-@section('title', 'Giỏ Hàng - VPNStore')
+@section('title', 'Giỏ Hàng - ' . ($settings['store_name'] ?? 'VPNStore'))
 
 @section('content')
 
-<!-- BREADCRUMB -->
-<div class="breadcrumb-section">
+{{-- ===== PAGE HEADER ===== --}}
+<section class="page-header" style="padding: 40px 0; background: var(--bg-elevated); border-bottom: 1px solid var(--border);">
     <div class="container">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="{{ route('home') }}"><i class="bi bi-house me-1"></i>Trang Chủ</a></li>
-                <li class="breadcrumb-item active">Giỏ Hàng</li>
-            </ol>
-        </nav>
-    </div>
-</div>
-
-<!-- PAGE HEADER -->
-<div class="page-header">
-    <div class="container">
-        <h1 class="section-title mb-1">
-            <i class="bi bi-bag me-3 text-primary"></i>Giỏ Hàng Của Bạn
+        <h1 style="font-size:1.8rem; font-weight:800; color:var(--text-primary);">
+            <i class="bi bi-cart3 text-primary me-2"></i> Giỏ Hàng Của Bạn
         </h1>
-        <p class="text-muted mb-0">Kiểm tra lại đơn hàng trước khi thanh toán</p>
+        <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:0;">
+            Kiểm tra và cập nhật số lượng sản phẩm trước khi tiếp tục thanh toán.
+        </p>
     </div>
-</div>
+</section>
 
-<div class="container py-5">
-    <!-- Checkout Steps -->
-    <div class="d-flex align-items-center mb-5 checkout-step">
-        <div class="step-dot active" style="min-width:32px"><i class="bi bi-bag"></i></div>
-        <div class="ms-2 me-3" style="white-space:nowrap"><small class="fw-700 text-primary">Giỏ Hàng</small></div>
-        <div class="step-line"></div>
-        <div class="step-dot pending mx-3" style="min-width:32px">2</div>
-        <div class="ms-1 me-3" style="white-space:nowrap"><small class="fw-600 text-muted">Thanh Toán</small></div>
-        <div class="step-line"></div>
-        <div class="step-dot pending mx-3" style="min-width:32px">3</div>
-        <div class="ms-1" style="white-space:nowrap"><small class="fw-600 text-muted">Hoàn Tất</small></div>
-    </div>
-
-    <div class="row g-4">
-        <!-- Cart Items -->
-        <div class="col-lg-8">
-            <!-- Coupon Input -->
-            <div class="bg-white border rounded-3 p-3 mb-4 d-flex gap-2" style="border-color:var(--gray-200)!important">
-                <input type="text" class="form-control" placeholder="Nhập mã giảm giá..." id="couponInput" style="max-width:280px">
-                <button class="btn btn-outline-primary fw-600 px-4" onclick="applyCoupon()">
-                    <i class="bi bi-tag me-1"></i>Áp Dụng
-                </button>
+{{-- ===== MAIN GRID ===== --}}
+<section class="section">
+    <div class="container" style="max-width: 1000px;">
+        
+        {{-- Checkout steps --}}
+        <div style="display:flex; align-items:center; justify-content:center; gap:16px; margin-bottom:40px; flex-wrap:wrap;">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <div style="width:28px; height:28px; background:var(--primary); color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:700;">1</div>
+                <span style="font-weight:700; color:var(--text-primary); font-size:0.85rem;">Giỏ Hàng</span>
             </div>
-
-            <!-- Cart Items Container -->
-            <div id="cartItemsContainer">
-                <!-- Rendered by JS -->
-                <div class="text-center py-5">
-                    <div class="spinner-border text-primary" style="width:2rem;height:2rem"></div>
-                    <p class="mt-3 text-muted">Đang tải giỏ hàng...</p>
-                </div>
+            <div style="width:60px; height:1px; background:var(--border);"></div>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <div style="width:28px; height:28px; background:var(--bg-card); border:1px solid var(--border); color:var(--text-muted); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:700;">2</div>
+                <span style="font-weight:600; color:var(--text-muted); font-size:0.85rem;">Thanh Toán</span>
             </div>
-
-            <!-- Continue Shopping -->
-            <div class="mt-3">
-                <a href="{{ route('products') }}" class="text-primary fw-600" style="font-size:14px">
-                    <i class="bi bi-arrow-left me-1"></i>Tiếp Tục Mua Sắm
-                </a>
+            <div style="width:60px; height:1px; background:var(--border);"></div>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <div style="width:28px; height:28px; background:var(--bg-card); border:1px solid var(--border); color:var(--text-muted); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:700;">3</div>
+                <span style="font-weight:600; color:var(--text-muted); font-size:0.85rem;">Hoàn Tất</span>
             </div>
         </div>
 
-        <!-- Order Summary -->
-        <div class="col-lg-4">
-            <div class="cart-summary-card">
-                <h5 class="fw-800 mb-4" style="font-size:16px;color:var(--gray-900)">
-                    <i class="bi bi-receipt me-2 text-primary"></i>Tóm Tắt Đơn Hàng
-                </h5>
-
-                <div class="cart-summary-row">
-                    <span>Tạm tính</span>
-                    <span id="cart-subtotal" class="fw-600">0đ</span>
-                </div>
-                <div class="cart-summary-row">
-                    <span>Giảm giá</span>
-                    <span id="cart-discount" class="fw-600 text-success">0đ</span>
-                </div>
-                <div class="cart-summary-row">
-                    <span>Mã giảm giá</span>
-                    <span id="cart-coupon" class="fw-600 text-success">Chưa áp dụng</span>
-                </div>
-                <div class="cart-summary-row">
-                    <span>Phí giao hàng</span>
-                    <span class="fw-600 text-success"><i class="bi bi-check-circle me-1"></i>Miễn phí</span>
+        <div style="display:grid; grid-template-columns:1fr 340px; gap:32px; align-items:start;" class="cart-page-layout">
+            
+            {{-- ===== LEFT: ITEMS CONTAINER ===== --}}
+            <div>
+                {{-- Coupon Code Card --}}
+                <div class="card" style="padding:16px; margin-bottom:20px; display:flex; flex-direction:row; gap:12px; align-items:center; flex-wrap:wrap;">
+                    <div style="display:flex; align-items:center; gap:8px; flex:1; min-width:200px;">
+                        <span style="font-size:1.2rem; color:var(--primary-light);"><i class="bi bi-tag"></i></span>
+                        <input type="text" id="couponInput" placeholder="Nhập mã giảm giá (VPNVN10, VIP20...)" style="background:var(--bg-input); border:1px solid var(--border); color:var(--text-primary); padding:10px 14px; border-radius:var(--radius); font-size:0.85rem; width:100%; outline:none;">
+                    </div>
+                    <button class="btn btn-primary" style="padding:10px 20px;" onclick="applyCoupon()">Áp Dụng</button>
                 </div>
 
-                <div class="cart-summary-total mt-3">
-                    <span class="fw-800" style="font-size:15px">Tổng Cộng</span>
-                    <span class="price" id="cart-total">0đ</span>
-                </div>
-
-                <a href="{{ route('checkout') }}" class="btn btn-primary w-100 py-3 fw-700 mt-4 rounded-pill" style="font-size:15px">
-                    <i class="bi bi-credit-card me-2"></i>Tiến Hành Thanh Toán
-                </a>
-
-                <div class="mt-4">
-                    <div class="text-center text-muted mb-3" style="font-size:12.5px">Phương Thức Thanh Toán Chấp Nhận</div>
-                    <div class="d-flex flex-wrap gap-2 justify-content-center">
-                        @foreach([['bi-credit-card','#1565c0','Visa/Master'],['bi-bank','#2e7d32','ATM/Bank'],['bi-phone','#7b1fa2','Momo'],['bi-wallet2','#1a237e','ZaloPay'],['bi-currency-bitcoin','#e65100','Crypto']] as [$ic,$clr,$lbl])
-                        <div class="text-center px-2 py-1 rounded-2" style="background:#f8fafc;border:1px solid #e2e8f0;min-width:64px">
-                            <i class="bi {{ $ic }}" style="font-size:16px;color:{{ $clr }}"></i>
-                            <div style="font-size:9.5px;color:var(--gray-500);margin-top:2px;font-weight:600">{{ $lbl }}</div>
-                        </div>
-                        @endforeach
+                {{-- Items Wrapper --}}
+                <div id="cartItemsContainer">
+                    <div style="text-align:center; padding:48px 0;">
+                        <div class="spinner-border text-primary" style="width:2rem; height:2rem;"></div>
+                        <p style="color:var(--text-muted); margin-top:16px;">Đang tải giỏ hàng của bạn...</p>
                     </div>
                 </div>
 
-                <!-- Security Badge -->
-                <div class="mt-4 p-3 rounded-2 text-center" style="background:var(--success-light);border:1px solid #bbf7d0">
-                    <i class="bi bi-shield-fill-check text-success" style="font-size:20px"></i>
-                    <div class="fw-700 mt-1" style="font-size:12.5px;color:var(--success)">Thanh toán 100% An Toàn</div>
-                    <div style="font-size:11.5px;color:var(--gray-500)">SSL 256-bit · Dữ liệu được mã hóa</div>
+                {{-- Back button --}}
+                <div style="margin-top:20px;">
+                    <a href="{{ route('products') }}" style="color:var(--primary-light); font-weight:700; text-decoration:none; font-size:0.9rem;">
+                        <i class="bi bi-arrow-left me-1"></i> Tiếp tục mua sắm
+                    </a>
                 </div>
             </div>
+
+            {{-- ===== RIGHT: SUMMARY BOX ===== --}}
+            <div>
+                <div class="card" style="padding:24px;">
+                    <h5 style="font-size:1rem; font-weight:800; color:var(--text-primary); margin-bottom:20px;">
+                        <i class="bi bi-receipt me-2 text-primary"></i> Tóm Tắt Đơn Hàng
+                    </h5>
+
+                    <div style="display:flex; flex-direction:column; gap:12px;">
+                        <div style="display:flex; justify-content:space-between; font-size:0.875rem;">
+                            <span style="color:var(--text-secondary);">Tạm tính</span>
+                            <span id="cart-subtotal" style="font-weight:700; color:var(--text-primary);">0đ</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; font-size:0.875rem;">
+                            <span style="color:var(--text-secondary);">Mã giảm giá</span>
+                            <span id="cart-coupon" style="font-weight:700; color:var(--success);">Chưa áp dụng</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; font-size:0.875rem;">
+                            <span style="color:var(--text-secondary);">Giảm giá tự động</span>
+                            <span id="cart-discount" style="font-weight:700; color:var(--success);">0đ</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; font-size:0.875rem; border-bottom:1px solid var(--border); padding-bottom:16px;">
+                            <span style="color:var(--text-secondary);">Phí giao hàng</span>
+                            <span style="font-weight:700; color:var(--success);">Miễn phí</span>
+                        </div>
+
+                        <div style="display:flex; justify-content:space-between; align-items:baseline; padding-top:8px; margin-bottom:20px;">
+                            <strong style="font-size:0.95rem; color:var(--text-primary);">Tổng thanh toán</strong>
+                            <strong id="cart-total" style="font-size:1.6rem; color:var(--primary-light); font-family:var(--font-mono);">0đ</strong>
+                        </div>
+                    </div>
+
+                    <a href="{{ route('checkout') }}" class="btn btn-primary btn-full btn-lg" style="padding:14px; font-weight:700;">
+                        <i class="bi bi-credit-card me-2"></i> Tiến Hành Thanh Toán
+                    </a>
+
+                    {{-- Guarantees --}}
+                    <div style="margin-top:24px; padding:16px; background:rgba(16, 185, 129, 0.05); border:1px solid rgba(16, 185, 129, 0.15); border-radius:var(--radius-lg); text-align:center;">
+                        <div style="font-size:1.2rem; color:var(--success); margin-bottom:6px;"><i class="bi bi-shield-fill-check"></i></div>
+                        <strong style="font-size:0.85rem; color:var(--text-primary); display:block; margin-bottom:2px;">Thanh Toán 100% An Toàn</strong>
+                        <span style="font-size:0.75rem; color:var(--text-muted);">SSL 256-bit · Mã hóa bảo mật thông tin</span>
+                    </div>
+
+                    <div style="margin-top:20px; text-align:center;">
+                        <span style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:10px;">Chấp Nhận Thanh Toán</span>
+                        <div style="display:flex; gap:6px; justify-content:center; flex-wrap:wrap;">
+                            <div style="padding:4px 8px; border:1px solid var(--border); border-radius:4px; font-size:0.7rem; background:var(--bg-elevated); color:var(--text-secondary);">MB Bank</div>
+                            <div style="padding:4px 8px; border:1px solid var(--border); border-radius:4px; font-size:0.7rem; background:var(--bg-elevated); color:var(--text-secondary);">Momo</div>
+                            <div style="padding:4px 8px; border:1px solid var(--border); border-radius:4px; font-size:0.7rem; background:var(--bg-elevated); color:var(--text-secondary);">ATM</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
-</div>
+</section>
 
 @endsection
 
 @section('extra_js')
 <script>
 window.stockMap = @json($stockMap);
-// Coupon codes được lấy từ DB qua server-side rendering
 const validCouponsFromServer = @json($publicCoupons ?? []);
 
 function applyCoupon() {

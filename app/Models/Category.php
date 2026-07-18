@@ -14,7 +14,8 @@ class Category extends Model
         'slug',
         'type',
         'seo_title',
-        'seo_description'
+        'seo_description',
+        'image_path'
     ];
 
     /**

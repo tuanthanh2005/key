@@ -23,6 +23,7 @@ class CategoryController extends Controller
             'type' => 'required|string|in:vpn,proxy',
             'seo_title' => 'nullable|string|max:255',
             'seo_description' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         $slug = $request->slug ? Str::slug($request->slug) : Str::slug($request->name);
@@ -34,12 +35,18 @@ class CategoryController extends Controller
             $slug = $originalSlug . '-' . $count++;
         }
 
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('categories', 'public');
+        }
+
         Category::create([
             'name' => $request->name,
             'slug' => $slug,
             'type' => $request->type,
             'seo_title' => $request->seo_title,
             'seo_description' => $request->seo_description,
+            'image_path' => $imagePath,
         ]);
 
         return redirect()->route('admin.categories.index')->with('success', 'Thêm danh mục mới thành công!');
@@ -55,6 +62,7 @@ class CategoryController extends Controller
             'type' => 'required|string|in:vpn,proxy',
             'seo_title' => 'nullable|string|max:255',
             'seo_description' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         $slug = $request->slug ? Str::slug($request->slug) : Str::slug($request->name);
@@ -65,12 +73,21 @@ class CategoryController extends Controller
             $slug = $originalSlug . '-' . $count++;
         }
 
+        $imagePath = $category->image_path;
+        if ($request->hasFile('image')) {
+            if ($category->image_path && file_exists(storage_path('app/public/' . $category->image_path))) {
+                @unlink(storage_path('app/public/' . $category->image_path));
+            }
+            $imagePath = $request->file('image')->store('categories', 'public');
+        }
+
         $category->update([
             'name' => $request->name,
             'slug' => $slug,
             'type' => $request->type,
             'seo_title' => $request->seo_title,
             'seo_description' => $request->seo_description,
+            'image_path' => $imagePath,
         ]);
 
         return redirect()->route('admin.categories.index')->with('success', 'Cập nhật danh mục thành công!');

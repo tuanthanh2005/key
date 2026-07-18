@@ -1,379 +1,274 @@
 @extends('layouts.app')
 
-@section('title', $settings['seo_title'] ?? 'VPNStore - Cửa Hàng VPN Chính Hãng Số 1 Việt Nam')
-@section('meta_description', $settings['meta_description'] ?? 'Mua VPN chính hãng: NordVPN, ExpressVPN, Surfshark, HMA, CyberGhost với giá tốt nhất. Bảo hành 30 ngày, hỗ trợ 24/7.')
-@section('meta_keywords', $settings['meta_keywords'] ?? 'vpn gia re, mua vpn, tai khoan nordvpn, tai khoan expressvpn, mua surfshark, key hma vpn, cyberghost gia re, gia vpn')
-
-@php
-$faqs = [
-    ['q'=>'VPN chính hãng khác gì VPN crack/fake?','a'=>'VPN chính hãng là key mua trực tiếp từ nhà cung cấp, đảm bảo hoạt động ổn định, đầy đủ tính năng và được hỗ trợ cập nhật. VPN crack/fake thường bị block, mất tính năng và tiềm ẩn nguy cơ bảo mật.'],
-    ['q'=>'Tôi nhận key như thế nào sau khi thanh toán?','a'=>'Sau khi thanh toán thành công, thông tin kích hoạt tài khoản/key sẽ được gửi tự động qua email trong vòng 1-30 phút. Bạn cũng có thể liên hệ Telegram/Zalo của chúng tôi để nhận hỗ trợ ngay lập tức.'],
-    ['q'=>'Có hỗ trợ cài đặt và kích hoạt không?','a'=>'Có! Chúng tôi hỗ trợ hướng dẫn cài đặt và kích hoạt miễn phí qua Telegram, Zalo hoặc email. Đội ngũ hỗ trợ 24/7 sẵn sàng giúp bạn.'],
-    ['q'=>'Nếu key lỗi có được đổi không?','a'=>'Có, chúng tôi bảo hành 100% key lỗi. Nếu key không hoạt động do lỗi từ phía chúng tôi, sẽ được đổi key mới ngay lập tức hoặc hoàn tiền trong vòng 24h.'],
-    ['q'=>'Có thể dùng VPN cho mấy thiết bị?','a'=>'Tùy theo gói VPN bạn mua. NordVPN cho phép 6 thiết bị, Surfshark không giới hạn thiết bị, ExpressVPN 5 thiết bị. Thông tin chi tiết có trong mỗi sản phẩm.'],
-];
-@endphp
-
-@section('json_ld')
-<script type="application/ld+json">
-{
-  "@@context": "https://schema.org",
-  "@@graph": [
-    {
-      "@@type": "Organization",
-      "@@id": "{{ route('home') }}#organization",
-      "name": "{{ $settings['store_name'] ?? 'VPNStore' }}",
-      "url": "{{ route('home') }}",
-      "logo": "{{ !empty($settings['favicon_path']) ? asset($settings['favicon_path']) : asset('favicon.ico') }}",
-      "sameAs": [
-        "https://t.me/specademy"
-      ],
-      "contactPoint": [
-        {
-          "@@type": "ContactPoint",
-          "telephone": "{{ $settings['contact_phone'] ?? '+84708910952' }}",
-          "contactType": "customer support",
-          "areaServed": "VN",
-          "availableLanguage": "Vietnamese"
-        }
-      ]
-    },
-    {
-      "@@type": "WebSite",
-      "@@id": "{{ route('home') }}#website",
-      "url": "{{ route('home') }}",
-      "name": "{{ $settings['store_name'] ?? 'VPNStore' }}",
-      "description": "{{ !empty($settings['meta_description']) ? $settings['meta_description'] : 'VPNStore - Chuyên cung cấp VPN chính hãng với giá tốt nhất. Bảo hành 30 ngày, hỗ trợ 24/7.' }}",
-      "publisher": {
-        "@@id": "{{ route('home') }}#organization"
-      },
-      "potentialAction": {
-        "@@type": "SearchAction",
-        "target": "{{ route('search') }}?q={search_term_string}",
-        "query-input": "required name=search_term_string"
-      }
-    },
-    {
-      "@@type": "FAQPage",
-      "mainEntity": [
-        @foreach($faqs as $fi => $faq)
-        {
-          "@@type": "Question",
-          "name": "{{ $faq['q'] }}",
-          "acceptedAnswer": {
-            "@@type": "Answer",
-            "text": "{{ $faq['a'] }}"
-          }
-        }{{ $fi < count($faqs) - 1 ? ',' : '' }}
-        @endforeach
-      ]
-    }
-  ]
-}
-</script>
-@endsection
+@section('title', $settings['seo_title'] ?? 'VPNStore - Cửa Hàng VPN & Proxy Chính Hãng Số 1 Việt Nam')
+@section('meta_description', $settings['meta_description'] ?? 'Mua VPN Premium, ChatGPT, Adobe, JetBrains, Netflix với giá tốt nhất thị trường. Giao hàng tự động, bảo hành uy tín, hỗ trợ 24/7.')
+@section('meta_keywords', $settings['meta_keywords'] ?? 'vpn gia re, proxy gia re, mua vpn, mua proxy, key vpn ban quyen')
 
 @section('content')
 
-<!-- HERO SECTION -->
-<section class="hero-section">
+@php
+    // Query items using Eloquent models directly in Blade to bypass controller constraints
+    $featuredProducts = \App\Models\Product::where('status', 'active')->where('is_popular', true)->with('category')
+        ->orderBy('id', 'desc')->limit(8)->get();
+
+    $popularProducts = \App\Models\Product::where('status', 'active')
+        ->orderBy('sold', 'desc')->limit(6)->get();
+
+    $categories = \App\Models\Category::withCount('products')->get();
+
+    // Query actual completed orders
+    $realOrders = \App\Models\Order::where('order_status', 'completed')
+        ->orderBy('id', 'desc')
+        ->limit(8)
+        ->get();
+@endphp
+
+{{-- ===== SOCIAL PROOF TICKER ===== --}}
+@if($realOrders->isNotEmpty())
+<div class="social-proof-bar">
+    <div class="ticker-track">
+        @php $doubled = $realOrders->concat($realOrders); @endphp
+        @foreach($doubled as $order)
+        @php
+            $nameParts = explode(' ', trim($order->customer_name));
+            $displayName = count($nameParts) > 1 ? implode(' ', array_slice($nameParts, 0, -1)) . ' *' : $order->customer_name;
+        @endphp
+        <div class="ticker-item">
+            <div class="ticker-avatar">{{ mb_substr($order->customer_name, 0, 1) }}</div>
+            <span><span class="ticker-name">{{ $displayName }}</span> vừa mua</span>
+            <span style="color:var(--text-primary); font-weight:600;">{{ $order->product_name }}</span>
+            <span class="ticker-amount">{{ number_format($order->total, 0, ',', '.') }}đ</span>
+            <span style="color:var(--text-muted); display: inline-flex; align-items: center; gap: 4px;"><i class="bi bi-clock"></i> {{ $order->created_at->diffForHumans() }}</span>
+            <span style="color:var(--border); margin:0 4px;">•</span>
+        </div>
+        @endforeach
+    </div>
+</div>
+@endif
+
+{{-- ===== HERO SECTION ===== --}}
+<section class="hero">
+    <div class="hero-bg">
+        <svg width="100%" height="100%" style="position:absolute;inset:0;opacity:0.04;" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+                    <circle cx="2" cy="2" r="1.5" fill="#a78bfa"/>
+                </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#dots)"/>
+        </svg>
+    </div>
+
     <div class="container">
-        <div class="row align-items-center">
-            <!-- Left Content -->
-            <div class="col-lg-6">
-                <div class="hero-badge">
-                    <span class="live-dot"></span>
-                    Hơn 50,000+ khách hàng tin dùng
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:64px; align-items:center;" class="hero-grid-wrap">
+            <div class="hero-content animate-fade-up">
+                <div class="hero-eyebrow">
+                    <div class="dot"></div>
+                    <i class="bi bi-fire text-warning" style="margin-right:6px;"></i> Hơn 50,000+ khách hàng tin dùng
                 </div>
-                <h1 class="hero-title mb-3">
-                    Bảo Vệ Quyền Riêng Tư<br>
-                    Của Bạn Với <span class="highlight">VPN Chính Hãng</span>
+
+                <h1 class="hero-title">
+                    Phần Mềm <span class="gradient-text">Bản Quyền</span><br>
+                    Giá Siêu Rẻ
                 </h1>
+
                 <p class="hero-desc">
-                    Chuyên cung cấp các gói VPN uy tín nhất thế giới với giá tốt nhất.
-                    NordVPN, ExpressVPN, Surfshark, HMA và nhiều thương hiệu hàng đầu khác.
-                    Bảo hành 30 ngày, hỗ trợ 24/7.
+                    Chuyên cung cấp các gói VPN Premium & Proxy bản quyền chính hãng với giá tốt nhất. Giao hàng tức thì, bảo hành uy tín, hỗ trợ 24/7.
                 </p>
 
                 <div class="hero-actions">
-                    <a href="{{ route('products') }}" class="btn-hero-primary">
-                        <i class="bi bi-shield-check"></i>
+                    <a href="{{ route('products') }}" class="btn btn-primary btn-xl">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
                         Mua VPN Ngay
                     </a>
-                    <a href="{{ route('pricing') }}" class="btn-hero-secondary">
-                        Xem Bảng Giá
-                    </a>
+                    <a href="#featured" class="btn btn-outline btn-xl">Xem Nổi Bật</a>
                 </div>
-            </div>
 
-            <!-- Right Visual -->
-            <div class="col-lg-6 d-none d-lg-block">
-                <div class="hero-visual text-center">
-                    <img src="{{ asset('uploads/vpn_security_light.png') }}" alt="VPN Security" class="img-fluid hero-illustration" style="max-height: 400px; mix-blend-mode: multiply; animation: float 6s ease-in-out infinite;">
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- BRAND STRIP -->
-<div class="brand-strip">
-    <div class="container">
-        <div class="d-flex flex-wrap justify-content-center align-items-center gap-2 gap-sm-3 gap-md-4">
-            <a href="{{ route('products', ['brand' => 'nordvpn']) }}" class="brand-strip-item">NordVPN</a>
-            <a href="{{ route('products', ['brand' => 'expressvpn']) }}" class="brand-strip-item">ExpressVPN</a>
-            <a href="{{ route('products', ['brand' => 'surfshark']) }}" class="brand-strip-item">Surfshark</a>
-            <a href="{{ route('products', ['brand' => 'hma']) }}" class="brand-strip-item">HMA VPN</a>
-            <a href="{{ route('products', ['brand' => 'cyberghost']) }}" class="brand-strip-item">CyberGhost</a>
-            <a href="{{ route('products', ['brand' => 'purevpn']) }}" class="brand-strip-item">PureVPN</a>
-            <a href="{{ route('products', ['brand' => 'ipvanish']) }}" class="brand-strip-item">IPVanish</a>
-            <a href="{{ route('products', ['brand' => 'protonvpn']) }}" class="brand-strip-item">ProtonVPN</a>
-        </div>
-    </div>
-</div>
-
-<!-- WHY CHOOSE US SECTION (MERGED & SIMPLIFIED) -->
-<section class="section-sm" style="background:#fff;border-bottom:1px solid var(--gray-100)">
-    <div class="container">
-        <div class="row g-4">
-            <div class="col-md-3 col-sm-6">
-                <div class="feature-card h-100">
-                    <div class="feature-icon"><i class="bi bi-shield-check"></i></div>
-                    <div class="feature-title">Bảo Mật Tối Đa</div>
-                    <div class="feature-desc">Mã hóa AES-256 quân đội & chính sách không lưu nhật ký (No-Log).</div>
-                </div>
-            </div>
-            <div class="col-md-3 col-sm-6">
-                <div class="feature-card h-100">
-                    <div class="feature-icon"><i class="bi bi-lightning-charge"></i></div>
-                    <div class="feature-title">Tốc Độ Vượt Trội</div>
-                    <div class="feature-desc">Băng thông không giới hạn, máy chủ tốc độ cao tại 100+ quốc gia.</div>
-                </div>
-            </div>
-            <div class="col-md-3 col-sm-6">
-                <div class="feature-card h-100">
-                    <div class="feature-icon"><i class="bi bi-patch-check"></i></div>
-                    <div class="feature-title">100% Chính Hãng</div>
-                    <div class="feature-desc">Cam kết key bản quyền chính hãng từ nhà phát hành, hoàn tiền nếu lỗi.</div>
-                </div>
-            </div>
-            <div class="col-md-3 col-sm-6">
-                <div class="feature-card h-100">
-                    <div class="feature-icon"><i class="bi bi-headset"></i></div>
-                    <div class="feature-title">Hỗ Trợ Kỹ Thuật</div>
-                    <div class="feature-desc">Đội ngũ kỹ thuật hỗ trợ kích hoạt và hướng dẫn sử dụng 24/7.</div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- HOT PRODUCTS SECTION -->
-<section class="section" style="background:var(--gray-50)">
-    <div class="container">
-        <div class="text-center mb-5">
-            <span class="section-label">🔥 Bán Chạy</span>
-            <h2 class="section-title mt-2">Sản Phẩm Nổi Bật</h2>
-            <p class="section-subtitle mx-auto">Những gói VPN được khách hàng tin dùng và đánh giá cao nhất</p>
-        </div>
-
-        <div class="row g-4">
-            @php
-            $hotProducts = $allProducts ?? [];
-            shuffle($hotProducts);
-            $hotProducts = array_slice($hotProducts, 0, 6);
-            @endphp
-
-            @foreach($hotProducts as $prod)
-            <div class="col-lg-4 col-md-6 product-card-wrap" data-name="{{ strtolower($prod['name']) }}" data-brand="{{ strtolower($prod['brand']) }}" data-price="{{ $prod['price'] }}" data-rating="{{ $prod['rating'] }}">
-                <div class="product-card">
-                    <!-- Badges -->
-                    <div class="product-card-badge">
-                        @if($prod['price'] < ($prod['old_price'] ?? 0))<span class="badge-sale">Sale</span>@endif
-                        @if($prod['plan'] === '1year' || $prod['plan'] === '2year')<span class="badge-hot"><i class="bi bi-fire"></i> Hot</span>@endif
+                <div class="hero-stats" style="margin-top: 40px; gap: 32px;">
+                    <div class="hero-stat" style="flex-direction: row; align-items: center; gap: 12px; max-width: 220px;">
+                        <div style="width: 42px; height: 42px; background: rgba(79, 70, 229, 0.08); color: var(--primary); border: 1px solid rgba(79, 70, 229, 0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0;">
+                            <i class="bi bi-lightning-charge-fill"></i>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 2px;">
+                            <span style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary);">Giao Tự Động</span>
+                            <span style="font-size: 0.72rem; color: var(--text-muted);">Nhận sản phẩm ngay sau khi mua</span>
+                        </div>
                     </div>
-
-                    <!-- Image -->
-                    <a href="{{ route('product.detail', $prod['slug']) }}" class="product-card-img" style="text-decoration: none; display: flex; justify-content: center; align-items: center;">
-                        @if(!empty($prod['image_path']))
-                            <img src="{{ asset($prod['image_path']) }}" alt="{{ $prod['name'] }}">
-                        @else
-                            <div class="product-brand-logo" style="background:linear-gradient(135deg,{{ $prod['color'] }},{{ $prod['color'] }}aa)">
-                                <i class="bi bi-shield-lock-fill"></i>
-                            </div>
-                        @endif
-                    </a>
-
-                    <!-- Body -->
-                    <div class="product-card-body">
-                        <div class="product-brand-tag" style="color:{{ $prod['color'] }}">
-                            <span style="width:8px;height:8px;background:{{ $prod['color'] }};border-radius:50%;display:inline-block"></span>
-                            {{ $prod['brand'] }}
+                    <div class="hero-stat" style="flex-direction: row; align-items: center; gap: 12px; max-width: 220px;">
+                        <div style="width: 42px; height: 42px; background: rgba(16, 185, 129, 0.08); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0;">
+                            <i class="bi bi-shield-check"></i>
                         </div>
-                        <div class="product-title">
-                            <a href="{{ route('product.detail', $prod['slug']) }}" style="color: inherit; text-decoration: none;">
-                                {{ $prod['name'] }}
-                            </a>
+                        <div style="display: flex; flex-direction: column; gap: 2px;">
+                            <span style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary);">Bảo Hành 1-Đổi-1</span>
+                            <span style="font-size: 0.72rem; color: var(--text-muted);">Cam kết bảo hành suốt thời hạn</span>
                         </div>
-                        <ul class="product-features">
-                            @foreach($prod['features'] as $fi => $feat)
-                                @if($fi < 2)
-                                    <li><i class="bi bi-check-circle-fill"></i>{{ $feat }}</li>
-                                @endif
-                            @endforeach
-                        </ul>
-                        <div class="product-rating">
-                            <div class="rating-stars">
-                                @for($i=1;$i<=5;$i++)
-                                    <i class="bi {{ $i <= floor($prod['rating']) ? 'bi-star-fill' : ($i - $prod['rating'] < 1 ? 'bi-star-half' : 'bi-star') }}"></i>
-                                @endfor
-                            </div>
-                            <span class="ms-2 text-muted" style="font-size:12px">• Đã bán {{ \App\Models\Setting::get('sales_' . strtolower($prod['slug']), '100+') }}</span>
+                    </div>
+                    <div class="hero-stat" style="flex-direction: row; align-items: center; gap: 12px; max-width: 220px;">
+                        <div style="width: 42px; height: 42px; background: rgba(124, 58, 237, 0.08); color: var(--accent); border: 1px solid rgba(124, 58, 237, 0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0;">
+                            <i class="bi bi-headset"></i>
                         </div>
-                        <div class="product-price-wrap">
-                            @if(($prod['old_price'] ?? 0) > $prod['price'])
-                                <div class="product-price-old">{{ number_format($prod['old_price']) }}đ</div>
-                            @endif
-                            <div class="d-flex align-items-baseline gap-1">
-                                <div class="product-price">{{ number_format($prod['price']) }}đ</div>
-                                <span class="product-price-unit">/{{ $prod['plan'] === '1year' ? '1 năm' : '2 năm' }}</span>
-                            </div>
-                        </div>
-                        <div class="product-actions">
-                            <a href="{{ route('product.detail', $prod['slug']) }}" class="btn-add-cart w-100" style="text-decoration:none">
-                                Xem Chi Tiết
-                            </a>
-                            @if(($prod['stock'] ?? 0) > 0)
-                            <button class="btn-wishlist"
-                                data-add-cart
-                                data-id="{{ $prod['id'] }}"
-                                data-name="{{ $prod['name'] }}"
-                                data-brand="{{ $prod['brand'] }}"
-                                data-plan="{{ $prod['plan'] }}"
-                                data-price="{{ $prod['price'] }}"
-                                data-color="{{ $prod['color'] }}"
-                                data-slug="{{ $prod['slug'] }}"
-                                title="Thêm Vào Giỏ">
-                                <i class="bi bi-bag-plus"></i>
-                            </button>
-                            @endif
+                        <div style="display: flex; flex-direction: column; gap: 2px;">
+                            <span style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary);">Hỗ Trợ 24/7</span>
+                            <span style="font-size: 0.72rem; color: var(--text-muted);">Đội ngũ kỹ thuật hỗ trợ tận tình</span>
                         </div>
                     </div>
                 </div>
             </div>
-            @endforeach
-        </div>
 
-        <div class="text-center mt-5">
-            <a href="{{ route('products') }}" class="btn btn-outline-primary btn-lg rounded-pill px-5">
-                <i class="bi bi-grid me-2"></i>Xem Tất Cả Sản Phẩm
-            </a>
-        </div>
-    </div>
-</section>
-
-<!-- PROMO BANNER 2 -->
-<section style="background: linear-gradient(135deg, var(--gray-900) 0%, var(--gray-800) 100%); padding: 50px 0; border-radius: var(--radius-lg); margin: 30px 0;">
-    <div class="container">
-        <div class="text-center text-white py-4">
-            <div class="badge text-uppercase mb-3 px-3 py-2" style="background:rgba(255,255,255,.1);color:#fbbf24;font-size:11px;letter-spacing:1px;border-radius:20px;border:1px solid rgba(255,255,255,.15)">
-                <i class="bi bi-lightning-charge-fill me-1"></i>Ưu Đãi Đặc Biệt
-            </div>
-            <h2 class="font-poppins fw-800 mb-3" style="font-size:30px;">
-                Mua Gói VPN Bản Quyền — Tiết Kiệm Đến 70%
-            </h2>
-            <p class="mx-auto text-white-50" style="max-width: 540px; font-size: 14.5px;">
-                Nhận tài khoản VPN chính quyền chính hãng với đầy đủ các tính năng bảo mật tối cao và tốc độ không giới hạn.
-            </p>
-            <div class="d-flex justify-content-center gap-3 mt-4">
-                <a href="{{ route('products') }}" class="btn btn-warning fw-700 px-4 py-2.5 rounded-pill">
-                    Mua Ngay
-                </a>
-                <a href="{{ route('pricing') }}" class="btn btn-outline-light fw-600 px-4 py-2.5 rounded-pill">
-                    Xem Bảng Giá
-                </a>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- PURCHASE PROCESS -->
-<section class="section" style="background:#fff">
-    <div class="container">
-        <div class="text-center mb-5">
-            <span class="section-label">⚡ HƯỚNG DẪN MUA HÀNG</span>
-            <h2 class="section-title mt-3 font-poppins fw-800" style="font-size: 28px; color: var(--gray-900);">Quy Trình Mua Hàng 3 Bước</h2>
-            <p class="section-subtitle mx-auto text-muted mt-2" style="max-width: 500px; font-size: 14.5px;">Sở hữu ngay tài khoản VPN & Proxy bản quyền chỉ với 3 bước cực kỳ đơn giản và nhanh chóng.</p>
-        </div>
-        <div class="row g-4 mt-2">
-            <div class="col-lg-4">
-                <div class="text-center p-4 rounded-4" style="background: var(--gray-50); border: 1px solid var(--gray-100); height: 100%;">
-                    <div class="d-inline-flex align-items-center justify-content-center mb-3" style="width: 50px; height: 50px; background: var(--primary-light); border-radius: 50%; color: var(--primary); font-size: 20px; font-weight: 800;">
-                        1
-                    </div>
-                    <h4 class="font-poppins fw-700 mb-3" style="font-size: 16px; color: var(--gray-800);">Chọn Gói Dịch Vụ</h4>
-                    <p class="text-muted mb-0" style="font-size: 13.5px; line-height: 1.6;">
-                        Khám phá danh sách VPN & Proxy cao cấp, chọn gói cước phù hợp và tiến hành thanh toán.
-                    </p>
-                </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="text-center p-4 rounded-4" style="background: var(--gray-50); border: 1px solid var(--gray-100); height: 100%;">
-                    <div class="d-inline-flex align-items-center justify-content-center mb-3" style="width: 50px; height: 50px; background: var(--accent-light); border-radius: 50%; color: var(--accent); font-size: 20px; font-weight: 800;">
-                        2
-                    </div>
-                    <h4 class="font-poppins fw-700 mb-3" style="font-size: 16px; color: var(--gray-800);">Quét Mã QR Thanh Toán</h4>
-                    <p class="text-muted mb-0" style="font-size: 13.5px; line-height: 1.6;">
-                        Quét mã QR thanh toán động đi kèm nội dung chuyển khoản tự động chính xác.
-                    </p>
-                </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="text-center p-4 rounded-4" style="background: var(--gray-50); border: 1px solid var(--gray-100); height: 100%;">
-                    <div class="d-inline-flex align-items-center justify-content-center mb-3" style="width: 50px; height: 50px; background: var(--warning-light); border-radius: 50%; color: var(--warning); font-size: 20px; font-weight: 800;">
-                        3
-                    </div>
-                    <h4 class="font-poppins fw-700 mb-3" style="font-size: 16px; color: var(--gray-800);">Nhận Key Tự Động</h4>
-                    <p class="text-muted mb-0" style="font-size: 13.5px; line-height: 1.6;">
-                        Thông tin tài khoản/key kích hoạt sẽ lập tức gửi trực tiếp vào email của bạn sau ít phút.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- FAQ SECTION -->
-<section class="section" style="background:#fff">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="text-center mb-5">
-                    <span class="section-label">❓ FAQ</span>
-                    <h2 class="section-title mt-2">Câu Hỏi Thường Gặp</h2>
-                </div>
-                <div class="accordion" id="faqAccordion">
-                    @foreach($faqs as $fi => $faq)
-                    <div class="accordion-item border border-gray-200 mb-2 rounded" style="border-radius:var(--radius)!important;overflow:hidden">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button {{ $fi > 0 ? 'collapsed' : '' }} fw-600" type="button" data-bs-toggle="collapse" data-bs-target="#faq{{ $fi }}" style="font-size:14.5px;border-radius:var(--radius)!important;background:#fff;color:var(--gray-800)">
-                                {{ $faq['q'] }}
-                            </button>
-                        </h2>
-                        <div id="faq{{ $fi }}" class="accordion-collapse collapse {{ $fi === 0 ? 'show' : '' }}" data-bs-parent="#faqAccordion">
-                            <div class="accordion-body text-muted" style="font-size:14px;line-height:1.7">
-                                {{ $faq['a'] }}
-                            </div>
+            {{-- Hero Visual --}}
+            <div class="animate-float hero-visual-wrap" style="display:flex; justify-content:center; align-items:center;">
+                <div style="position:relative; width:380px; height:380px;">
+                    <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center;">
+                        <div style="width:200px; height:200px; background:linear-gradient(135deg, rgba(124,58,237,0.2), rgba(6,182,212,0.2)); border:1px solid rgba(124,58,237,0.3); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:4.5rem; color:var(--primary-light); box-shadow:0 0 60px rgba(124,58,237,0.3);">
+                            <i class="bi bi-shield-fill-check"></i>
                         </div>
+                    </div>
+                    @php
+                        $orbIcons = [
+                            ['bi bi-shield-lock-fill', 'top:20px; left:50%; transform:translateX(-50%)', 'VPN', 'var(--primary-light)'],
+                            ['bi bi-cpu-fill', 'top:50%; right:10px; transform:translateY(-50%)', 'AI', 'var(--accent)'],
+                            ['bi bi-palette-fill', 'bottom:20px; left:50%; transform:translateX(-50%)', 'Design', '#ec4899'],
+                            ['bi bi-code-slash', 'top:50%; left:10px; transform:translateY(-50%)', 'Dev', 'var(--warning)'],
+                        ];
+                    @endphp
+                    @foreach($orbIcons as $i => $orb)
+                    <div style="position:absolute; {{ $orb[1] }}; width:64px; height:64px; background:var(--bg-card); border:1px solid var(--border); border-radius:16px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; box-shadow:var(--shadow-card); backdrop-filter:blur(10px);">
+                        <span style="font-size:1.5rem; color:{{ $orb[3] }}; line-height:1;"><i class="{{ $orb[0] }}"></i></span>
+                        <span style="font-size:0.55rem; color:var(--text-muted); font-weight:700; margin-top:4px;">{{ $orb[2] }}</span>
                     </div>
                     @endforeach
+
+                    <div style="position:absolute; inset:30px; border:1px dashed rgba(124,58,237,0.2); border-radius:50%; animation:spin 20s linear infinite;"></div>
+                    <div style="position:absolute; inset:60px; border:1px dashed rgba(6,182,212,0.15); border-radius:50%; animation:spin 15s linear infinite reverse;"></div>
                 </div>
-                <div class="text-center mt-4">
-                    <p class="text-muted mb-3">Còn câu hỏi khác? Liên hệ với chúng tôi!</p>
-                    <a href="{{ route('contact') }}" class="btn btn-primary rounded-pill px-4">
-                        <i class="bi bi-headset me-2"></i>Liên Hệ Hỗ Trợ
-                    </a>
-                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{{-- ===== CATEGORIES SECTION ===== --}}
+<section class="section-sm" style="background:var(--bg-elevated);">
+    <div class="container">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:24px;">
+            <h2 style="font-size:1.1rem; font-weight:700;">Thương Hiệu & Danh Mục</h2>
+            <a href="{{ route('products') }}" class="btn btn-ghost btn-sm">Tất Cả →</a>
+        </div>
+        <div style="display:flex; justify-content:center; flex-wrap:wrap; gap:16px; margin:0 auto;">
+            @foreach($categories as $cat)
+            @php
+                $catIcons = [
+                    'nordvpn' => 'bi bi-shield-lock-fill',
+                    'expressvpn' => 'bi bi-shield-lock-fill',
+                    'surfshark' => 'bi bi-shield-lock-fill',
+                    'hma' => 'bi bi-shield-lock-fill'
+                ];
+                $iconClass = $catIcons[$cat->slug] ?? 'bi bi-tag-fill';
+            @endphp
+            <a href="{{ route('products', ['brand' => $cat->slug]) }}"
+               class="card animate-on-scroll"
+               style="text-align:center; padding:24px 16px; cursor:pointer; text-decoration:none; width:200px; flex-shrink:0; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                @if($cat->image_path)
+                    <img src="{{ asset('storage/' . $cat->image_path) }}" alt="{{ $cat->name }}" style="width:50px; height:50px; object-fit:contain; margin-bottom:12px;">
+                @else
+                    <div style="font-size:2.2rem; margin-bottom:12px; color:var(--primary-light);"><i class="{{ $iconClass }}"></i></div>
+                @endif
+                <div style="font-size:0.85rem; font-weight:700; color:var(--text-primary); margin-bottom:6px;">{{ $cat->name }}</div>
+                <div style="font-size:0.75rem; color:var(--text-muted);">{{ $cat->products_count }} sản phẩm</div>
+            </a>
+            @endforeach
+        </div>
+    </div>
+</section>
+
+{{-- ===== FEATURED PRODUCTS ===== --}}
+<section class="section" id="featured">
+    <div class="container">
+        <div class="section-header">
+            <div>
+                <h2 class="section-title"><i class="bi bi-fire text-warning" style="margin-right:8px;"></i> Sản Phẩm <span>Nổi Bật</span></h2>
+                <p class="section-subtitle">Được lựa chọn nhiều nhất - Chất lượng đảm bảo</p>
+            </div>
+            <a href="{{ route('products') }}" class="btn btn-outline">Xem Tất Cả</a>
+        </div>
+
+        <div class="product-grid">
+            @foreach($featuredProducts as $product)
+                @include('partials.product-card', ['product' => $product])
+            @endforeach
+        </div>
+    </div>
+</section>
+
+{{-- ===== WHY US SECTION ===== --}}
+<section class="section" style="background:var(--bg-elevated);">
+    <div class="container">
+        <div class="section-header">
+            <div>
+                <h2 class="section-title">Tại Sao Chọn <span>{{ $settings['store_name'] ?? 'VPNStore' }}?</span></h2>
+                <p class="section-subtitle">Cam kết mang đến trải nghiệm mua sắm tốt nhất</p>
+            </div>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card animate-on-scroll">
+                <span class="feature-icon" style="font-size:2rem; line-height:1;"><i class="bi bi-lightning-charge-fill" style="color:var(--warning);"></i></span>
+                <h3 class="feature-title">Giao Hàng Tự Động</h3>
+                <p class="feature-desc">License key và tài khoản được giao ngay lập tức sau khi thanh toán. Không phải chờ đợi.</p>
+            </div>
+            <div class="feature-card animate-on-scroll delay-1">
+                <span class="feature-icon" style="font-size:2rem; line-height:1;"><i class="bi bi-shield-lock-fill" style="color:var(--accent);"></i></span>
+                <h3 class="feature-title">Bảo Hành Uy Tín</h3>
+                <p class="feature-desc">Cam kết hoàn tiền hoặc đổi sản phẩm nếu có lỗi trong vòng thời gian bảo hành.</p>
+            </div>
+            <div class="feature-card animate-on-scroll delay-2">
+                <span class="feature-icon" style="font-size:2rem; line-height:1;"><i class="bi bi-wallet2" style="color:#10b981;"></i></span>
+                <h3 class="feature-title">Giá Tốt Nhất</h3>
+                <p class="feature-desc">Giá thấp hơn 60-80% so với mua trực tiếp. Cập nhật deal mới mỗi ngày.</p>
+            </div>
+            <div class="feature-card animate-on-scroll delay-3">
+                <span class="feature-icon" style="font-size:2rem; line-height:1;"><i class="bi bi-shield-fill-check" style="color:var(--primary-light);"></i></span>
+                <h3 class="feature-title">Thanh Toán An Toàn</h3>
+                <p class="feature-desc">Thanh toán qua ngân hàng/Momo. Mã hóa SSL 256-bit bảo vệ thông tin của bạn.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+{{-- ===== POPULAR PRODUCTS ===== --}}
+@if($popularProducts->count())
+<section class="section">
+    <div class="container">
+        <div class="section-header">
+            <div>
+                <h2 class="section-title"><i class="bi bi-graph-up-arrow text-primary" style="margin-right: 8px;"></i> Bán Chạy <span>Nhất</span></h2>
+                <p class="section-subtitle">Lựa chọn hàng đầu của hàng nghìn khách hàng</p>
+            </div>
+        </div>
+        <div class="product-grid">
+            @foreach($popularProducts as $product)
+                @include('partials.product-card', ['product' => $product])
+            @endforeach
+        </div>
+    </div>
+</section>
+@endif
+
+{{-- ===== CTA SECTION ===== --}}
+<section class="section">
+    <div class="container">
+        <div style="text-align:center; max-width:600px; margin:0 auto;">
+            <div style="font-size:3rem; margin-bottom:16px; color:var(--primary-light);"><i class="bi bi-rocket-takeoff-fill"></i></div>
+            <h2 class="section-title" style="margin-bottom:16px;">Sẵn Sàng <span>Bắt Đầu?</span></h2>
+            <p style="color:var(--text-secondary); margin-bottom:32px; line-height:1.7;">
+                Đăng ký miễn phí và khám phá các gói VPN, Proxy bản quyền với mức giá tốt nhất. Giao hàng tự động tức thì.
+            </p>
+            <div class="hero-actions" style="justify-content:center;">
+                @guest
+                    <a href="{{ route('auth.register') }}" class="btn btn-primary btn-xl">Đăng Ký Miễn Phí</a>
+                    <a href="{{ route('products') }}" class="btn btn-outline btn-xl">Xem Sản Phẩm</a>
+                @else
+                    <a href="{{ route('products') }}" class="btn btn-primary btn-xl">Mua Ngay</a>
+                @endguest
             </div>
         </div>
     </div>

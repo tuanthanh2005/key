@@ -1,152 +1,139 @@
 @extends('layouts.app')
 
-@section('title', 'Liên Hệ - VPNStore')
+@section('title', 'Liên Hệ Hỗ Trợ - ' . ($settings['store_name'] ?? 'VPNStore'))
+@section('meta_description', 'Liên hệ với chúng tôi để nhận hỗ trợ mua key VPN, Proxy chính hãng và bảo hành tài khoản 24/7.')
 
 @section('content')
 
-<div class="breadcrumb-section">
-    <div class="container">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="{{ route('home') }}">Trang Chủ</a></li>
-                <li class="breadcrumb-item active">Liên Hệ</li>
-            </ol>
-        </nav>
-    </div>
-</div>
-
-<div class="page-header text-center">
-    <div class="container">
-        <span class="section-label mb-3 d-inline-block">📞 Hỗ Trợ 24/7</span>
-        <h1 class="section-title mb-2">Liên Hệ Với Chúng Tôi</h1>
-        <p class="section-subtitle mx-auto">Chúng tôi luôn sẵn sàng hỗ trợ bạn mọi lúc mọi nơi</p>
-    </div>
-</div>
-
-<section class="section" style="background:var(--gray-50)">
-    <div class="container">
-        <!-- Contact Cards -->
-        <div class="row g-4 mb-5">
-            @php
-            $contacts = [
-                ['icon'=>'bi-telegram','color'=>'#1565c0','bg'=>'#e3f2fd','label'=>'Telegram','value'=>'@specademy','action'=>'Nhắn Tin Ngay','link'=>'https://t.me/specademy','desc'=>'Phản hồi nhanh nhất, trong 5 phút'],
-                ['icon'=>'bi-chat-dots-fill','color'=>'#7b1fa2','bg'=>'#f3e5f5','label'=>'Zalo 1','value'=>'0708910952','action'=>'Chat Zalo 1','link'=>'https://zalo.me/0708910952','desc'=>'Nhắn tin Zalo trực tiếp'],
-                ['icon'=>'bi-chat-dots-fill','color'=>'#ab47bc','bg'=>'#f3e5f5','label'=>'Zalo 2','value'=>'0569012134','action'=>'Chat Zalo 2','link'=>'https://zalo.me/0569012134','desc'=>'Nhắn tin Zalo trực tiếp'],
-                ['icon'=>'bi-envelope-fill','color'=>'#2e7d32','bg'=>'#e8f5e9','label'=>'Email','value'=>'tetuongmmovn@gmail.com','action'=>'Gửi Email','link'=>'mailto:tetuongmmovn@gmail.com','desc'=>'Phản hồi trong vòng 24 giờ'],
-            ];
-            @endphp
-            @foreach($contacts as $ct)
-            <div class="col-lg-3 col-md-6">
-                <div class="contact-card">
-                    <div class="contact-icon" style="background:{{ $ct['bg'] }};color:{{ $ct['color'] }}">
-                        <i class="bi {{ $ct['icon'] }}" style="font-size:28px"></i>
-                    </div>
-                    <div class="fw-700 mb-1" style="font-size:15px;color:var(--gray-900)">{{ $ct['label'] }}</div>
-                    <div class="fw-800 mb-1" style="color:{{ $ct['color'] }};font-size:14px">{{ $ct['value'] }}</div>
-                    <div class="text-muted mb-3" style="font-size:12.5px">{{ $ct['desc'] }}</div>
-                    <a href="{{ $ct['link'] }}" class="btn btn-sm rounded-pill px-4 fw-600"
-                       style="background:{{ $ct['color'] }}15;color:{{ $ct['color'] }};border:1.5px solid {{ $ct['color'] }}40">
-                        {{ $ct['action'] }}
-                    </a>
-                </div>
-            </div>
-            @endforeach
+<section class="section animate-on-scroll">
+    <div class="container" style="max-width:960px;">
+        <div style="text-align:center; margin-bottom:48px;">
+            <span class="badge" style="background:rgba(124,58,237,0.1); color:var(--primary-light); padding:6px 16px; border-radius:var(--radius-full); font-size:0.8rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; display:inline-block; margin-bottom:12px;">Liên Hệ</span>
+            <h1 style="font-size:2.2rem; font-weight:800; color:var(--text-primary); margin-bottom:12px;">Liên Hệ Với Chúng Tôi</h1>
+            <p style="color:var(--text-secondary); max-width:600px; margin:0 auto; font-size:0.95rem;">Bạn cần hỗ trợ kỹ thuật, thắc mắc về sản phẩm hay yêu cầu bảo hành? Chúng tôi luôn sẵn sàng phục vụ bạn 24/7.</p>
         </div>
 
-        <div class="row g-5">
-            <!-- Contact Form -->
-            <div class="col-lg-7">
-                <div class="bg-white border rounded-4 p-3 p-md-5" style="border-color:var(--gray-200)!important">
-                    <h2 class="fw-800 mb-2 font-poppins" style="font-size:22px">Gửi Tin Nhắn</h2>
-                    <p class="text-muted mb-4" style="font-size:14px">Điền thông tin và chúng tôi sẽ phản hồi sớm nhất</p>
+        <div style="display:grid; grid-template-columns:1fr 1.2fr; gap:40px; align-items:stretch;" class="contact-layout-wrap">
+            {{-- Contact Information --}}
+            <div style="display:flex; flex-direction:column; gap:20px;">
+                <div class="card" style="padding:24px; flex:1; display:flex; flex-direction:column; justify-content:center;">
+                    <h3 style="font-size:1.1rem; font-weight:700; margin-bottom:20px; color:var(--text-primary); display:flex; align-items:center; gap:8px;">
+                        <i class="bi bi-info-circle-fill" style="color:var(--primary-light);"></i> Thông Tin Hỗ Trợ
+                    </h3>
+                    
+                    <div style="display:flex; flex-direction:column; gap:24px;">
+                        @if(!empty($settings['contact_email']) || !empty($settings['zalo_support']) || !empty($settings['telegram_support']))
+                            @if(!empty($settings['contact_email']) || empty($settings['contact_email']))
+                            <div style="display:flex; gap:16px; align-items:flex-start;">
+                                <div style="width:40px; height:40px; border-radius:50%; background:rgba(124,58,237,0.1); color:var(--primary-light); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                    <i class="bi bi-envelope-fill"></i>
+                                </div>
+                                <div>
+                                    <div style="font-size:0.75rem; color:var(--text-muted); font-weight:600; text-transform:uppercase;">Email hỗ trợ</div>
+                                    <div style="font-weight:600; color:var(--text-primary); margin-top:2px;">{{ $settings['contact_email'] ?? 'tetuongmmovn@gmail.com' }}</div>
+                                </div>
+                            </div>
+                            @endif
 
-                    <form id="contactForm">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Họ và Tên <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" placeholder="Nguyễn Văn A" required>
+                            <div style="display:flex; gap:16px; align-items:flex-start;">
+                                <div style="width:40px; height:40px; border-radius:50%; background:#0088cc1e; color:#0088cc; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                    <i class="bi bi-telegram"></i>
+                                </div>
+                                <div>
+                                    <div style="font-size:0.75rem; color:var(--text-muted); font-weight:600; text-transform:uppercase;">Kênh Telegram</div>
+                                    <div style="font-weight:600; color:var(--text-primary); margin-top:2px;">
+                                        <a href="{{ $settings['telegram_url'] ?? 'https://t.me/' . ltrim($settings['telegram_support'] ?? 'specademy', '@') }}" target="_blank" style="color:#0088cc; text-decoration:none;">
+                                            {{ '@' . ltrim($settings['telegram_support'] ?? 'specademy', '@') }}
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Email <span class="text-danger">*</span></label>
-                                <input type="email" class="form-control" placeholder="email@gmail.com" required>
+
+                            <div style="display:flex; gap:16px; align-items:flex-start;">
+                                <div style="width:40px; height:40px; border-radius:50%; background:#25d3661e; color:#25d366; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                    <i class="bi bi-chat-dots-fill"></i>
+                                </div>
+                                <div>
+                                    <div style="font-size:0.75rem; color:var(--text-muted); font-weight:600; text-transform:uppercase;">Zalo Hỗ Trợ</div>
+                                    <div style="font-weight:600; color:var(--text-primary); margin-top:2px; display:flex; flex-direction:column; gap:4px;">
+                                        <a href="{{ $settings['zalo_url_1'] ?? 'https://zalo.me/' . ($settings['zalo_support'] ?? '0708910952') }}" target="_blank" style="color:#25d366; text-decoration:none;">
+                                            Zalo 1: {{ $settings['zalo_support'] ?? '0708910952' }}
+                                        </a>
+                                        @if(!empty($settings['zalo_support_2']))
+                                        <a href="{{ $settings['zalo_url_2'] ?? 'https://zalo.me/' . $settings['zalo_support_2'] }}" target="_blank" style="color:#25d366; text-decoration:none;">
+                                            Zalo 2: {{ $settings['zalo_support_2'] }}
+                                        </a>
+                                        @endif
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Số Điện Thoại</label>
-                                <input type="tel" class="form-control" placeholder="0909 999 999">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Chủ Đề</label>
-                                <select class="form-select">
-                                    <option>Hỏi về sản phẩm VPN</option>
-                                    <option>Hỗ trợ kích hoạt</option>
-                                    <option>Báo lỗi / Khiếu nại</option>
-                                    <option>Yêu cầu hoàn tiền</option>
-                                    <option>Hợp tác kinh doanh</option>
-                                    <option>Khác</option>
-                                </select>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label">Nội Dung <span class="text-danger">*</span></label>
-                                <textarea class="form-control" rows="5" placeholder="Mô tả chi tiết vấn đề hoặc câu hỏi của bạn..." required></textarea>
-                            </div>
-                            <div class="col-12">
-                                <button type="submit" class="btn btn-primary fw-700 px-5 py-3 rounded-pill" style="font-size:15px">
-                                    <i class="bi bi-send me-2"></i>Gửi Tin Nhắn
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="card" style="padding:20px; background:rgba(124,58,237,0.05); border-color:var(--primary-light);">
+                    <h4 style="font-size:0.9rem; font-weight:700; color:var(--primary-light); margin-bottom:8px;"><i class="bi bi-shield-fill-check"></i> Cam Kết Hỗ Trợ 24/7</h4>
+                    <p style="font-size:0.8rem; color:var(--text-secondary); line-height:1.5; margin:0;">Mọi thắc mắc về cài đặt hoặc bảo hành key VPN đều được nhân viên kỹ thuật phản hồi trực tuyến nhanh chóng.</p>
                 </div>
             </div>
 
-            <!-- Info Panel -->
-            <div class="col-lg-5">
-                <!-- FAQ Quick -->
-                <div class="bg-white border rounded-4 p-4 mb-4" style="border-color:var(--gray-200)!important">
-                    <h5 class="fw-800 mb-3 font-poppins" style="font-size:16px">Câu Hỏi Thường Gặp</h5>
-                    @php
-                    $quickFaqs = [
-                        ['q'=>'Bao lâu nhận được key?','a'=>'1–30 phút sau khi xác nhận thanh toán'],
-                        ['q'=>'Có hỗ trợ cài đặt không?','a'=>'Có, miễn phí qua Telegram/Zalo/Email'],
-                        ['q'=>'Key lỗi có được đổi không?','a'=>'Có, đổi key mới hoặc hoàn tiền 100%'],
-                        ['q'=>'Có thể thanh toán bằng gì?','a'=>'CK ngân hàng, Momo, ZaloPay, Crypto'],
-                    ];
-                    @endphp
-                    @foreach($quickFaqs as $fq)
-                    <div class="mb-3 pb-3 border-bottom" style="border-color:var(--gray-100)!important">
-                        <div class="fw-700 mb-1" style="font-size:13.5px;color:var(--gray-800)">
-                            <i class="bi bi-question-circle-fill text-primary me-2"></i>{{ $fq['q'] }}
+            {{-- Contact Form --}}
+            <div class="card" style="padding:32px;">
+                <h3 style="font-size:1.2rem; font-weight:700; margin-bottom:20px; color:var(--text-primary);">Gửi Tin Nhắn Hỗ Trợ</h3>
+                <form action="#" method="POST" id="contactForm">
+                    @csrf
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
+                        <div>
+                            <label style="display:block; font-size:0.8rem; font-weight:600; color:var(--text-secondary); margin-bottom:6px;">Họ Tên</label>
+                            <input type="text" placeholder="Nguyễn Văn A" required style="width:100%; padding:10px 14px; border:1px solid var(--border); border-radius:var(--radius-md); background:var(--bg-input); color:var(--text-primary); outline:none;">
                         </div>
-                        <div class="text-muted ps-4" style="font-size:13px">{{ $fq['a'] }}</div>
-                    </div>
-                    @endforeach
-                    <div class="mb-0 pb-0">
-                        <div class="fw-700 mb-1" style="font-size:13.5px;color:var(--gray-800)">
-                            <i class="bi bi-question-circle-fill text-primary me-2"></i>Chính sách bảo hành?
+                        <div>
+                            <label style="display:block; font-size:0.8rem; font-weight:600; color:var(--text-secondary); margin-bottom:6px;">Email</label>
+                            <input type="email" placeholder="example@gmail.com" required style="width:100%; padding:10px 14px; border:1px solid var(--border); border-radius:var(--radius-md); background:var(--bg-input); color:var(--text-primary); outline:none;">
                         </div>
-                        <div class="text-muted ps-4" style="font-size:13px">Bảo hành 30 ngày, đổi trả nếu lỗi từ shop</div>
                     </div>
-                </div>
 
-                <!-- Working Hours -->
-                <div class="bg-white border rounded-4 p-4" style="border-color:var(--gray-200)!important">
-                    <h5 class="fw-800 mb-3 font-poppins" style="font-size:16px">
-                        <i class="bi bi-clock-fill text-primary me-2"></i>Giờ Hỗ Trợ
-                    </h5>
-                    @foreach([['Telegram / Zalo','24/7 — Mọi lúc mọi nơi','text-success'],['Email','08:00 – 23:00 hàng ngày',''],['Hotline','08:00 – 24:00 hàng ngày',''],['Xử lý Key','Tự động 24/7','text-success']] as [$channel,$hours,$cls])
-                    <div class="d-flex justify-content-between align-items-center py-2 border-bottom" style="border-color:var(--gray-100)!important">
-                        <span class="fw-600" style="font-size:13.5px;color:var(--gray-700)">{{ $channel }}</span>
-                        <span class="fw-700 {{ $cls ?: '' }}" style="font-size:13px">{{ $hours }}</span>
+                    <div style="margin-bottom:16px;">
+                        <label style="display:block; font-size:0.8rem; font-weight:600; color:var(--text-secondary); margin-bottom:6px;">Chủ Đề</label>
+                        <select required style="width:100%; padding:10px 14px; border:1px solid var(--border); border-radius:var(--radius-md); background:var(--bg-input); color:var(--text-primary); outline:none;">
+                            <option value="">-- Chọn vấn đề cần hỗ trợ --</option>
+                            <option value="buy">Tư vấn mua tài khoản</option>
+                            <option value="warranty">Bảo hành tài khoản</option>
+                            <option value="other">Ý kiến đóng góp khác</option>
+                        </select>
                     </div>
-                    @endforeach
-                    <div class="mt-3 p-3 rounded-2 text-center" style="background:var(--success-light);border:1px solid #bbf7d0">
-                        <i class="bi bi-check-circle-fill text-success me-2"></i>
-                        <span class="fw-700 text-success" style="font-size:13.5px">Online ngay bây giờ!</span>
+
+                    <div style="margin-bottom:20px;">
+                        <label style="display:block; font-size:0.8rem; font-weight:600; color:var(--text-secondary); margin-bottom:6px;">Nội Dung Tin Nhắn</label>
+                        <textarea placeholder="Nhập tin nhắn chi tiết tại đây..." rows="5" required style="width:100%; padding:10px 14px; border:1px solid var(--border); border-radius:var(--radius-md); background:var(--bg-input); color:var(--text-primary); outline:none; resize:vertical;"></textarea>
                     </div>
-                </div>
+
+                    <button type="submit" class="btn btn-primary btn-full btn-lg">Gửi Liên Hệ <i class="bi bi-send-fill" style="margin-left:6px;"></i></button>
+                </form>
             </div>
         </div>
     </div>
 </section>
 
+@endsection
+
+@section('extra_js')
+<script>
+const contactForm = document.getElementById('contactForm');
+if (contactForm) {
+    contactForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const btn = this.querySelector('button[type="submit"]');
+        if (btn) {
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Đang gửi...';
+            btn.disabled = true;
+        }
+        setTimeout(() => {
+            showToast('Tin nhắn đã được gửi thành công! Chúng tôi sẽ phản hồi trong thời gian sớm nhất.', 'success');
+            this.reset();
+            if (btn) { btn.innerHTML = 'Gửi Liên Hệ <i class="bi bi-send-fill" style="margin-left:6px;"></i>'; btn.disabled = false; }
+        }, 1500);
+    });
+}
+</script>
 @endsection

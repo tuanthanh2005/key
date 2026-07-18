@@ -17,7 +17,7 @@
 
 <div class="page-header text-center">
     <div class="container">
-        <span class="section-label mb-3 d-inline-block">💰 Giá Tốt Nhất Thị Trường</span>
+        <span class="section-label mb-3 d-inline-block"><i class="bi bi-cash-coin text-success" style="margin-right: 6px;"></i> Giá Tốt Nhất Thị Trường</span>
         <h1 class="section-title mb-2">Bảng Giá VPN Chi Tiết</h1>
         <p class="section-subtitle mx-auto">So sánh các gói VPN để chọn gói phù hợp nhất với nhu cầu của bạn</p>
     </div>

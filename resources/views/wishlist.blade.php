@@ -1,16 +1,15 @@
 @extends('layouts.app')
 
-@section('title', 'Sản Phẩm Yêu Thích - VPNStore')
+@section('title', 'Sản Phẩm Yêu Thích - ' . ($settings['store_name'] ?? 'VPNStore'))
 
 @section('content')
 
 <div class="breadcrumb-section">
     <div class="container">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="{{ route('home') }}">Trang Chủ</a></li>
-                <li class="breadcrumb-item active">Sản Phẩm Yêu Thích</li>
-            </ol>
+        <nav aria-label="breadcrumb" style="display:flex; align-items:center; gap:8px; font-size:0.85rem; color:var(--text-muted); margin-bottom:32px;">
+            <a href="{{ route('home') }}" style="color:var(--text-muted); text-decoration:none;">Trang Chủ</a>
+            <span>/</span>
+            <span style="color:var(--text-primary);">Sản Phẩm Yêu Thích</span>
         </nav>
     </div>
 </div>
@@ -24,85 +23,26 @@
     </div>
 </div>
 
-<div class="container py-5">
+<div class="container py-5" style="margin-bottom: 40px;">
     @php
     $results = $allProducts ?? [];
     @endphp
 
     @if(count($results) > 0)
     <p class="text-muted mb-4">Bạn đang lưu trữ <strong>{{ count($results) }}</strong> sản phẩm yêu thích</p>
-    <div class="row g-4">
+    <div class="product-grid">
         @foreach($results as $prod)
-        <div class="col-lg-4 col-md-6 product-card-wrap" data-slug="{{ $prod['slug'] }}" data-id="{{ $prod['id'] }}">
-            <div class="product-card">
-                <div class="product-card-badge">
-                    @if($prod['price'] < ($prod['old_price'] ?? 0))<span class="badge-sale">Sale</span>@endif
-                    @if($prod['plan'] === '1year' || $prod['plan'] === '2year')<span class="badge-hot"><i class="bi bi-fire"></i> Hot</span>@endif
-                </div>
-                <a href="{{ route('product.detail', $prod['slug']) }}" class="product-card-img" style="text-decoration: none; display: flex; justify-content: center; align-items: center;">
-                    @if(!empty($prod['image_path']))
-                        <img src="{{ asset($prod['image_path']) }}" alt="{{ $prod['name'] }}">
-                    @else
-                        <div class="product-brand-logo" style="background:linear-gradient(135deg,{{ $prod['color'] }},{{ $prod['color'] }}99)">
-                            <i class="bi bi-shield-lock-fill"></i>
-                        </div>
-                    @endif
-                </a>
-                <div class="product-card-body">
-                    <div class="product-brand-tag" style="color:{{ $prod['color'] }}">
-                        <span style="width:8px;height:8px;background:{{ $prod['color'] }};border-radius:50%;display:inline-block"></span>
-                        {{ $prod['brand'] }}
-                    </div>
-                    <div class="product-title">
-                        <a href="{{ route('product.detail', $prod['slug']) }}" style="color: inherit; text-decoration: none;">
-                            {{ $prod['name'] }}
-                        </a>
-                    </div>
-                    <ul class="product-features">
-                        @foreach(array_slice($prod['features'],0,3) as $feat)
-                        <li><i class="bi bi-check-circle-fill"></i>{{ $feat }}</li>
-                        @endforeach
-                    </ul>
-                    <div class="product-rating mb-2">
-                        <div class="rating-stars">
-                            @for($i=1;$i<=5;$i++)<i class="bi {{ $i <= floor($prod['rating']) ? 'bi-star-fill' : 'bi-star' }}"></i>@endfor
-                        </div>
-                        <span class="rating-count ms-1">({{ $prod['reviews'] }})</span>
-                    </div>
-                    <div class="product-price-wrap">
-                        @if(($prod['old_price'] ?? 0) > $prod['price'])
-                            <div class="product-price-old">{{ number_format($prod['old_price']) }}đ</div>
-                        @endif
-                        <div class="product-price">{{ number_format($prod['price']) }}đ</div>
-                    </div>
-                    <div class="product-actions">
-                        <a href="{{ route('product.detail', $prod['slug']) }}" class="btn-add-cart" style="text-decoration:none;display:flex;align-items:center;justify-content:center;gap:8px">
-                            Xem Chi Tiết
-                        </a>
-                        @if(($prod['stock'] ?? 0) <= 0)
-                        <button class="btn-wishlist" disabled style="background:#cbd5e1; border-color:#cbd5e1; color:#64748b; cursor:not-allowed;" title="Hết Hàng">
-                            <i class="bi bi-x-circle"></i>
-                        </button>
-                        @else
-                        <button class="btn-wishlist" data-add-cart data-id="{{ $prod['id'] }}" data-name="{{ $prod['name'] }}" data-brand="{{ $prod['brand'] }}" data-plan="{{ $prod['plan'] }}" data-price="{{ $prod['price'] }}" data-color="{{ $prod['color'] }}" data-slug="{{ $prod['slug'] }}" title="Thêm Vào Giỏ">
-                            <i class="bi bi-bag-plus"></i>
-                        </button>
-                        @endif
-                        <button class="btn-wishlist" data-wishlist data-id="{{ $prod['id'] }}">
-                            <i class="bi bi-heart"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
+        <div class="product-card-wrap" data-slug="{{ $prod['slug'] }}" data-id="{{ $prod['id'] }}">
+            @include('partials.product-card', ['product' => $prod])
         </div>
         @endforeach
     </div>
     @else
-    <div class="empty-state py-5">
-        <div class="empty-state-icon text-danger"><i class="bi bi-heart"></i></div>
-        <h5>Danh sách yêu thích trống</h5>
-        <p>Hãy lưu những sản phẩm VPN bạn quan tâm bằng cách bấm nút Trái tim nhé!</p>
-        <a href="{{ route('products') }}" class="btn btn-primary mt-3 rounded-pill px-4">
+    <div class="empty-state py-5" style="text-align:center;">
+        <div class="empty-state-icon text-danger" style="font-size:3rem; margin-bottom:16px;"><i class="bi bi-heart"></i></div>
+        <h5 style="font-size:1.2rem; font-weight:700; margin-bottom:8px;">Danh sách yêu thích trống</h5>
+        <p style="color:var(--text-muted); margin-bottom:24px;">Hãy lưu những sản phẩm VPN bạn quan tâm bằng cách bấm nút Trái tim nhé!</p>
+        <a href="{{ route('products') }}" class="btn btn-primary mt-3">
             <i class="bi bi-grid me-2"></i>Xem Tất Cả Sản Phẩm
         </a>
     </div>

@@ -1,85 +1,81 @@
 @extends('layouts.app')
 
-@section('title', 'Đặt Hàng Thành Công - VPNStore')
+@section('title', 'Đặt Hàng Thành Công - ' . ($settings['store_name'] ?? 'VPNStore'))
 
 @section('content')
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-7">
-            <!-- Success Card -->
-            <div class="text-center bg-white rounded-4 p-3 p-md-5 shadow-sm" style="border:1.5px solid var(--gray-200)">
-                <div class="mb-4" style="font-size:80px;color:#22c55e;animation:bounceIn .6s ease">
-                    <i class="bi bi-check-circle-fill"></i>
-                </div>
-                <h1 class="font-poppins fw-800 mb-2" style="font-size:28px;color:var(--gray-900)">
-                    Đặt Hàng Thành Công! 🎉
-                </h1>
-                <p class="text-muted mb-4" style="font-size:15px;line-height:1.7">
-                    Cảm ơn bạn đã tin tưởng VPNStore.<br>
-                    Đơn hàng của bạn đã được xác nhận và đang được xử lý.
-                </p>
+<section class="section">
+    <div class="container" style="max-width:680px;">
+        <div style="text-align:center; margin-bottom:40px;">
+            <div style="width:80px; height:80px; background:rgba(16,185,129,0.15); border:2px solid var(--success); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:2.5rem; margin:0 auto 20px; color:var(--success);">
+                <i class="bi bi-check-lg"></i>
+            </div>
+            <h1 style="font-size:2rem; font-weight:800; color:var(--success); margin-bottom:8px;">Đặt Hàng Thành Công! <i class="bi bi-emoji-smile"></i></h1>
+            <p style="color:var(--text-secondary);">Cảm ơn bạn đã tin tưởng mua sắm tại {{ $settings['store_name'] ?? 'VPNStore' }}.</p>
+        </div>
 
-                <!-- Order ID -->
-                <div class="p-3 rounded-3 mb-4 d-inline-flex align-items-center gap-3" style="background:var(--primary-light);border:1.5px solid var(--primary-100)">
+        {{-- Order ID Badge --}}
+        <div class="card text-center" style="padding:24px; margin-bottom:24px; border-color:rgba(124,58,237,0.3);">
+            <span style="font-size:0.75rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; display:block; margin-bottom:6px;">Mã Đơn Hàng Của Bạn</span>
+            <div style="font-size:1.6rem; font-weight:900; color:var(--primary-light); font-family:var(--font-mono); letter-spacing:1px; margin-bottom:12px;">
+                {{ request('order', 'VPN12345678') }}
+            </div>
+            <button class="btn btn-outline btn-sm" onclick="navigator.clipboard.writeText('{{ request('order', 'VPN12345678') }}').then(()=>showToast('Đã sao chép!','success'))" style="margin:0 auto; padding:6px 16px;">
+                <i class="bi bi-copy me-2"></i> Sao Chép Mã Đơn
+            </button>
+        </div>
+
+        {{-- Instructions List --}}
+        <div class="card" style="padding:24px; margin-bottom:24px;">
+            <h3 style="font-size:1rem; font-weight:800; color:var(--text-primary); margin-bottom:20px;">Các Bước Tiếp Theo:</h3>
+            
+            <div style="display:flex; flex-direction:column; gap:20px;">
+                <div style="display:flex; gap:16px;">
+                    <div style="width:32px; height:32px; background:var(--primary); color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.9rem; font-weight:700; flex-shrink:0;">1</div>
                     <div>
-                        <div style="font-size:11.5px;color:var(--gray-500);font-weight:600">MÃ ĐƠN HÀNG</div>
-                        <div class="fw-800 text-primary font-poppins" style="font-size:20px">{{ request('order', 'VPN12345678') }}</div>
-                    </div>
-                    <button class="btn btn-sm btn-outline-primary" onclick="navigator.clipboard.writeText('{{ request('order', 'VPN12345678') }}').then(()=>showToast('Đã sao chép!','success'))">
-                        <i class="bi bi-copy me-1"></i>Sao Chép
-                    </button>
-                </div>
-
-                <!-- Next Steps -->
-                <div class="text-start p-4 rounded-3 mb-4" style="background:var(--gray-50);border:1px solid var(--gray-200)">
-                    <h6 class="fw-700 mb-3" style="font-size:14px;color:var(--gray-800)">Các Bước Tiếp Theo:</h6>
-                    <div class="d-flex gap-3 mb-3">
-                        <div style="width:28px;height:28px;background:var(--primary);border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0">1</div>
-                        <div>
-                            <div class="fw-600" style="font-size:13.5px">Kiểm tra Email</div>
-                            <div class="text-muted" style="font-size:12.5px">Thông tin tài khoản/key kích hoạt sẽ được gửi về email trong 1–30 phút sau khi xác nhận thanh toán</div>
-                        </div>
-                    </div>
-                    <div class="d-flex gap-3 mb-3">
-                        <div style="width:28px;height:28px;background:var(--success);border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0">2</div>
-                        <div>
-                            <div class="fw-600" style="font-size:13.5px">Xác Nhận Thanh Toán</div>
-                            <div class="text-muted" style="font-size:12.5px">Gửi ảnh chụp màn hình xác nhận CK về Telegram {{ '@' . ltrim($settings['telegram_support'] ?? 'specademy', '@') }}{{ !empty($settings['zalo_support']) ? ' hoặc Zalo ' . $settings['zalo_support'] . (!empty($settings['zalo_support_2']) ? ' / ' . $settings['zalo_support_2'] : '') : '' }}</div>
-                        </div>
-                    </div>
-                    <div class="d-flex gap-3">
-                        <div style="width:28px;height:28px;background:var(--warning);border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0">3</div>
-                        <div>
-                            <div class="fw-600" style="font-size:13.5px">Nhận Key & Kích Hoạt</div>
-                            <div class="text-muted" style="font-size:12.5px">Theo hướng dẫn trong email để kích hoạt VPN. Hỗ trợ miễn phí nếu cần!</div>
-                        </div>
+                        <strong style="font-size:0.95rem; color:var(--text-primary); display:block; margin-bottom:4px;">Chuyển Khoản & Xác Nhận</strong>
+                        <span style="font-size:0.85rem; color:var(--text-secondary); line-height:1.6; display:block;">
+                            Nếu chưa chuyển khoản, vui lòng thực hiện quét QR thanh toán đúng số tiền và nội dung. Đơn hàng của bạn sẽ được kích hoạt tự động sau khi nhận được thanh toán.
+                        </span>
                     </div>
                 </div>
 
-                <!-- Action Buttons -->
-                <div class="d-flex gap-3 justify-content-center flex-wrap">
-                    <a href="{{ route('order.check') }}" class="btn btn-primary rounded-pill px-4 fw-600">
-                        <i class="bi bi-search me-2"></i>Tra Cứu Đơn Hàng
-                    </a>
-                    <a href="{{ route('home') }}" class="btn btn-outline-secondary rounded-pill px-4 fw-600">
-                        <i class="bi bi-house me-2"></i>Về Trang Chủ
-                    </a>
-                    <a href="{{ $settings['telegram_url'] ?? 'https://t.me/' . ltrim($settings['telegram_support'] ?? 'specademy','@') }}" target="_blank" class="btn btn-outline-primary rounded-pill px-4 fw-600">
-                        <i class="bi bi-telegram me-2"></i>Telegram Hỗ Trợ
-                    </a>
+                <div style="display:flex; gap:16px;">
+                    <div style="width:32px; height:32px; background:var(--success); color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.9rem; font-weight:700; flex-shrink:0;">2</div>
+                    <div>
+                        <strong style="font-size:0.95rem; color:var(--text-primary); display:block; margin-bottom:4px;">Kiểm Tra Email Nhận Key</strong>
+                        <span style="font-size:0.85rem; color:var(--text-secondary); line-height:1.6; display:block;">
+                            Thông tin tài khoản Premium hoặc License Key kích hoạt sẽ được gửi tự động vào Email của bạn trong vòng 1-30 phút sau khi xác nhận thanh toán thành công.
+                        </span>
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:16px;">
+                    <div style="width:32px; height:32px; background:var(--warning); color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.9rem; font-weight:700; flex-shrink:0;">3</div>
+                    <div>
+                        <strong style="font-size:0.95rem; color:var(--text-primary); display:block; margin-bottom:4px;">Hỗ Trợ Kỹ Thuật 24/7</strong>
+                        <span style="font-size:0.85rem; color:var(--text-secondary); line-height:1.6; display:block;">
+                            Nếu gặp bất kỳ vấn đề gì về kích hoạt hoặc sử dụng, vui lòng liên hệ Telegram / Zalo hỗ trợ của chúng tôi để được xử lý nhanh nhất.
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-@endsection
 
-@section('extra_css')
-<style>
-@keyframes bounceIn {
-    0% { transform: scale(0); opacity:0; }
-    60% { transform: scale(1.1); }
-    100% { transform: scale(1); opacity:1; }
-}
-</style>
+        {{-- Actions --}}
+        <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+            <a href="{{ route('order.check') }}" class="btn btn-primary">
+                <i class="bi bi-search me-2"></i> Tra Cứu Đơn Hàng
+            </a>
+            <a href="{{ route('home') }}" class="btn btn-outline">
+                <i class="bi bi-house me-2"></i> Về Trang Chủ
+            </a>
+            @if(!empty($settings['telegram_support']))
+            <a href="{{ $settings['telegram_url'] ?? 'https://t.me/' . ltrim($settings['telegram_support'],'@') }}" target="_blank" class="btn btn-outline" style="color:var(--primary-light); border-color:rgba(124,58,237,0.3);">
+                <i class="bi bi-telegram me-2"></i> Hỗ Trợ Telegram
+            </a>
+            @endif
+        </div>
+
+    </div>
+</section>
 @endsection

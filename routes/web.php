@@ -47,14 +47,19 @@ Route::get('/tin-tuc/{slug}', [ShopController::class, 'postDetail'])->name('post
 // XML Sitemap
 // =============================================
 Route::get('/sitemap.xml', function () {
-    // Lấy slug từ DB thay vì hardcode
-    $brands = \App\Models\Product::where('status', 'active')
+    // Get all Category slugs (e.g. vpn, chatgpt, netflix brand pages)
+    $categorySlugs = \App\Models\Category::pluck('slug')->toArray();
+
+    // Get all active Product slugs
+    $productSlugs = \App\Models\Product::where('status', 'active')
         ->whereNotNull('slug')
-        ->distinct()
         ->pluck('slug')
         ->toArray();
 
-    // Lấy các bài viết đã xuất bản để thêm vào sitemap
+    // Merge and unique them so both brand hubs and specific products are indexed
+    $brands = array_unique(array_filter(array_merge($categorySlugs, $productSlugs)));
+
+    // Get published posts
     $posts = \App\Models\Post::published()
         ->orderBy('created_at', 'desc')
         ->get(['slug', 'updated_at']);
@@ -127,6 +132,21 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::put('/{id}', [ProductController::class, 'update'])->name('update');
         Route::delete('/{id}', [ProductController::class, 'destroy'])->name('destroy');
         Route::post('/{id}/clone', [ProductController::class, 'clone'])->name('clone');
+        Route::post('/{id}/toggle', [ProductController::class, 'toggleActive'])->name('toggle');
+    });
+
+    // Quản lý license
+    Route::prefix('licenses')->name('licenses.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\LicenseController::class, 'index'])->name('index');
+        Route::post('/', [\App\Http\Controllers\Admin\LicenseController::class, 'store'])->name('store');
+        Route::post('/send-email', [\App\Http\Controllers\Admin\LicenseController::class, 'sendEmail'])->name('send_email');
+        Route::delete('/{license}', [\App\Http\Controllers\Admin\LicenseController::class, 'destroy'])->name('destroy');
+    });
+
+    // Quản lý hạn dùng khách hàng (Subscriptions)
+    Route::prefix('han-khach-hang')->name('subscriptions.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\SubscriptionController::class, 'index'])->name('index');
+        Route::put('/{id}/gia-han', [\App\Http\Controllers\Admin\SubscriptionController::class, 'extend'])->name('extend');
     });
 
     // Quản lý danh mục

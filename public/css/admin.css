@@ -3,18 +3,18 @@
    ============================================= */
 
 :root {
-    --admin-bg: #f0f2f7;
-    --admin-sidebar: #0f172a;
-    --admin-sidebar-hover: rgba(255,255,255,.07);
-    --admin-sidebar-active: rgba(37,99,235,.25);
+    --admin-bg: #f8fafc;
+    --admin-sidebar: #ffffff;
+    --admin-sidebar-hover: #f1f5f9;
+    --admin-sidebar-active: rgba(79, 70, 229, 0.08);
     --admin-surface: #ffffff;
     --admin-border: #e2e8f0;
-    --admin-text: #1e293b;
+    --admin-text: #0f172a;
     --admin-muted: #64748b;
-    --admin-primary: #2563eb;
-    --admin-success: #16a34a;
-    --admin-warning: #d97706;
-    --admin-danger: #dc2626;
+    --admin-primary: #4f46e5;
+    --admin-success: #10b981;
+    --admin-warning: #f59e0b;
+    --admin-danger: #ef4444;
     --admin-sidebar-width: 260px;
     --admin-topbar-height: 64px;
 }
@@ -51,23 +51,24 @@ body.admin-body {
     transition: transform .3s ease;
     overflow-y: auto;
     overflow-x: hidden;
+    border-right: 1px solid var(--admin-border);
 }
 
 .admin-sidebar::-webkit-scrollbar { width: 4px; }
-.admin-sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 2px; }
+.admin-sidebar::-webkit-scrollbar-thumb { background: rgba(0,0,0,.05); border-radius: 2px; }
 
 .sidebar-logo {
     display: flex;
     align-items: center;
     gap: 12px;
     padding: 20px 20px 16px;
-    border-bottom: 1px solid rgba(255,255,255,.07);
+    border-bottom: 1px solid var(--admin-border);
     flex-shrink: 0;
 }
 
 .sidebar-logo-icon {
     width: 40px; height: 40px;
-    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    background: linear-gradient(135deg, var(--admin-primary), #7c3aed);
     border-radius: 10px;
     display: flex; align-items: center; justify-content: center;
     font-size: 18px; color: #fff;
@@ -77,19 +78,19 @@ body.admin-body {
 .sidebar-logo-text {
     font-family: 'Poppins', sans-serif;
     font-size: 17px; font-weight: 800;
-    background: linear-gradient(135deg, #60a5fa, #a78bfa);
+    background: linear-gradient(135deg, var(--admin-primary), #7c3aed);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     line-height: 1.2;
 }
 
-.sidebar-logo-sub { font-size: 10.5px; color: rgba(255,255,255,.35); font-weight: 500; letter-spacing: .5px; }
+.sidebar-logo-sub { font-size: 10.5px; color: var(--admin-muted); font-weight: 500; letter-spacing: .5px; }
 
 .sidebar-close {
     margin-left: auto;
     background: none; border: none;
-    color: rgba(255,255,255,.4);
+    color: var(--admin-muted);
     padding: 4px; cursor: pointer;
     font-size: 16px;
 }
@@ -99,13 +100,13 @@ body.admin-body {
     align-items: center;
     gap: 12px;
     padding: 16px 20px;
-    border-bottom: 1px solid rgba(255,255,255,.07);
+    border-bottom: 1px solid var(--admin-border);
     flex-shrink: 0;
 }
 
 .sidebar-user-avatar {
     width: 40px; height: 40px;
-    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    background: linear-gradient(135deg, var(--admin-primary), #7c3aed);
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     color: #fff; font-weight: 800; font-size: 16px;
@@ -113,15 +114,15 @@ body.admin-body {
 }
 
 .sidebar-user-name {
-    font-size: 13.5px; font-weight: 700; color: #fff;
+    font-size: 13.5px; font-weight: 700; color: var(--admin-text);
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 
 .admin-role-badge {
     font-size: 10.5px; font-weight: 700;
-    background: rgba(37,99,235,.3);
-    color: #60a5fa;
-    border: 1px solid rgba(37,99,235,.4);
+    background: rgba(79, 70, 229, 0.1);
+    color: var(--admin-primary);
+    border: 1px solid rgba(79, 70, 229, 0.15);
     border-radius: 999px;
     padding: 2px 8px;
 }
@@ -137,7 +138,7 @@ body.admin-body {
 
 .sidebar-section-label {
     font-size: 10px; font-weight: 700; letter-spacing: 1px;
-    color: rgba(255,255,255,.25);
+    color: var(--admin-muted);
     padding: 8px 8px 4px;
     margin-top: 4px;
 }
@@ -148,7 +149,7 @@ body.admin-body {
     gap: 10px;
     padding: 10px 12px;
     border-radius: 10px;
-    color: rgba(255,255,255,.55);
+    color: var(--admin-muted);
     text-decoration: none;
     font-size: 13.5px; font-weight: 500;
     transition: all .2s;
@@ -157,14 +158,14 @@ body.admin-body {
 
 .sidebar-link:hover {
     background: var(--admin-sidebar-hover);
-    color: rgba(255,255,255,.85);
+    color: var(--admin-text);
 }
 
 .sidebar-link.active {
-    background: linear-gradient(135deg, rgba(37,99,235,.35), rgba(124,58,237,.2));
-    color: #fff;
+    background: var(--admin-sidebar-active);
+    color: var(--admin-primary);
     font-weight: 600;
-    border: 1px solid rgba(37,99,235,.25);
+    border: 1px solid rgba(79, 70, 229, 0.15);
 }
 
 .sidebar-link i { font-size: 16px; flex-shrink: 0; min-width: 18px; }
@@ -175,8 +176,8 @@ body.admin-body {
     border-radius: 999px;
     padding: 2px 7px;
 }
-.badge-blue  { background: rgba(37,99,235,.2); color: #60a5fa; border: 1px solid rgba(37,99,235,.3); }
-.badge-orange{ background: rgba(234,88,12,.2); color: #fb923c; border: 1px solid rgba(234,88,12,.3); }
+.badge-blue  { background: rgba(79, 70, 229, 0.1); color: var(--admin-primary); border: 1px solid rgba(79, 70, 229, 0.15); }
+.badge-orange{ background: rgba(245, 158, 11, 0.1); color: var(--admin-warning); border: 1px solid rgba(245, 158, 11, 0.15); }
 
 /* =============================================
    MAIN CONTENT

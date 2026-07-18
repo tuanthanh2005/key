@@ -23,7 +23,17 @@ class ShopController extends Controller
     public function products(Request $request)
     {
         $allProducts = \App\Models\Product::with('category')->where('status', 'active')->get()->toArray();
-        return view('products', compact('allProducts'));
+        $categories = \App\Models\Category::withCount(['products' => function($q) {
+            $q->where('status', 'active');
+        }])->get();
+
+        $categorySlug = $request->query('category');
+        $selectedCategory = null;
+        if ($categorySlug) {
+            $selectedCategory = $categories->where('slug', $categorySlug)->first();
+        }
+
+        return view('products', compact('allProducts', 'categories', 'selectedCategory'));
     }
 
     /**
@@ -90,13 +100,18 @@ class ShopController extends Controller
      */
     public function checkout()
     {
-        $products = \App\Models\Product::get(['brand', 'plan', 'stock']);
+        $products = \App\Models\Product::get(['id', 'brand', 'plan', 'stock', 'require_upgrade_email']);
         $stockMap = [];
+        $emailRequireMap = [];
         foreach ($products as $p) {
             $key = strtolower(str_replace(' ', '', $p->brand)) . '_' . strtolower($p->plan);
             $stockMap[$key] = $p->stock;
+            $emailRequireMap[$p->id] = (bool)$p->require_upgrade_email;
         }
-        return view('checkout', ['stockMap' => $stockMap]);
+        return view('checkout', [
+            'stockMap' => $stockMap,
+            'emailRequireMap' => $emailRequireMap
+        ]);
     }
 
     /**
@@ -414,8 +429,28 @@ class ShopController extends Controller
         $allProductsQuery = \App\Models\Product::where('status', 'active');
         if ($q) {
             $allProductsQuery->where(function ($sub) use ($q) {
+                // 1. Exact match in name, brand, or description
                 $sub->where('name', 'like', "%{$q}%")
-                    ->orWhere('brand', 'like', "%{$q}%");
+                    ->orWhere('brand', 'like', "%{$q}%")
+                    ->orWhere('description', 'like', "%{$q}%");
+                
+                // 2. Space-stripped match (e.g. "chat gpt" -> "chatgpt")
+                $stripped = str_replace(' ', '', $q);
+                if ($stripped !== $q) {
+                    $sub->orWhere('name', 'like', "%{$stripped}%")
+                        ->orWhere('brand', 'like', "%{$stripped}%");
+                }
+                
+                // 3. Keyword matching (words >= 2 chars)
+                $words = array_filter(explode(' ', $q));
+                if (count($words) > 1) {
+                    foreach ($words as $word) {
+                        if (mb_strlen($word) >= 2) {
+                            $sub->orWhere('name', 'like', "%{$word}%")
+                                ->orWhere('brand', 'like', "%{$word}%");
+                        }
+                    }
+                }
             });
         }
         $allProducts = $allProductsQuery->get()->toArray();

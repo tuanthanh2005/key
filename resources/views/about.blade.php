@@ -20,7 +20,7 @@
     <div class="container">
         <div class="row align-items-center g-5">
             <div class="col-lg-6">
-                <span class="section-label mb-3 d-inline-block">🏆 Uy Tín Số 1</span>
+                <span class="section-label mb-3 d-inline-block"><i class="bi bi-trophy-fill text-warning" style="margin-right: 6px;"></i> Uy Tín Số 1</span>
                 <h1 class="section-title mb-3">VPNStore — Chuyên Gia VPN Tại Việt Nam</h1>
                 <p class="text-muted mb-4" style="font-size:15px;line-height:1.8">
                     Thành lập từ năm 2020, VPNStore là đơn vị chuyên cung cấp các gói VPN chính hãng
@@ -67,7 +67,7 @@
 <section class="section bg-white">
     <div class="container">
         <div class="text-center mb-5">
-            <span class="section-label mb-3 d-inline-block">🎯 Sứ Mệnh</span>
+            <span class="section-label mb-3 d-inline-block"><i class="bi bi-target text-danger" style="margin-right: 6px;"></i> Sứ Mệnh</span>
             <h2 class="section-title">Cam Kết Của Chúng Tôi</h2>
         </div>
         <div class="row g-4">

@@ -74,6 +74,14 @@
             <i class="bi bi-shield-fill-check"></i>
             <span>Sản Phẩm</span>
         </a>
+        <a href="{{ route('admin.licenses.index') }}" class="sidebar-link {{ request()->routeIs('admin.licenses.*') ? 'active' : '' }}">
+            <i class="bi bi-key-fill"></i>
+            <span>Lịch Sử Bàn Giao</span>
+        </a>
+        <a href="{{ route('admin.subscriptions.index') }}" class="sidebar-link {{ request()->routeIs('admin.subscriptions.*') ? 'active' : '' }}">
+            <i class="bi bi-clock-fill"></i>
+            <span>Hạn Khách Hàng</span>
+        </a>
         <a href="{{ route('admin.categories.index') }}" class="sidebar-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
             <i class="bi bi-folder-fill"></i>
             <span>Danh Mục</span>
@@ -114,11 +122,11 @@
             <span>Cài Đặt</span>
         </a>
 
-        <div class="mt-auto pt-3 border-top" style="border-color:rgba(255,255,255,.08)!important">
+        <div class="mt-auto pt-3 border-top" style="border-color:var(--admin-border)!important">
             <form method="POST" action="{{ route('auth.logout') }}">
                 @csrf
-                <button type="submit" class="sidebar-link w-100 text-start" style="background:none;border:none;color:rgba(255,255,255,.55);">
-                    <i class="bi bi-box-arrow-left" style="color:#f87171"></i>
+                <button type="submit" class="sidebar-link w-100 text-start" style="background:none;border:none;">
+                    <i class="bi bi-box-arrow-left" style="color:var(--admin-danger)"></i>
                     <span>Đăng Xuất</span>
                 </button>
             </form>
@@ -157,9 +165,9 @@
                     <span class="topbar-notif-dot"></span>
                 </button>
                 <div class="dropdown-menu dropdown-menu-end shadow-lg p-0" style="width:320px;border-radius:16px;border:1px solid var(--admin-border);overflow:hidden">
-                    <div class="p-3 border-bottom" style="background:var(--admin-sidebar);color:#fff">
+                    <div class="p-3 border-bottom" style="background:var(--admin-primary);color:#fff">
                         <div class="fw-700" style="font-size:14px">Thông Báo</div>
-                        <div style="font-size:12px;opacity:.6">3 thông báo mới</div>
+                        <div style="font-size:12px;opacity:.8">3 thông báo mới</div>
                     </div>
                     @foreach([['Đơn hàng #VPN12345 mới','2 phút trước','bi-bag-plus-fill','#2563eb'],['Người dùng mới đăng ký','15 phút trước','bi-person-plus-fill','#10b981'],['Key VPN đã hết hạn cảnh báo','1 giờ trước','bi-exclamation-triangle-fill','#f59e0b']] as [$msg,$time,$icon,$color])
                     <div class="d-flex gap-3 p-3 border-bottom notif-item">

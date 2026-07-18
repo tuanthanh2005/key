@@ -112,6 +112,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const price       = parseFloat(this.dataset.price) || 0;
             const brandColor  = this.dataset.color || '#2563eb';
             const brandSlug   = this.dataset.slug || '';
+            const requireEmail = this.dataset.requireEmail === '1';
 
             // Check if there is a quantity selector on the page (e.g. product-detail page)
             const qtyInput = document.getElementById('detail-qty');
@@ -126,6 +127,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 price,
                 brandColor,
                 brandSlug,
+                requireEmail,
                 qty: qtyVal
             });
 

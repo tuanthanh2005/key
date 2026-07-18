@@ -1,166 +1,145 @@
 @extends('admin.layouts.admin')
+@section('title', 'Quản Lý Sản Phẩm')
+@section('page_title', 'Quản Lý Sản Phẩm')
 
-@section('title', 'Quản Lý Sản Phẩm VPN')
-@section('page_title', 'Quản Lý Sản Phẩm VPN')
-@section('breadcrumb', 'Admin / Sản Phẩm VPN')
+@section('topbar_actions')
+<a href="{{ route('admin.products.create') }}" class="btn btn-primary btn-sm">+ Thêm Sản Phẩm</a>
+@endsection
 
 @section('content')
 
-<!-- Stats -->
-<div class="row g-3 mb-4">
-    <div class="col-md-4">
-        <div class="admin-stat-card p-3" style="--card-color:#2563eb">
-            <div class="stat-icon" style="background:#dbeafe;color:#2563eb;width:42px;height:42px;font-size:20px;border-radius:10px">
-                <i class="bi bi-shield-fill-check"></i>
-            </div>
-            <div>
-                <div class="stat-label">Tổng Sản Phẩm</div>
-                <div class="stat-value" style="font-size:22px">{{ $stats['total'] }}</div>
-            </div>
+{{-- Filters --}}
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; flex-wrap:wrap; gap:16px;">
+    <form method="GET" action="{{ route('admin.products.index') }}" style="display:flex; gap:10px; align-items:center; flex:1; max-width:480px;">
+        <div class="search-bar" style="width:100%; max-width:320px; border:1px solid var(--border); border-radius:var(--radius); padding:6px 12px; background:var(--bg-input); display:flex; align-items:center; gap:8px;">
+            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--text-muted);"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <input type="text" name="q" placeholder="Tìm kiếm sản phẩm..." value="{{ request('q') }}" style="border:none; background:none; outline:none; color:var(--text-primary); font-size:0.85rem; width:100%;">
         </div>
-    </div>
-    <div class="col-md-4">
-        <div class="admin-stat-card p-3" style="--card-color:#16a34a">
-            <div class="stat-icon" style="background:#dcfce7;color:#16a34a;width:42px;height:42px;font-size:20px;border-radius:10px">
-                <i class="bi bi-check-circle-fill"></i>
-            </div>
-            <div>
-                <div class="stat-label">Đang Bán</div>
-                <div class="stat-value" style="font-size:22px">{{ $stats['active'] }}</div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="admin-stat-card p-3" style="--card-color:#d97706">
-            <div class="stat-icon" style="background:#fef3c7;color:#d97706;width:42px;height:42px;font-size:20px;border-radius:10px">
-                <i class="bi bi-bag-check-fill"></i>
-            </div>
-            <div>
-                <div class="stat-label">Đã Bán</div>
-                <div class="stat-value" style="font-size:22px">{{ number_format($stats['total_sold']) }}</div>
-            </div>
-        </div>
+        <button type="submit" class="btn btn-primary btn-sm">Tìm kiếm</button>
+    </form>
+    
+    <div style="display:flex; gap:10px;">
+        <a href="{{ route('admin.products.index') }}" class="btn btn-ghost btn-sm" style="border: 1px solid var(--border); color: var(--text-secondary);"><i class="bi bi-arrow-clockwise" style="margin-right:4px;"></i> Làm mới</a>
+        <a href="{{ route('admin.products.create') }}" class="btn btn-primary btn-sm">+ Thêm sản phẩm</a>
     </div>
 </div>
 
-<!-- Filter + Add -->
-<div class="admin-card mb-4">
-    <div class="admin-card-body">
-        <form method="GET" class="row g-3 align-items-end">
-            <div class="col-md-5">
-                <div class="admin-search-bar">
-                    <i class="bi bi-search"></i>
-                    <input type="text" name="search" placeholder="Tên sản phẩm, thương hiệu..." value="{{ request('search') }}" style="width:100%">
-                </div>
-            </div>
-            <div class="col-md-3">
-                <select name="brand" class="form-select form-select-sm" style="border-radius:10px">
-                    <option value="">Tất cả thương hiệu</option>
-                    @foreach(['NordVPN','ExpressVPN','Surfshark','HMA VPN','CyberGhost','PureVPN','ProtonVPN','IPVanish'] as $b)
-                    <option value="{{ $b }}" {{ request('brand')==$b?'selected':'' }}>{{ $b }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="col-md-4 d-flex gap-2">
-                <button type="submit" class="btn btn-primary btn-sm rounded-pill px-3 flex-grow-1" style="font-size:13px">
-                    <i class="bi bi-funnel me-1"></i>Lọc
-                </button>
-                <a href="{{ route('admin.products.create') }}" class="btn btn-success btn-sm rounded-pill px-3" style="font-size:13px;white-space:nowrap">
-                    <i class="bi bi-plus-lg me-1"></i>Thêm Sản Phẩm
-                </a>
-            </div>
-        </form>
-    </div>
-</div>
-
-<!-- Products Table -->
-<div class="admin-card">
-    <div class="admin-card-header">
-        <div class="admin-card-title">
-            <i class="bi bi-grid-3x3-gap-fill text-primary"></i>
-            Danh Sách Sản Phẩm
-        </div>
-    </div>
-    <div class="table-responsive">
-        <table class="admin-table">
-            <thead>
-                <tr>
-                    <th>Sản Phẩm</th>
-                    <th>Thương Hiệu</th>
-                    <th>Gói</th>
-                    <th>Giá Bán</th>
-                    <th>Giá Gốc</th>
-                    <th>Đã Bán</th>
-                    <th>Trạng Thái</th>
-                    <th>Thao Tác</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($products as $prod)
-                <tr>
-                    <td>
-                        <div class="d-flex align-items-center gap-3">
-                            @if(!empty($prod->image_path))
-                                <img src="{{ asset($prod->image_path) }}" alt="{{ $prod->name }}" style="width:42px;height:42px;object-fit:contain;border-radius:10px;border:1px solid var(--gray-200);flex-shrink:0;">
+<div class="table-wrapper" style="background:var(--bg-surface); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden;">
+    <table class="table" style="width:100%; border-collapse:collapse; text-align:left;">
+        <thead>
+            <tr style="border-bottom: 1px solid var(--border); background:rgba(0,0,0,0.02);">
+                <th style="color:var(--text-muted); font-size:0.75rem; text-transform:uppercase; padding:16px; font-weight:700;">Sản phẩm</th>
+                <th style="color:var(--text-muted); font-size:0.75rem; text-transform:uppercase; padding:16px; font-weight:700;">Giá</th>
+                <th style="color:var(--text-muted); font-size:0.75rem; text-transform:uppercase; padding:16px; font-weight:700;">Trạng thái</th>
+                <th style="color:var(--text-muted); font-size:0.75rem; text-transform:uppercase; padding:16px; font-weight:700;">Tài khoản</th>
+                <th style="color:var(--text-muted); font-size:0.75rem; text-transform:uppercase; padding:16px; font-weight:700;">Đánh giá</th>
+                <th style="color:var(--text-muted); font-size:0.75rem; text-transform:uppercase; padding:16px; font-weight:700; width:120px;">Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse($products as $product)
+            <tr style="border-bottom: 1px solid var(--border); transition: background 0.2s;" onmouseover="this.style.background='rgba(0,0,0,0.01)'" onmouseout="this.style.background='none'">
+                <td style="padding:16px;">
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <div style="width:40px; height:40px; border-radius:8px; overflow:hidden; background:var(--bg-base); flex-shrink:0; display:flex; align-items:center; justify-content:center; border: 1px solid var(--border);">
+                            @if($product->image)
+                                <img src="{{ asset('storage/' . $product->image) }}" style="width:100%; height:100%; object-fit:cover;">
+                            @elseif($product->image_path)
+                                <img src="{{ asset($product->image_path) }}" style="width:100%; height:100%; object-fit:cover;">
                             @else
-                                <div style="width:42px;height:42px;background:{{ $prod->color }}18;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;color:{{ $prod->color }};flex-shrink:0">
-                                    <i class="bi bi-shield-lock-fill"></i>
-                                </div>
+                                @php 
+                                    $catIcons = [
+                                        'vpn-premium' => 'bi bi-shield-lock-fill',
+                                        'ai-code' => 'bi bi-cpu-fill',
+                                        'design-software' => 'bi bi-palette-fill',
+                                        'xem-phim-premium' => 'bi bi-play-btn-fill'
+                                    ];
+                                    $iconClass = $product->category ? ($catIcons[$product->category->slug] ?? 'bi bi-box-seam-fill') : 'bi bi-box-seam-fill';
+                                @endphp
+                                <span style="font-size:1.2rem; color: #3b82f6;"><i class="{{ $iconClass }}"></i></span>
                             @endif
-                            <div class="fw-700" style="font-size:13.5px">{{ $prod->name }}</div>
                         </div>
-                    </td>
-                    <td>
-                        <span class="brand-pill" style="background:{{ $prod->color }}15;color:{{ $prod->color }};border:1px solid {{ $prod->color }}35">
-                            {{ $prod->brand }}
+                        <div>
+                            <div style="font-weight:600; font-size:0.875rem; color:var(--text-primary);">{{ $product->name }}</div>
+                            <div style="font-size:0.72rem; color:var(--text-muted); margin-top:2px;">ID: {{ $product->slug }}</div>
+                        </div>
+                    </div>
+                </td>
+                <td style="padding:16px;">
+                    <div style="display:flex; flex-direction:column; line-height: 1.3;">
+                        <span style="font-weight: 700; color: var(--text-primary); font-family: var(--font-mono); font-size: 0.9rem;">
+                            {{ number_format($product->price, 0, ',', '.') }} đ
                         </span>
-                    </td>
-                    <td style="font-size:12.5px;color:var(--admin-muted);font-weight:600">
-                        {{ match($prod->plan){'1month'=>'1 Tháng','6month'=>'6 Tháng','1year'=>'1 Năm','2year'=>'2 Năm',default=>$prod->plan} }}
-                    </td>
-                    <td><span class="fw-800 text-primary">{{ number_format($prod->price) }}đ</span></td>
-                    <td><span style="text-decoration:line-through;color:var(--admin-muted);font-size:12.5px">{{ $prod->old_price ? number_format($prod->old_price).'đ' : '-' }}</span></td>
-                    <td>
-                        <span class="fw-600">{{ number_format($prod->sold) }}</span>
-                        <span style="font-size:11px;color:var(--admin-muted)"> đơn</span>
-                    </td>
-                    <td>
-                        @if($prod->status === 'active')
-                            @if($prod->stock <= 0)
-                                <span class="admin-badge admin-badge-danger">Hết Hàng</span>
-                            @else
-                                <span class="admin-badge admin-badge-success">Đang Bán</span>
-                            @endif
-                        @else
-                            <span class="admin-badge admin-badge-secondary">Ẩn</span>
+                        @if($product->original_price && $product->original_price > $product->price)
+                        <span style="font-size: 0.75rem; color: var(--text-muted); text-decoration: line-through; font-family: var(--font-mono);">
+                            {{ number_format($product->original_price, 0, ',', '.') }} đ
+                        </span>
                         @endif
-                    </td>
-                    <td>
-                        <div class="d-flex gap-1 align-items-center">
-                            <form action="{{ route('admin.products.clone', $prod->id) }}" method="POST" style="display:inline-block;margin:0;">
-                                @csrf
-                                <button type="submit" class="btn btn-sm btn-outline-success" style="border-radius:8px;font-size:12px;padding:4px 10px;" title="Nhân bản sản phẩm bao gồm cả ảnh">
-                                    <i class="bi bi-copy me-1"></i>Clone
-                                </button>
-                            </form>
-                            <a href="{{ route('admin.products.edit', $prod->id) }}" class="btn btn-sm btn-outline-primary" style="border-radius:8px;font-size:12px;padding:4px 10px">
-                                <i class="bi bi-pencil me-1"></i>Sửa
-                            </a>
-                            <form action="{{ route('admin.products.destroy', $prod->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn xóa gói VPN này không?');" style="display:inline-block;margin:0;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-outline-danger" style="border-radius:8px;font-size:12px;padding:4px 10px">
-                                    <i class="bi bi-trash me-1"></i>Xóa
-                                </button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-                @empty
-                <tr><td colspan="8" class="text-center py-4 text-muted">Không có sản phẩm nào</td></tr>
-                @endforelse
-            </tbody>
-        </table>
+                    </div>
+                </td>
+                <td style="padding:16px;">
+                    <div style="display:flex; flex-direction:column; gap:6px; align-items:flex-start;">
+                        @if($product->is_active)
+                            <span style="padding: 2px 8px; border-radius: 9999px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); display: inline-flex; align-items: center; gap: 4px;">
+                                ● Active
+                            </span>
+                        @else
+                            <span style="padding: 2px 8px; border-radius: 9999px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); display: inline-flex; align-items: center; gap: 4px;">
+                                ● Inactive
+                            </span>
+                        @endif
+
+                        <form action="{{ route('admin.products.toggle', $product->id) }}" method="POST" style="margin: 0;">
+                            @csrf
+                            <select onchange="this.form.submit()" style="background: var(--bg-input); border: 1px solid var(--border); color: var(--text-secondary); font-size: 0.72rem; padding: 4px 20px 4px 8px; border-radius: 6px; cursor: pointer; outline:none;">
+                                <option value="1" {{ $product->is_active ? 'selected' : '' }}>Active</option>
+                                <option value="0" {{ !$product->is_active ? 'selected' : '' }}>Inactive</option>
+                            </select>
+                        </form>
+                    </div>
+                </td>
+                <td style="padding:16px;">
+                    <span style="padding: 4px 10px; background: var(--bg-base); border: 1px solid var(--border); border-radius: 9999px; font-size: 0.75rem; color: var(--text-secondary); font-weight: 600; white-space: nowrap;">
+                        {{ $product->available_licenses_count }} tài khoản
+                    </span>
+                </td>
+                <td style="padding:16px;">
+                    <div style="display:flex; align-items:center; gap:6px;">
+                        <i class="bi bi-star-fill" style="color:#eab308; font-size: 0.85rem; display:inline-flex;"></i>
+                        <span style="font-weight: 600; color: var(--text-primary); font-size: 0.85rem;">{{ number_format($product->rating, 1) }}</span>
+                        <span style="color: #64748b; font-size: 0.85rem;">({{ $product->review_count }})</span>
+                    </div>
+                </td>
+                <td style="padding:16px;">
+                    <div style="display:flex; gap:6px; align-items:center;">
+                        <a href="{{ route('admin.licenses.index', ['product' => $product->id]) }}" class="btn btn-ghost btn-icon btn-sm" style="border: 1px solid var(--border); border-radius: 8px; color: var(--success); padding: 6px; text-decoration:none;" title="Xem License"><i class="bi bi-shield-check"></i></a>
+                        <a href="{{ route('admin.products.edit', $product->id) }}" class="btn btn-ghost btn-icon btn-sm" style="border: 1px solid var(--border); border-radius: 8px; color: var(--info); padding: 6px; text-decoration:none;" title="Sửa"><i class="bi bi-pencil"></i></a>
+                        <form action="{{ route('admin.products.destroy', $product->id) }}" method="POST" style="margin: 0; display: inline;">
+                            @csrf @method('DELETE')
+                            <button type="submit" class="btn btn-ghost btn-icon btn-sm" style="border: 1px solid var(--border); border-radius: 8px; color: var(--danger); padding: 6px; background: none;" title="Xóa" onclick="return confirm('Xóa sản phẩm này?')"><i class="bi bi-trash"></i></button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            @empty
+            <tr>
+                <td colspan="6" style="text-align:center; padding:40px; color:#64748b;">
+                    Chưa có sản phẩm nào. <a href="{{ route('admin.products.create') }}" style="color:#3b82f6;">Thêm ngay →</a>
+                </td>
+            </tr>
+            @endforelse
+        </tbody>
+    </table>
+    @if($products->hasPages())
+    <div style="padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.01);">
+        <div style="font-size: 13px; color: var(--text-muted);">
+            Hiển thị {{ $products->firstItem() }}–{{ $products->lastItem() }} / {{ $products->total() }} sản phẩm
+        </div>
+        <div>
+            {{ $products->links() }}
+        </div>
     </div>
+    @endif
 </div>
+
 @endsection
