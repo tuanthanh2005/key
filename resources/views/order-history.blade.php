@@ -68,10 +68,13 @@
                             <td style="text-align:right;">
                                 @if($order->order_status === 'completed')
                                     @if(!empty($order->license_key))
-                                        <div style="display:inline-flex; align-items:center; gap:8px; padding:6px 12px; background:rgba(16, 185, 129, 0.05); border:1px solid rgba(16, 185, 129, 0.15); border-radius:var(--radius); font-family:var(--font-mono); font-size:0.8rem; color:var(--success); font-weight:700;">
-                                            <span>{{ $order->license_key }}</span>
-                                            <button type="button" class="btn btn-ghost btn-sm" onclick="copyTextDirect('{{ $order->license_key }}')" style="padding:0; min-width:unset; height:auto; color:inherit; background:none; border:none; cursor:pointer;"><i class="bi bi-clipboard"></i></button>
-                                        </div>
+                                        <button class="btn btn-primary btn-sm btn-view-license" 
+                                                style="padding:6px 12px; font-size:0.8rem; background:var(--primary); color:#fff; border:none; border-radius:var(--radius); cursor:pointer;"
+                                                data-code="{{ $order->order_code }}"
+                                                data-product="{{ $order->product_name }}"
+                                                data-license="{{ $order->license_key }}">
+                                            <i class="bi bi-eye-fill me-1"></i> Xem Key
+                                        </button>
                                     @else
                                         <span style="font-size:0.8rem; color:var(--text-muted);"><i class="bi bi-hourglass-split me-1"></i>Đang tạo key...</span>
                                     @endif
@@ -93,11 +96,64 @@
 @endsection
 
 @section('extra_js')
+{{-- ===== LICENSE DETAILS MODAL ===== --}}
+<div id="licenseModal" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.7); backdrop-filter:blur(8px); align-items:center; justify-content:center; padding:16px;">
+    <div style="background:var(--bg-elevated); border:1px solid var(--border); border-radius:var(--radius-xl); max-width:550px; width:100%; padding:24px; box-shadow:var(--shadow-card-hover); text-align:left; display:flex; flex-direction:column; gap:16px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:12px;">
+            <h3 style="font-size:1.15rem; font-weight:800; color:var(--text-primary); margin-bottom:0; text-align:left;" id="modal-product-title">Chi Tiết License Key</h3>
+            <button type="button" onclick="closeLicenseModal()" style="background:none; border:none; color:var(--text-muted); font-size:1.5rem; cursor:pointer;">✕</button>
+        </div>
+        
+        <div style="text-align:left;">
+            <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:4px;">Mã Đơn Hàng: <strong id="modal-order-code" style="color:var(--primary-light);"></strong></div>
+            <div style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:12px;">Thông tin tài khoản hoặc License Key kích hoạt:</div>
+            
+            <div style="position:relative; background:var(--bg-input); border:1px solid var(--border); border-radius:var(--radius); padding:16px; font-family:var(--font-mono); font-size:0.9rem; color:var(--success); font-weight:500; white-space:pre-wrap; max-height:260px; overflow-y:auto; line-height:1.6;" id="modal-license-content">
+            </div>
+        </div>
+        
+        <div style="display:flex; gap:12px; margin-top:8px;">
+            <button type="button" class="btn btn-outline" onclick="closeLicenseModal()" style="flex:1; padding:12px;">Đóng</button>
+            <button type="button" class="btn btn-primary" onclick="copyModalLicense()" style="flex:1; padding:12px; font-weight:700;"><i class="bi bi-clipboard me-2"></i> Sao Chép Key</button>
+        </div>
+    </div>
+</div>
+
 <script>
-function copyTextDirect(text) {
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.btn-view-license').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const code = this.getAttribute('data-code');
+            const product = this.getAttribute('data-product');
+            const license = this.getAttribute('data-license');
+            openLicenseModal(code, product, license);
+        });
+    });
+});
+
+function openLicenseModal(code, product, license) {
+    document.getElementById('modal-product-title').innerText = product;
+    document.getElementById('modal-order-code').innerText = '#' + code;
+    document.getElementById('modal-license-content').innerText = license;
+    document.getElementById('licenseModal').style.display = 'flex';
+}
+
+function closeLicenseModal() {
+    document.getElementById('licenseModal').style.display = 'none';
+}
+
+function copyModalLicense() {
+    const text = document.getElementById('modal-license-content').innerText;
     navigator.clipboard.writeText(text).then(() => {
-        showToast('Đã sao chép: ' + text, 'success');
+        showToast('Đã sao chép thông tin key thành công!', 'success');
     });
 }
+
+// Close when clicking outside modal body
+document.getElementById('licenseModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeLicenseModal();
+    }
+});
 </script>
 @endsection

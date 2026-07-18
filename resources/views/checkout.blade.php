@@ -96,7 +96,7 @@
                     </div>
 
                     {{-- 3. Instructions --}}
-                    <div class="card" style="background:rgba(6,182,212,0.05); border-color:rgba(6,182,212,0.2); padding:24px;">
+                    <div class="card checkout-instructions" style="background:rgba(6,182,212,0.05); border-color:rgba(6,182,212,0.2); padding:24px;">
                         <h3 style="font-size:0.9rem; font-weight:700; margin-bottom:14px; color:var(--accent);"><i class="bi bi-info-circle-fill" style="margin-right:6px; color:var(--accent);"></i> Hướng Dẫn Thanh Toán</h3>
                         <ol style="display:flex; flex-direction:column; gap:10px; list-style:none; counter-reset:steps; padding-left:0;">
                             <li style="display:flex; align-items:flex-start; gap:12px; font-size:0.875rem; color:var(--text-secondary);">

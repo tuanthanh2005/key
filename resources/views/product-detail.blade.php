@@ -101,9 +101,11 @@ $curReviews = intval($defaultPlan['reviews'] ?? 120);
 .plan-option {
     transition: all 0.2s ease-in-out !important;
 }
-.plan-option:hover {
-    border-color: rgba(124, 58, 237, 0.5) !important;
-    background: rgba(124, 58, 237, 0.02) !important;
+@media (hover: hover) {
+    .plan-option:hover {
+        border-color: rgba(124, 58, 237, 0.5) !important;
+        background: rgba(124, 58, 237, 0.02) !important;
+    }
 }
 .plan-option.selected {
     border-color: var(--primary-light) !important;
@@ -153,9 +155,9 @@ $curReviews = intval($defaultPlan['reviews'] ?? 120);
         <div class="product-detail-layout">
 
             {{-- ===== LEFT: PRODUCT INFO ===== --}}
-            <div>
+            <div class="product-info-column">
                 {{-- Product Image & Placeholder --}}
-                <div style="position:relative; aspect-ratio:16/9; background:linear-gradient(135deg, {{ $brand['color'] }}22, {{ $brand['color'] }}55); border-radius:var(--radius-xl); overflow:hidden; margin-bottom:32px; border:1px solid var(--border); display:flex; align-items:center; justify-content:center;">
+                <div class="product-gallery-card" style="position:relative; aspect-ratio:16/9; background:linear-gradient(135deg, {{ $brand['color'] }}22, {{ $brand['color'] }}55); border-radius:var(--radius-xl); overflow:hidden; margin-bottom:32px; border:1px solid var(--border); display:flex; align-items:center; justify-content:center;">
                     <img src="{{ !empty($defaultPlan['image_path']) ? asset($defaultPlan['image_path']) : '' }}" alt="{{ $brand['name'] }}" id="main-product-image" style="width:100%; height:100%; object-fit:cover;" class="{{ empty($defaultPlan['image_path']) ? 'd-none' : '' }}">
                     
                     <div id="main-product-icon-container" class="{{ !empty($defaultPlan['image_path']) ? 'd-none' : '' }}" style="text-align:center;">
@@ -166,6 +168,7 @@ $curReviews = intval($defaultPlan['reviews'] ?? 120);
                     </div>
                 </div>
 
+                <div class="product-details-group">
                 {{-- Specs & Description --}}
                 <div class="card" style="padding:24px; margin-bottom:32px;">
                     <h2 style="font-size:1.1rem; font-weight:800; color:var(--text-primary); margin-bottom:16px;">Mô Tả Sản Phẩm</h2>
@@ -252,11 +255,12 @@ $curReviews = intval($defaultPlan['reviews'] ?? 120);
                         </div>
                     @endif
                 </div>
+                </div>
             </div>
 
             {{-- ===== RIGHT: PURCHASE BOX ===== --}}
-            <div class="product-sidebar-sticky">
-                <div class="card" style="border-color:rgba(124,58,237,0.3); padding:24px;">
+            <div class="product-purchase-column product-sidebar-sticky">
+                <div class="product-purchase-card card" style="border-color:rgba(124,58,237,0.3); padding:24px;">
                     <span style="font-size:0.75rem; font-weight:800; color:var(--accent); text-transform:uppercase; letter-spacing:0.05em; display:block; margin-bottom:6px;">Premium Account</span>
                     <h1 style="font-size:1.6rem; font-weight:800; margin-bottom:16px; color:var(--text-primary);">{{ $brand['name'] }}</h1>
                     

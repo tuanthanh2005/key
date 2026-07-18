@@ -199,6 +199,24 @@
     </div>
 </section>
 
+@if($popularProducts->count())
+<section class="section">
+    <div class="container">
+        <div class="section-header">
+            <div>
+                <h2 class="section-title"><i class="bi bi-graph-up-arrow text-primary" style="margin-right: 8px;"></i> Bán Chạy <span>Nhất</span></h2>
+                <p class="section-subtitle">Lựa chọn hàng đầu của hàng nghìn khách hàng</p>
+            </div>
+        </div>
+        <div class="product-grid">
+            @foreach($popularProducts as $product)
+                @include('partials.product-card', ['product' => $product])
+            @endforeach
+        </div>
+    </div>
+</section>
+@endif
+
 {{-- ===== WHY US SECTION ===== --}}
 <section class="section" style="background:var(--bg-elevated);">
     <div class="container">
@@ -233,25 +251,6 @@
         </div>
     </div>
 </section>
-
-{{-- ===== POPULAR PRODUCTS ===== --}}
-@if($popularProducts->count())
-<section class="section">
-    <div class="container">
-        <div class="section-header">
-            <div>
-                <h2 class="section-title"><i class="bi bi-graph-up-arrow text-primary" style="margin-right: 8px;"></i> Bán Chạy <span>Nhất</span></h2>
-                <p class="section-subtitle">Lựa chọn hàng đầu của hàng nghìn khách hàng</p>
-            </div>
-        </div>
-        <div class="product-grid">
-            @foreach($popularProducts as $product)
-                @include('partials.product-card', ['product' => $product])
-            @endforeach
-        </div>
-    </div>
-</section>
-@endif
 
 {{-- ===== CTA SECTION ===== --}}
 <section class="section">

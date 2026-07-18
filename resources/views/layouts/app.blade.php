@@ -37,7 +37,7 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%237c3aed'><path d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'/></svg>">
 
     {{-- CSS --}}
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}?v=1.01">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}?v={{ filemtime(public_path('css/app.css')) }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     @stack('head')
 
@@ -400,11 +400,28 @@ const hamburger = document.getElementById('hamburger-btn');
 const mobileNav = document.getElementById('mobile-nav');
 const closeNav  = document.getElementById('close-nav');
 if (hamburger && mobileNav) {
-    hamburger.addEventListener('click', () => mobileNav.style.display = 'flex');
-    closeNav.addEventListener('click', () => mobileNav.style.display = 'none');
-    mobileNav.addEventListener('click', (e) => { if (e.target === mobileNav) mobileNav.style.display = 'none'; });
+    hamburger.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (mobileNav.style.display === 'flex') {
+            mobileNav.style.display = 'none';
+        } else {
+            mobileNav.style.display = 'flex';
+        }
+    });
+    if (closeNav) {
+        closeNav.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            mobileNav.style.display = 'none';
+        });
+    }
+    mobileNav.addEventListener('click', (e) => {
+        if (e.target === mobileNav) {
+            mobileNav.style.display = 'none';
+        }
+    });
 }
-
 // Search Modal
 function openSearchModal() {
     const modal = document.getElementById('search-modal');
@@ -440,28 +457,7 @@ setTimeout(() => {
     setTimeout(() => document.querySelectorAll('.toast').forEach(t => t.remove()), 400);
 }, 5000);
 
-// Scroll animation
-document.addEventListener("DOMContentLoaded", function() {
-    const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -40px 0px' };
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-                observer.unobserve(entry.target); // Stop observing once visible
-            }
-        });
-    }, observerOptions);
 
-    document.querySelectorAll('.animate-on-scroll').forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(24px)';
-        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        setTimeout(() => {
-            observer.observe(el);
-        }, 50);
-    });
-});
 </script>
 
 {{-- Terms & Privacy Modal --}}

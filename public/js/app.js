@@ -540,22 +540,7 @@ document.addEventListener('DOMContentLoaded', function () {
         renderCartPage();
     }
 
-    // ============================
-    // SMOOTH REVEAL ON SCROLL
-    // ============================
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(e => {
-            if (e.isIntersecting) {
-                e.target.classList.add('fade-in');
-                observer.unobserve(e.target);
-            }
-        });
-    }, { threshold: 0.1 });
 
-    document.querySelectorAll('.product-card, .feature-card, .testimonial-card, .pricing-card').forEach(el => {
-        el.style.opacity = '0';
-        observer.observe(el);
-    });
 
     // ============================
     // NAVBAR SCROLL EFFECT

@@ -28,19 +28,21 @@
 @endphp
 <div class="product-card animate-on-scroll">
     <div class="product-card-image">
-        @if($prodImage)
-            <img src="{{ asset($prodImage) }}" alt="{{ $prodName }}" loading="lazy">
-        @else
-            {{-- Placeholder with gradient --}}
-            <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, {{ $prodColor }}, {{ $prodColor }}55);">
-                <div style="text-align:center;">
-                    <div style="font-size:3rem; line-height:1; color:#fff;">
-                        <i class="bi bi-shield-lock-fill"></i>
+        <a href="{{ route('product.detail', $prodSlug) }}" style="display:block; width:100%; height:100%;">
+            @if($prodImage)
+                <img src="{{ asset($prodImage) }}" alt="{{ $prodName }}" loading="lazy" style="width:100%; height:100%; object-fit:cover; display:block;">
+            @else
+                {{-- Placeholder with gradient --}}
+                <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, {{ $prodColor }}, {{ $prodColor }}55);">
+                    <div style="text-align:center;">
+                        <div style="font-size:3rem; line-height:1; color:#fff;">
+                            <i class="bi bi-shield-lock-fill"></i>
+                        </div>
+                        <div style="font-size:0.6rem; color:#fff; margin-top:12px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase;">{{ $catName ?: $prodBrand }}</div>
                     </div>
-                    <div style="font-size:0.6rem; color:#fff; margin-top:12px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase;">{{ $catName ?: $prodBrand }}</div>
                 </div>
-            </div>
-        @endif
+            @endif
+        </a>
 
         <div class="product-badge">
             @if($prodIsPopular)
@@ -52,13 +54,6 @@
             @if($discount > 0)
                 <span class="badge badge-sale">-{{ $discount }}%</span>
             @endif
-        </div>
-
-        {{-- Quick add overlay --}}
-        <div style="position:absolute; inset:0; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; opacity:0; transition:var(--transition);"
-             class="quick-overlay"
-             onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0'">
-            <a href="{{ route('product.detail', $prodSlug) }}" class="btn btn-primary btn-sm">Xem Chi Tiết</a>
         </div>
     </div>
 
