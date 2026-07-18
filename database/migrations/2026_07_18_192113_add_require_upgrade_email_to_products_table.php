@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->boolean('require_upgrade_email')->default(false)->after('is_featured');
+            $table->boolean('require_upgrade_email')->default(false);
         });
     }
 
