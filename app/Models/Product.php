@@ -37,6 +37,8 @@ class Product extends Model
         'duration_days' => 'integer',
     ];
 
+    protected $appends = ['image_url'];
+
     protected static function booted()
     {
         static::saving(function ($product) {
@@ -59,7 +61,7 @@ class Product extends Model
                 $product->plan = $product->duration;
             }
             if (isset($product->image)) {
-                $product->image_path = 'storage/' . $product->image;
+                $product->image_path = $product->image;
             }
             if (isset($product->is_active)) {
                 $product->status = $product->is_active ? 'active' : 'inactive';
@@ -323,5 +325,32 @@ class Product extends Model
         }
 
         return 'Mua tài khoản ' . $this->name . ' giá rẻ, chính hãng tại vpnstore.pro. Giao hàng tự động, bảo hành uy tín full thời gian sử dụng.';
+    }
+
+    /**
+     * Accessor to dynamically resolve the product image URL.
+     */
+    public function getImageUrlAttribute()
+    {
+        $path = $this->image ?: $this->image_path;
+        if (empty($path)) {
+            return null;
+        }
+
+        if (str_starts_with($path, 'storage/')) {
+            return asset($path);
+        }
+
+        if (str_starts_with($path, 'products/')) {
+            if (file_exists(public_path($path))) {
+                return asset($path);
+            }
+            if (file_exists(storage_path('app/public/' . $path))) {
+                return asset('storage/' . $path);
+            }
+            return asset($path);
+        }
+
+        return asset('storage/' . $path);
     }
 }

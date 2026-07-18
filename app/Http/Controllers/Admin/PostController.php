@@ -58,9 +58,7 @@ class PostController extends Controller
         $data['slug'] = Str::slug($request->slug ?: $request->title);
 
         if ($request->hasFile('image')) {
-            $imageName = time() . '_' . Str::random(10) . '.' . $request->image->extension();
-            $request->image->move(public_path('uploads'), $imageName);
-            $data['image_path'] = 'uploads/' . $imageName;
+            $data['image_path'] = $request->file('image')->store('uploads', 'public_uploads');
         }
 
         Post::create($data);
@@ -100,14 +98,10 @@ class PostController extends Controller
         $data['slug'] = Str::slug($request->slug ?: $request->title);
 
         if ($request->hasFile('image')) {
-            // Xóa ảnh cũ nếu có
-            if ($post->image_path && File::exists(public_path($post->image_path))) {
-                File::delete(public_path($post->image_path));
+            if ($post->image_path) {
+                \Illuminate\Support\Facades\Storage::disk('public_uploads')->delete($post->image_path);
             }
-
-            $imageName = time() . '_' . Str::random(10) . '.' . $request->image->extension();
-            $request->image->move(public_path('uploads'), $imageName);
-            $data['image_path'] = 'uploads/' . $imageName;
+            $data['image_path'] = $request->file('image')->store('uploads', 'public_uploads');
         }
 
         $post->update($data);
@@ -122,8 +116,8 @@ class PostController extends Controller
     {
         $post = Post::findOrFail($id);
 
-        if ($post->image_path && File::exists(public_path($post->image_path))) {
-            File::delete(public_path($post->image_path));
+        if ($post->image_path) {
+            \Illuminate\Support\Facades\Storage::disk('public_uploads')->delete($post->image_path);
         }
 
         $post->delete();

@@ -6,7 +6,7 @@
     $prodPrice = $isArr ? $product['price'] : $product->price;
     $prodOldPrice = $isArr ? ($product['old_price'] ?? null) : $product->old_price;
     $prodPlan = $isArr ? ($product['plan'] ?? null) : $product->plan;
-    $prodImage = $isArr ? ($product['image_path'] ?? null) : $product->image_path;
+    $prodImage = $isArr ? ($product['image_url'] ?? $product['image_path'] ?? null) : ($product->image_url ?: $product->image_path);
     $prodIsPopular = $isArr ? ($product['is_popular'] ?? false) : $product->is_popular;
     $prodRating = $isArr ? ($product['rating'] ?? 0) : $product->rating;
     $prodReviews = $isArr ? ($product['reviews'] ?? 0) : $product->reviews;

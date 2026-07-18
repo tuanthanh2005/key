@@ -65,7 +65,7 @@ class ProductController extends Controller
         $data['require_upgrade_email'] = $request->boolean('require_upgrade_email');
 
         if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('products', 'public');
+            $data['image'] = $request->file('image')->store('products', 'public_uploads');
         }
 
         Product::create($data);
@@ -110,10 +110,10 @@ class ProductController extends Controller
         $data['require_upgrade_email'] = $request->boolean('require_upgrade_email');
 
         if ($request->hasFile('image')) {
-            if ($product->image && file_exists(storage_path('app/public/' . $product->image))) {
-                @unlink(storage_path('app/public/' . $product->image));
+            if ($product->image) {
+                \Illuminate\Support\Facades\Storage::disk('public_uploads')->delete($product->image);
             }
-            $data['image'] = $request->file('image')->store('products', 'public');
+            $data['image'] = $request->file('image')->store('products', 'public_uploads');
         }
 
         $product->update($data);
@@ -124,8 +124,8 @@ class ProductController extends Controller
     public function destroy($id)
     {
         $product = Product::findOrFail($id);
-        if ($product->image && file_exists(storage_path('app/public/' . $product->image))) {
-            @unlink(storage_path('app/public/' . $product->image));
+        if ($product->image) {
+            \Illuminate\Support\Facades\Storage::disk('public_uploads')->delete($product->image);
         }
         $product->delete();
         return back()->with('success', 'Sản phẩm đã được xóa!');

@@ -132,10 +132,10 @@
                 </div>
                 <div class="admin-card-body">
                     <div style="border:2px dashed var(--admin-border); border-radius:12px; padding:24px; text-align:center; cursor:pointer;" onclick="document.getElementById('image-input').click()">
-                        <div id="img-preview" style="{{ $product->image || $product->image_path ? '' : 'display:none;' }} margin-bottom:12px;">
-                            <img id="img-preview-src" src="{{ $product->image ? asset('storage/' . $product->image) : ($product->image_path ? asset($product->image_path) : '') }}" style="max-height:120px; border-radius:8px; margin:0 auto; display:block;">
+                        <div id="img-preview" style="{{ $product->image_url ? '' : 'display:none;' }} margin-bottom:12px;">
+                            <img id="img-preview-src" src="{{ $product->image_url ?: '' }}" style="max-height:120px; border-radius:8px; margin:0 auto; display:block;">
                         </div>
-                        <div style="margin-bottom:8px; {{ $product->image || $product->image_path ? 'display:none;' : '' }}" id="upload-icon"><i class="bi bi-image" style="font-size:1.8rem; color:var(--admin-muted);"></i></div>
+                        <div style="margin-bottom:8px; {{ $product->image_url ? 'display:none;' : '' }}" id="upload-icon"><i class="bi bi-image" style="font-size:1.8rem; color:var(--admin-muted);"></i></div>
                         <div style="font-size:0.8rem; color:var(--admin-muted);">Click để thay đổi</div>
                         <div style="font-size:0.7rem; color:var(--admin-muted); margin-top:4px;">PNG, JPG, WEBP (tối đa 2MB)</div>
                         <input type="file" id="image-input" name="image" accept="image/*" style="display:none" onchange="previewImage(this)">

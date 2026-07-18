@@ -42,10 +42,8 @@
                 <td style="padding:16px;">
                     <div style="display:flex; align-items:center; gap:12px;">
                         <div style="width:40px; height:40px; border-radius:8px; overflow:hidden; background:var(--bg-base); flex-shrink:0; display:flex; align-items:center; justify-content:center; border: 1px solid var(--border);">
-                            @if($product->image)
-                                <img src="{{ asset('storage/' . $product->image) }}" style="width:100%; height:100%; object-fit:cover;">
-                            @elseif($product->image_path)
-                                <img src="{{ asset($product->image_path) }}" style="width:100%; height:100%; object-fit:cover;">
+                            @if($product->image_url)
+                                <img src="{{ $product->image_url }}" style="width:100%; height:100%; object-fit:cover;">
                             @else
                                 @php 
                                     $catIcons = [

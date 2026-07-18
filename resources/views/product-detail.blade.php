@@ -39,7 +39,7 @@ foreach ($dbProducts ?? [] as $dbProd) {
         'old' => $dbProd->old_price ?: ($dbProd->price * 1.5),
         'save' => $save,
         'popular' => $hasPopular ? (bool) $dbProd->is_popular : ($planKey === '1year'),
-        'image_path' => $dbProd->image_path,
+        'image_path' => $dbProd->image_url,
         'color' => $dbProd->color,
         'servers' => $dbProd->servers ?: ($brand['servers'] ?? ''),
         'countries' => $dbProd->countries ?: ($brand['countries'] ?? ''),
