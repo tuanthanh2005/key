@@ -324,6 +324,7 @@ $curReviews = intval($defaultPlan['reviews'] ?? 120);
                     <div style="display:flex; gap:12px; margin-bottom:24px;">
                         @php
                             $isDefaultOutOfStock = ($defaultPlan['stock'] ?? 0) <= 0;
+                            $btnDisabledAttr = $isDefaultOutOfStock ? 'disabled style="background:#94a3b8; border-color:#94a3b8; cursor:not-allowed; pointer-events:none;"' : '';
                         @endphp
                         <button class="btn btn-primary btn-lg" style="flex:1; padding:14px; font-weight:700;"
                                 id="btn-main-add-cart"
@@ -336,10 +337,7 @@ $curReviews = intval($defaultPlan['reviews'] ?? 120);
                                 data-color="{{ $brand['color'] }}"
                                 data-slug="{{ $slug }}"
                                 data-require-email="{{ $defaultPlan['require_upgrade_email'] ? '1' : '0' }}"
-                                @if($isDefaultOutOfStock)
-                                    disabled
-                                    style="background:#94a3b8; border-color:#94a3b8; cursor:not-allowed; pointer-events:none;"
-                                @endif>
+                                {!! $btnDisabledAttr !!}>
                             @if($isDefaultOutOfStock)
                                 <i class="bi bi-x-circle me-2"></i>Tạm Hết Hàng
                             @else
