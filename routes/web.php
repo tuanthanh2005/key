@@ -12,12 +12,20 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\IndexingController;
 use App\Http\Controllers\Admin\CategoryController;
+use Illuminate\Support\Facades\Artisan;
    
 /*
 |--------------------------------------------------------------------------
 | VPNStore - Web Routes
 |--------------------------------------------------------------------------
 */
+
+Route::get('/clear-cache', function() {
+    Artisan::call('config:clear');
+    Artisan::call('cache:clear');
+    Artisan::call('view:clear');
+    return "All Laravel caches cleared successfully!";
+});
 
 // =============================================
 // TRANG CÔNG KHAI (SHOP)
