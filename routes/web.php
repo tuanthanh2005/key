@@ -24,7 +24,10 @@ Route::get('/clear-cache', function() {
     Artisan::call('config:clear');
     Artisan::call('cache:clear');
     Artisan::call('view:clear');
-    return "All Laravel caches cleared successfully!";
+    if (function_exists('opcache_reset')) {
+        opcache_reset();
+    }
+    return "All Laravel caches cleared successfully! (OPcache cleared too)";
 });
 
 // =============================================
