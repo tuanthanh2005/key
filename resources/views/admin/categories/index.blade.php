@@ -92,7 +92,7 @@
                                  <td>
                                      <div class="d-flex align-items-center gap-2">
                                          @if($cat->image_path)
-                                             <img src="{{ asset('storage/' . $cat->image_path) }}" style="width: 32px; height: 32px; object-fit: contain; border-radius: 6px; border: 1px solid var(--admin-border);">
+                                             <img src="{{ $cat->image_url }}" style="width: 32px; height: 32px; object-fit: contain; border-radius: 6px; border: 1px solid var(--admin-border);">
                                          @else
                                              <div style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: var(--admin-bg); border-radius: 6px; color: var(--primary);">
                                                  <i class="bi {{ $cat->type === 'proxy' ? 'bi-tag-fill' : 'bi-shield-lock-fill' }}"></i>
@@ -123,7 +123,7 @@
                                              data-slug="{{ $cat->slug }}"
                                              data-title="{{ $cat->seo_title }}"
                                              data-desc="{{ $cat->seo_description }}"
-                                             data-image="{{ $cat->image_path ? asset('storage/' . $cat->image_path) : '' }}"
+                                             data-image="{{ $cat->image_url ?: '' }}"
                                              data-bs-toggle="modal" 
                                              data-bs-target="#editCategoryModal"
                                              style="border-radius:8px;"

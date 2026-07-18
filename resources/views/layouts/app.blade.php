@@ -85,7 +85,7 @@
                         @endphp
                         <a href="{{ route('products', ['category' => $cat->slug]) }}" class="dropdown-item" style="padding: 8px 10px; display: inline-flex; align-items: center; gap: 8px;">
                             @if($cat->image_path)
-                                <img src="{{ asset('storage/' . $cat->image_path) }}" alt="{{ $cat->name }}" style="width: 16px; height: 16px; object-fit: contain; border-radius: 2px;">
+                                <img src="{{ $cat->image_url }}" alt="{{ $cat->name }}" style="width: 16px; height: 16px; object-fit: contain; border-radius: 2px;">
                             @else
                                 <i class="bi {{ $icon }} text-primary"></i>
                             @endif
@@ -193,7 +193,7 @@
             @endphp
             <a href="{{ route('products', ['category' => $cat->slug]) }}" class="dropdown-item" style="display: flex; align-items: center; gap: 8px;">
                 @if($cat->image_path)
-                    <img src="{{ asset('storage/' . $cat->image_path) }}" alt="{{ $cat->name }}" style="width: 16px; height: 16px; object-fit: contain; border-radius: 2px;">
+                    <img src="{{ $cat->image_url }}" alt="{{ $cat->name }}" style="width: 16px; height: 16px; object-fit: contain; border-radius: 2px;">
                 @else
                     <i class="bi {{ $icon }}"></i>
                 @endif

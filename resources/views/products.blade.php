@@ -101,7 +101,7 @@
                         @foreach($categories as $cat)
                         <a href="#" class="filter-category-item" data-category="{{ $cat->slug }}" style="display: flex; align-items: center; gap: 8px;">
                             @if($cat->image_path)
-                                <img src="{{ asset('storage/' . $cat->image_path) }}" alt="{{ $cat->name }}" style="width: 14px; height: 14px; object-fit: contain; border-radius: 2px; flex-shrink: 0;">
+                                <img src="{{ $cat->image_url }}" alt="{{ $cat->name }}" style="width: 14px; height: 14px; object-fit: contain; border-radius: 2px; flex-shrink: 0;">
                             @else
                                 <i class="bi {{ catIcon($cat->slug, $cat->type) }}" style="flex-shrink: 0;"></i>
                             @endif
@@ -124,7 +124,7 @@
                     @foreach($categories as $cat)
                     <a href="#" class="category-tab" data-category="{{ $cat->slug }}" style="display: flex; align-items: center; gap: 6px;">
                         @if($cat->image_path)
-                            <img src="{{ asset('storage/' . $cat->image_path) }}" alt="{{ $cat->name }}" style="width: 14px; height: 14px; object-fit: contain; border-radius: 2px; flex-shrink: 0;">
+                            <img src="{{ $cat->image_url }}" alt="{{ $cat->name }}" style="width: 14px; height: 14px; object-fit: contain; border-radius: 2px; flex-shrink: 0;">
                         @else
                             <i class="bi {{ catIcon($cat->slug, $cat->type) }}" style="flex-shrink: 0;"></i>
                         @endif

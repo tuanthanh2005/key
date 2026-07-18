@@ -168,7 +168,7 @@
                class="card animate-on-scroll"
                style="text-align:center; padding:24px 16px; cursor:pointer; text-decoration:none; width:200px; flex-shrink:0; display:flex; flex-direction:column; align-items:center; justify-content:center;">
                 @if($cat->image_path)
-                    <img src="{{ asset('storage/' . $cat->image_path) }}" alt="{{ $cat->name }}" style="width:50px; height:50px; object-fit:contain; margin-bottom:12px;">
+                    <img src="{{ $cat->image_url }}" alt="{{ $cat->name }}" style="width:50px; height:50px; object-fit:contain; margin-bottom:12px;">
                 @else
                     <div style="font-size:2.2rem; margin-bottom:12px; color:var(--primary-light);"><i class="{{ $iconClass }}"></i></div>
                 @endif

@@ -37,7 +37,7 @@ class CategoryController extends Controller
 
         $imagePath = null;
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('categories', 'public');
+            $imagePath = $request->file('image')->store('categories', 'public_uploads');
         }
 
         Category::create([
@@ -75,10 +75,10 @@ class CategoryController extends Controller
 
         $imagePath = $category->image_path;
         if ($request->hasFile('image')) {
-            if ($category->image_path && file_exists(storage_path('app/public/' . $category->image_path))) {
-                @unlink(storage_path('app/public/' . $category->image_path));
+            if ($category->image_path) {
+                \Illuminate\Support\Facades\Storage::disk('public_uploads')->delete($category->image_path);
             }
-            $imagePath = $request->file('image')->store('categories', 'public');
+            $imagePath = $request->file('image')->store('categories', 'public_uploads');
         }
 
         $category->update([
@@ -96,6 +96,9 @@ class CategoryController extends Controller
     public function destroy($id)
     {
         $category = Category::findOrFail($id);
+        if ($category->image_path) {
+            \Illuminate\Support\Facades\Storage::disk('public_uploads')->delete($category->image_path);
+        }
         $category->delete();
 
         return redirect()->route('admin.categories.index')->with('success', 'Xóa danh mục thành công!');
