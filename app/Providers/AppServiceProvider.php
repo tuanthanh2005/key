@@ -42,6 +42,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if (config('app.env') === 'production') {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
+
         Paginator::useBootstrapFive();
 
         // Dùng route đặt lại mật khẩu tùy chỉnh thay vì route mặc định của Laravel
