@@ -30,6 +30,10 @@ Route::get('/clear-cache', function() {
     return "All Laravel caches cleared successfully! (OPcache cleared too)";
 });
 
+Route::get('/debug-view', function() {
+    return response(file_get_contents(resource_path('views/product-detail.blade.php')), 200, ['Content-Type' => 'text/plain']);
+});
+
 // =============================================
 // TRANG CÔNG KHAI (SHOP)
 // =============================================
