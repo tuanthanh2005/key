@@ -134,7 +134,7 @@
                 </div>
 
                 {{-- Grid --}}
-                <div class="product-grid" id="productsGrid" style="grid-template-columns:repeat(auto-fill, minmax(240px, 1fr));">
+                <div class="product-grid" id="productsGrid">
                     @foreach($allProducts as $prod)
                     <div class="product-card-wrap"
                          data-id="{{ $prod['id'] }}"

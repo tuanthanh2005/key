@@ -60,7 +60,7 @@
     </div>
 
     <div class="container">
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:64px; align-items:center;" class="hero-grid-wrap">
+        <div class="hero-grid-wrap">
             <div class="hero-content animate-fade-up">
                 <div class="hero-eyebrow">
                     <div class="dot"></div>
@@ -84,8 +84,8 @@
                     <a href="#featured" class="btn btn-outline btn-xl">Xem Nổi Bật</a>
                 </div>
 
-                <div class="hero-stats" style="margin-top: 40px; gap: 32px;">
-                    <div class="hero-stat" style="flex-direction: row; align-items: center; gap: 12px; max-width: 220px;">
+                <div class="hero-stats">
+                    <div class="hero-stat">
                         <div style="width: 42px; height: 42px; background: rgba(79, 70, 229, 0.08); color: var(--primary); border: 1px solid rgba(79, 70, 229, 0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0;">
                             <i class="bi bi-lightning-charge-fill"></i>
                         </div>
@@ -94,7 +94,7 @@
                             <span style="font-size: 0.72rem; color: var(--text-muted);">Nhận sản phẩm ngay sau khi mua</span>
                         </div>
                     </div>
-                    <div class="hero-stat" style="flex-direction: row; align-items: center; gap: 12px; max-width: 220px;">
+                    <div class="hero-stat">
                         <div style="width: 42px; height: 42px; background: rgba(16, 185, 129, 0.08); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0;">
                             <i class="bi bi-shield-check"></i>
                         </div>
@@ -103,7 +103,7 @@
                             <span style="font-size: 0.72rem; color: var(--text-muted);">Cam kết bảo hành suốt thời hạn</span>
                         </div>
                     </div>
-                    <div class="hero-stat" style="flex-direction: row; align-items: center; gap: 12px; max-width: 220px;">
+                    <div class="hero-stat">
                         <div style="width: 42px; height: 42px; background: rgba(124, 58, 237, 0.08); color: var(--accent); border: 1px solid rgba(124, 58, 237, 0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0;">
                             <i class="bi bi-headset"></i>
                         </div>
@@ -117,7 +117,7 @@
 
             {{-- Hero Visual --}}
             <div class="animate-float hero-visual-wrap" style="display:flex; justify-content:center; align-items:center;">
-                <div style="position:relative; width:380px; height:380px;">
+                <div class="hero-visual-inner">
                     <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center;">
                         <div style="width:200px; height:200px; background:linear-gradient(135deg, rgba(124,58,237,0.2), rgba(6,182,212,0.2)); border:1px solid rgba(124,58,237,0.3); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:4.5rem; color:var(--primary-light); box-shadow:0 0 60px rgba(124,58,237,0.3);">
                             <i class="bi bi-shield-fill-check"></i>
@@ -147,7 +147,7 @@
 </section>
 
 {{-- ===== CATEGORIES SECTION ===== --}}
-<section class="section-sm" style="background:var(--bg-elevated);">
+<section class="section-sm home-brands-section" style="background:var(--bg-elevated);">
     <div class="container">
         <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:24px;">
             <h2 style="font-size:1.1rem; font-weight:700;">Thương Hiệu & Danh Mục</h2>
@@ -165,8 +165,8 @@
                 $iconClass = $catIcons[$cat->slug] ?? 'bi bi-tag-fill';
             @endphp
             <a href="{{ route('products', ['brand' => $cat->slug]) }}"
-               class="card animate-on-scroll"
-               style="text-align:center; padding:24px 16px; cursor:pointer; text-decoration:none; width:200px; flex-shrink:0; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+               class="card animate-on-scroll category-card"
+               style="cursor:pointer; text-decoration:none;">
                 @if($cat->image_path)
                     <img src="{{ $cat->image_url }}" alt="{{ $cat->name }}" style="width:50px; height:50px; object-fit:contain; margin-bottom:12px;">
                 @else

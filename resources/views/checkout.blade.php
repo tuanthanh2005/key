@@ -24,7 +24,7 @@
                         <h2 style="font-size:1rem; font-weight:700; margin-bottom:20px; display:flex; align-items:center; gap:8px;">
                             <i class="bi bi-person-fill text-primary" style="font-size:1.2rem; margin-right:8px;"></i> 1. Thông Tin Nhận Hàng
                         </h2>
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;" class="checkout-form-grid">
+                        <div class="checkout-form-grid">
                             <div style="display:flex; flex-direction:column; gap:6px;">
                                 <label style="font-size:0.8rem; font-weight:700; color:var(--text-secondary);">Họ và Tên <span style="color:var(--danger);">*</span></label>
                                 <input type="text" id="full-name" placeholder="Nguyễn Văn A" required value="{{ auth()->user()->name ?? '' }}" style="background:var(--bg-input); border:1px solid var(--border); color:var(--text-primary); padding:10px 14px; border-radius:var(--radius); font-size:0.85rem; outline:none;">
