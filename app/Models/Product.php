@@ -341,7 +341,7 @@ class Product extends Model
             return asset($path);
         }
 
-        if (str_starts_with($path, 'products/')) {
+        if (str_starts_with($path, 'products/') || str_starts_with($path, 'uploads/products/')) {
             if (file_exists(public_path($path))) {
                 return asset($path);
             }

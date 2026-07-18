@@ -37,7 +37,7 @@ class CategoryController extends Controller
 
         $imagePath = null;
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('categories', 'public_uploads');
+            $imagePath = $request->file('image')->store('uploads/categories', 'public_uploads');
         }
 
         Category::create([
@@ -78,7 +78,7 @@ class CategoryController extends Controller
             if ($category->image_path) {
                 \Illuminate\Support\Facades\Storage::disk('public_uploads')->delete($category->image_path);
             }
-            $imagePath = $request->file('image')->store('categories', 'public_uploads');
+            $imagePath = $request->file('image')->store('uploads/categories', 'public_uploads');
         }
 
         $category->update([

@@ -65,7 +65,7 @@ class ProductController extends Controller
         $data['require_upgrade_email'] = $request->boolean('require_upgrade_email');
 
         if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('products', 'public_uploads');
+            $data['image'] = $request->file('image')->store('uploads/products', 'public_uploads');
         }
 
         Product::create($data);
@@ -113,7 +113,7 @@ class ProductController extends Controller
             if ($product->image) {
                 \Illuminate\Support\Facades\Storage::disk('public_uploads')->delete($product->image);
             }
-            $data['image'] = $request->file('image')->store('products', 'public_uploads');
+            $data['image'] = $request->file('image')->store('uploads/products', 'public_uploads');
         }
 
         $product->update($data);
