@@ -51,7 +51,6 @@ class IndexingController extends Controller
         $staticUrls = [
             'Trang chủ' => route('home'),
             'Sản phẩm' => route('products'),
-            'Bảng giá' => route('pricing'),
             'Giới thiệu' => route('about'),
             'Liên hệ' => route('contact'),
         ];

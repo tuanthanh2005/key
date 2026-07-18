@@ -68,7 +68,6 @@ Route::post('/tra-don-hang/review', [ShopController::class, 'submitOrderReview']
 Route::get('/lich-su-don-hang', [ShopController::class, 'orderHistory'])->name('order.history')->middleware('auth');
 Route::post('/wishlist/toggle', [ShopController::class, 'toggleWishlist'])->name('wishlist.toggle');
 Route::get('/san-pham-yeu-thich', [ShopController::class, 'wishlistPage'])->name('wishlist.index')->middleware('auth');
-Route::get('/bang-gia', [ShopController::class, 'pricing'])->name('pricing');
 Route::get('/gioi-thieu', [ShopController::class, 'about'])->name('about');
 Route::get('/lien-he', [ShopController::class, 'contact'])->name('contact');
 Route::get('/tim-kiem', [ShopController::class, 'search'])->name('search');

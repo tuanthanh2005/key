@@ -279,7 +279,6 @@
                 <h4 class="footer-heading">Hỗ Trợ</h4>
                 <ul class="footer-links">
                     <li><a href="{{ route('order.check') }}">Tra Cứu Đơn Hàng</a></li>
-                    <li><a href="{{ route('pricing') }}">Bảng Giá Dịch Vụ</a></li>
                     <li><a href="{{ route('about') }}">Giới Thiệu</a></li>
                     <li><a href="{{ route('contact') }}">Liên Hệ Hỗ Trợ</a></li>
                 </ul>

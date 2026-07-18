@@ -396,15 +396,6 @@ class ShopController extends Controller
     }
 
     /**
-     * Bảng giá
-     */
-    public function pricing()
-    {
-        $activeProducts = \App\Models\Product::where('status', 'active')->get();
-        return view('pricing', compact('activeProducts'));
-    }
-
-    /**
      * Giới thiệu
      */
     public function about()

@@ -14,12 +14,6 @@
         <priority>0.9</priority>
     </url>
     <url>
-        <loc>{{ route('pricing') }}</loc>
-        <lastmod>{{ date('Y-m-d') }}</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.7</priority>
-    </url>
-    <url>
         <loc>{{ route('about') }}</loc>
         <lastmod>{{ date('Y-m-d') }}</lastmod>
         <changefreq>monthly</changefreq>
