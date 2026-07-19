@@ -71,8 +71,8 @@
                         <div class="p-4" style="background:linear-gradient(135deg,var(--primary-light),var(--accent-light));border-bottom:1.5px solid var(--primary-100)">
                             <div class="row align-items-center">
                                 <div class="col-md-6">
-                                    <div class="text-muted small mb-1">Mã Đơn Hàng</div>
-                                    <div class="fw-800 font-poppins text-primary" style="font-size:22px">#{{ $order->order_code }}</div>
+                                    <div style="color: rgba(255,255,255,0.75); font-size: 0.8rem; margin-bottom: 4px; font-weight: 600;">Mã Đơn Hàng</div>
+                                    <div style="font-size: 1.5rem; font-weight: 800; color: #ffffff; font-family: var(--font-mono); line-height: 1;">#{{ $order->order_code }}</div>
                                 </div>
                                 <div class="col-md-6 text-md-end mt-2 mt-md-0">
                                     @php
