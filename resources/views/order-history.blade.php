@@ -67,17 +67,27 @@
                             </td>
                             <td style="text-align:right;">
                                 @if($order->order_status === 'completed')
-                                    @if(!empty($order->license_key))
-                                        <button class="btn btn-primary btn-sm btn-view-license" 
-                                                style="padding:6px 12px; font-size:0.8rem; background:var(--primary); color:#fff; border:none; border-radius:var(--radius); cursor:pointer;"
-                                                data-code="{{ $order->order_code }}"
-                                                data-product="{{ $order->product_name }}"
-                                                data-license="{{ $order->license_key }}">
-                                            <i class="bi bi-eye-fill me-1"></i> Xem Key
-                                        </button>
-                                    @else
-                                        <span style="font-size:0.8rem; color:var(--text-muted);"><i class="bi bi-hourglass-split me-1"></i>Đang tạo key...</span>
-                                    @endif
+                                    <div style="display:flex; justify-content:flex-end; gap:8px; align-items:center;">
+                                        @if(!$order->is_reviewed)
+                                            <a href="{{ route('order.check') }}?order={{ $order->order_code }}" class="btn btn-warning btn-sm" style="padding:6px 12px; font-size:0.8rem; color:#fff; border:none; border-radius:var(--radius); cursor:pointer; background:#f59e0b; text-decoration:none;">
+                                                <i class="bi bi-star-fill me-1"></i> Đánh Giá
+                                            </a>
+                                        @else
+                                            <span class="text-success" style="font-size:0.75rem; font-weight:600;"><i class="bi bi-check-circle-fill"></i> Đã đánh giá</span>
+                                        @endif
+
+                                        @if(!empty($order->license_key))
+                                            <button class="btn btn-primary btn-sm btn-view-license" 
+                                                    style="padding:6px 12px; font-size:0.8rem; background:var(--primary); color:#fff; border:none; border-radius:var(--radius); cursor:pointer;"
+                                                    data-code="{{ $order->order_code }}"
+                                                    data-product="{{ $order->product_name }}"
+                                                    data-license="{{ $order->license_key }}">
+                                                <i class="bi bi-eye-fill me-1"></i> Xem Key
+                                            </button>
+                                        @else
+                                            <span style="font-size:0.8rem; color:var(--text-muted);"><i class="bi bi-hourglass-split me-1"></i>Đang tạo key...</span>
+                                        @endif
+                                    </div>
                                 @elseif($order->order_status === 'cancelled')
                                     <span style="font-size:0.8rem; color:var(--danger);"><i class="bi bi-x-circle me-1"></i>Đã Hủy</span>
                                 @else
