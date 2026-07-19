@@ -175,7 +175,7 @@ $curReviews = intval($defaultPlan['reviews'] ?? 0);
             <span>/</span>
             <a href="{{ route('products') }}" style="color:var(--text-muted); text-decoration:none;">Sản Phẩm</a>
             <span>/</span>
-            <span style="color:var(--text-primary);">{{ $brand['name'] }}</span>
+            <span style="color:var(--text-primary);">{{ $firstProduct ? $firstProduct->name : $brand['name'] }}</span>
         </nav>
 
         <div class="product-detail-layout">
@@ -316,7 +316,7 @@ $curReviews = intval($defaultPlan['reviews'] ?? 0);
             <div class="product-purchase-column product-sidebar-sticky">
                 <div class="product-purchase-card card" style="border-color:rgba(124,58,237,0.3); padding:24px;">
                     <span style="font-size:0.75rem; font-weight:800; color:var(--accent); text-transform:uppercase; letter-spacing:0.05em; display:block; margin-bottom:6px;">Premium Account</span>
-                    <h1 style="font-size:1.6rem; font-weight:800; margin-bottom:12px; color:var(--text-primary);">{{ $brand['name'] }}</h1>
+                    <h1 style="font-size:1.6rem; font-weight:800; margin-bottom:12px; color:var(--text-primary);">{{ $firstProduct ? $firstProduct->name : $brand['name'] }}</h1>
                     
                     {{-- Rating Stars --}}
                     <div style="display:flex; align-items:center; gap:8px; margin-bottom:20px;">
