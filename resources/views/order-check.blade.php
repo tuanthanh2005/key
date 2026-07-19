@@ -4,23 +4,23 @@
 
 @section('content')
 
-<div class="breadcrumb-section">
+<div class="breadcrumb-section" style="padding: 16px 0; background: var(--bg-elevated); border-bottom: 1px solid var(--border);">
     <div class="container">
         <nav aria-label="breadcrumb">
-            <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="{{ route('home') }}">Trang Chủ</a></li>
-                <li class="breadcrumb-item active">Tra Cứu Đơn Hàng</li>
+            <ol class="breadcrumb mb-0" style="font-size: 13px; display: flex; flex-wrap: wrap; list-style: none; padding: 0; margin: 0; gap: 8px; align-items: center;">
+                <li class="breadcrumb-item" style="display: flex; align-items: center; gap: 8px;"><a href="{{ route('home') }}" class="text-decoration-none" style="color: var(--primary-light);">Trang Chủ</a><span class="text-muted">/</span></li>
+                <li class="breadcrumb-item active text-truncate" aria-current="page" style="max-width: 250px; color: var(--text-secondary);">Tra Cứu Đơn Hàng</li>
             </ol>
         </nav>
     </div>
 </div>
 
-<div class="page-header">
+<div class="page-header" style="padding: 40px 0; background: var(--bg-card); border-bottom: 1px solid var(--border);">
     <div class="container">
-        <h1 class="section-title mb-1">
+        <h1 class="section-title mb-1" style="font-size:1.8rem; font-weight:800; color:var(--text-primary);">
             <i class="bi bi-box-seam me-3 text-primary"></i>Tra Cứu Đơn Hàng
         </h1>
-        <p class="text-muted mb-0">Nhập mã đơn hàng để kiểm tra trạng thái</p>
+        <p class="text-muted mb-0" style="font-size:0.9rem;">Nhập mã đơn hàng để kiểm tra trạng thái</p>
     </div>
 </div>
 
@@ -29,19 +29,16 @@
         <div class="col-lg-8">
 
             <!-- Search Form -->
-            <div class="bg-white border rounded-4 p-4 mb-4" style="border-color:var(--gray-200)!important">
+            <div class="bg-white border rounded-4 p-4 mb-4" style="border-color:var(--border)!important; border-radius:16px; box-shadow: var(--shadow-card);">
                 <form id="orderCheckForm">
-                    <label class="form-label fw-700 mb-2" style="font-size:14px">Mã Đơn Hàng</label>
-                    <div class="input-group input-group-lg">
-                        <span class="input-group-text bg-white border-end-0">
-                            <i class="bi bi-search text-muted"></i>
-                        </span>
-                        <input type="text" id="orderIdInput" class="form-control border-start-0 ps-0"
-                            placeholder="Ví dụ: VPN12345678"
-                            value="{{ request('order','') }}"
-                            style="letter-spacing:.5px">
-                        <button class="btn btn-primary px-4 fw-600" type="submit">
-                            <i class="bi bi-search me-1"></i>Tra Cứu
+                    <label class="form-label fw-700 mb-2" style="font-size:14px; color: var(--text-primary); display:block;">Mã Đơn Hàng</label>
+                    <div style="display: flex; gap: 8px; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: var(--bg-input); padding: 4px;">
+                        <div style="display: flex; align-items: center; padding-left: 12px; color: var(--text-muted);">
+                            <i class="bi bi-search"></i>
+                        </div>
+                        <input type="text" id="orderIdInput" placeholder="Ví dụ: VPN12345678" value="{{ request('order','') }}" style="flex: 1; border: none; outline: none; background: transparent; padding: 10px; color: var(--text-primary); font-family: var(--font-mono); font-weight: 700; letter-spacing: 0.5px;">
+                        <button class="btn btn-primary" type="submit" style="padding: 10px 24px; border-radius: var(--radius); font-weight: 600;">
+                            <i class="bi bi-search me-1"></i> Tra Cứu
                         </button>
                     </div>
                     <div class="mt-2 d-flex gap-4">
@@ -111,22 +108,22 @@
                                     </span>
                                 </div>
                             </div>
-                            <div class="row mt-3 g-2">
-                                <div class="col-6 col-md-3">
-                                    <div class="text-muted" style="font-size:11.5px;font-weight:600">Ngày đặt</div>
-                                    <div class="fw-700" style="font-size:13.5px;color:var(--gray-800)">{{ $order->created_at->format('d/m/Y') }}</div>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 16px; margin-top: 16px;">
+                                <div>
+                                    <div style="font-size:0.75rem; color:rgba(255,255,255,0.75); font-weight:600;">Ngày đặt</div>
+                                    <div style="font-weight:700; font-size:0.9rem; color:#ffffff; margin-top:2px;">{{ $order->created_at->format('d/m/Y') }}</div>
                                 </div>
-                                <div class="col-6 col-md-3">
-                                    <div class="text-muted" style="font-size:11.5px;font-weight:600">Khách hàng</div>
-                                    <div class="fw-700" style="font-size:13.5px;color:var(--gray-800)">{{ $order->customer_name }}</div>
+                                <div>
+                                    <div style="font-size:0.75rem; color:rgba(255,255,255,0.75); font-weight:600;">Khách hàng</div>
+                                    <div style="font-weight:700; font-size:0.9rem; color:#ffffff; margin-top:2px;">{{ $order->customer_name }}</div>
                                 </div>
-                                <div class="col-6 col-md-3">
-                                    <div class="text-muted" style="font-size:11.5px;font-weight:600">Email</div>
-                                    <div class="fw-700" style="font-size:13.5px;color:var(--gray-800)">{{ $maskedEmail }}</div>
+                                <div>
+                                    <div style="font-size:0.75rem; color:rgba(255,255,255,0.75); font-weight:600;">Email</div>
+                                    <div style="font-weight:700; font-size:0.9rem; color:#ffffff; margin-top:2px; word-break:break-all;">{{ $maskedEmail }}</div>
                                 </div>
-                                <div class="col-6 col-md-3">
-                                    <div class="text-muted" style="font-size:11.5px;font-weight:600">Tổng tiền</div>
-                                    <div class="fw-700 text-primary" style="font-size:13.5px">{{ number_format($order->total) }}đ</div>
+                                <div>
+                                    <div style="font-size:0.75rem; color:rgba(255,255,255,0.75); font-weight:600;">Tổng tiền</div>
+                                    <div style="font-weight:800; font-size:1rem; color:#ffffff; margin-top:2px;">{{ number_format($order->total) }}đ</div>
                                 </div>
                             </div>
                         </div>
@@ -224,6 +221,51 @@
                         @endif
 
                         <!-- Order Timeline -->
+                        <style>
+                            .order-status-timeline {
+                                position: relative;
+                                padding-left: 24px;
+                                border-left: 2px solid var(--border);
+                                display: flex;
+                                flex-direction: column;
+                                gap: 24px;
+                                margin-top: 16px;
+                            }
+                            .timeline-item {
+                                position: relative;
+                            }
+                            .timeline-dot {
+                                position: absolute;
+                                left: -33px;
+                                top: 4px;
+                                width: 16px;
+                                height: 16px;
+                                border-radius: 50%;
+                                background: var(--bg-base);
+                                border: 3px solid var(--border);
+                                transition: var(--transition);
+                            }
+                            .timeline-dot.done {
+                                background: var(--success);
+                                border-color: var(--success);
+                                box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+                            }
+                            .timeline-dot.active {
+                                background: var(--primary);
+                                border-color: var(--primary-light);
+                                box-shadow: 0 0 10px rgba(79, 70, 229, 0.4);
+                            }
+                            .timeline-title {
+                                font-weight: 700;
+                                font-size: 0.9rem;
+                                color: var(--text-primary);
+                            }
+                            .timeline-desc {
+                                font-size: 0.8rem;
+                                color: var(--text-muted);
+                                margin-top: 2px;
+                            }
+                        </style>
                         <div class="p-4">
                             <h6 class="fw-700 mb-4" style="font-size:14px">Trạng Thái Đơn Hàng</h6>
                             <div class="order-status-timeline">
@@ -279,13 +321,13 @@
                                 @foreach($timeline as $step)
                                 <div class="timeline-item">
                                     <div class="timeline-dot {{ !empty($step['done']) ? 'done' : (!empty($step['active']) ? 'active' : (!empty($step['cancelled']) ? 'bg-danger border-danger' : '')) }}" style="{{ !empty($step['cancelled']) ? 'background:var(--danger);box-shadow:0 0 0 1px var(--danger);' : '' }}"></div>
-                                    <div class="d-flex justify-content-between align-items-start">
+                                    <div class="d-flex justify-content-between align-items-start" style="padding-left: 12px;">
                                         <div>
                                             <div class="timeline-title {{ !empty($step['pending']) ? 'text-muted' : (!empty($step['cancelled']) ? 'text-danger' : '') }}">{{ $step['title'] }}</div>
                                             <div class="timeline-desc">{{ $step['desc'] }}</div>
                                         </div>
                                         @if($step['time'])
-                                        <div style="font-size:11.5px;color:var(--gray-400);white-space:nowrap;margin-left:12px">{{ $step['time'] }}</div>
+                                        <div style="font-size:11.5px;color:var(--text-muted);white-space:nowrap;margin-left:12px">{{ $step['time'] }}</div>
                                         @endif
                                     </div>
                                 </div>
@@ -293,16 +335,16 @@
                             </div>
 
                             <!-- Support -->
-                            <div class="mt-4 p-3 rounded-3 d-flex align-items-center gap-3" style="background:var(--primary-light);border:1px solid var(--primary-100)">
-                                <i class="bi bi-headset text-primary" style="font-size:24px;flex-shrink:0"></i>
-                                <div>
-                                    <div class="fw-700" style="font-size:13.5px;color:var(--primary)">Cần hỗ trợ?</div>
-                                     <div style="font-size:12.5px;color:var(--gray-600)">
+                            <div class="mt-4 p-4 rounded-3 d-flex align-items-center gap-3" style="background: rgba(79, 70, 229, 0.05); border: 1px solid rgba(79, 70, 229, 0.15); border-radius: 12px; flex-wrap: wrap;">
+                                <i class="bi bi-headset text-primary-light" style="font-size:24px;flex-shrink:0"></i>
+                                <div style="flex: 1; min-width: 200px;">
+                                    <div class="fw-700" style="font-size:13.5px;color:var(--primary-light)">Cần hỗ trợ?</div>
+                                     <div style="font-size:12.5px;color:var(--text-secondary); margin-top:2px;">
                                          Liên hệ qua Telegram <strong>{{ '@' . ltrim($settings['telegram_support'] ?? 'specademy', '@') }}</strong>
                                          @if(!empty($settings['zalo_support'])) hoặc Zalo <strong>{{ $settings['zalo_support'] }}{{ !empty($settings['zalo_support_2']) ? ' / ' . $settings['zalo_support_2'] : '' }}</strong> @endif
                                      </div>
                                 </div>
-                                <a href="{{ route('contact') }}" class="btn btn-sm btn-primary ms-auto rounded-pill px-3">Liên Hệ</a>
+                                <a href="{{ route('contact') }}" class="btn btn-sm btn-primary rounded-pill px-4" style="margin-left: auto;">Liên Hệ</a>
                             </div>
                         </div>
                     </div>
