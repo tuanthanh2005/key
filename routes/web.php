@@ -184,6 +184,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
     // Quản lý danh mục
     Route::resource('categories', CategoryController::class)->except(['create', 'show', 'edit']);
 
+    // Quản lý loại danh mục (Category Types)
+    Route::prefix('loai-danh-muc')->name('category-types.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\CategoryTypeController::class, 'index'])->name('index');
+        Route::post('/', [\App\Http\Controllers\Admin\CategoryTypeController::class, 'store'])->name('store');
+        Route::put('/{id}', [\App\Http\Controllers\Admin\CategoryTypeController::class, 'update'])->name('update');
+        Route::delete('/{id}', [\App\Http\Controllers\Admin\CategoryTypeController::class, 'destroy'])->name('destroy');
+    });
+
     // Quản lý người dùng
     Route::prefix('nguoi-dung')->name('users.')->group(function () {
         Route::get('/', [UserController::class, 'index'])->name('index');

@@ -12,7 +12,8 @@ class CategoryController extends Controller
     public function index()
     {
         $categories = Category::withCount('products')->get();
-        return view('admin.categories.index', compact('categories'));
+        $categoryTypes = \App\Models\CategoryType::all();
+        return view('admin.categories.index', compact('categories', 'categoryTypes'));
     }
 
     public function store(Request $request)
@@ -20,7 +21,7 @@ class CategoryController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'slug' => 'nullable|string|max:255|unique:categories,slug',
-            'type' => 'required|string|in:vpn,proxy',
+            'type' => 'required|string|exists:category_types,slug',
             'seo_title' => 'nullable|string|max:255',
             'seo_description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
@@ -59,7 +60,7 @@ class CategoryController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'slug' => 'nullable|string|max:255|unique:categories,slug,' . $id,
-            'type' => 'required|string|in:vpn,proxy',
+            'type' => 'required|string|exists:category_types,slug',
             'seo_title' => 'nullable|string|max:255',
             'seo_description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',

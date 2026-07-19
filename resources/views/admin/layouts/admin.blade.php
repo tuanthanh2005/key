@@ -90,6 +90,10 @@
             <i class="bi bi-folder-fill"></i>
             <span>Danh Mục</span>
         </a>
+        <a href="{{ route('admin.category-types.index') }}" class="sidebar-link {{ request()->routeIs('admin.category-types.*') ? 'active' : '' }}">
+            <i class="bi bi-grid-fill"></i>
+            <span>Loại Danh Mục</span>
+        </a>
         <a href="{{ route('admin.posts.index') }}" class="sidebar-link {{ request()->routeIs('admin.posts.*') ? 'active' : '' }}">
             <i class="bi bi-journal-text"></i>
             <span>Bài Viết</span>

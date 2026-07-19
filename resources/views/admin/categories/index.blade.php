@@ -31,8 +31,9 @@
                     <div class="mb-3">
                         <label class="form-label fw-bold">Loại Danh Mục <span class="text-danger">*</span></label>
                         <select name="type" class="form-select" required>
-                            <option value="vpn">VPN</option>
-                            <option value="proxy">Proxy</option>
+                            @foreach($categoryTypes as $t)
+                                <option value="{{ $t->slug }}">{{ $t->name }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="mb-3">
@@ -174,8 +175,9 @@
                     <div class="form-group">
                         <label class="form-label fw-bold text-dark">Loại Danh Mục <span class="text-danger">*</span></label>
                         <select name="type" id="edit_type" class="form-select" required>
-                            <option value="vpn">VPN</option>
-                            <option value="proxy">Proxy</option>
+                            @foreach($categoryTypes as $t)
+                                <option value="{{ $t->slug }}">{{ $t->name }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="form-group">
