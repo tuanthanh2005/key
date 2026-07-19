@@ -36,9 +36,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
         getCouponDiscount(subtotal) {
             const coupon = this.getCoupon();
-            const coupons = { 'VPNVN10': 0.1, 'VIP20': 0.2, 'SALE15': 0.15 };
-            if (coupon && coupons[coupon]) {
-                return Math.round(subtotal * coupons[coupon]);
+            const coupons = window.publicCoupons || { 'VPNVN10': 0.1, 'VIP20': 0.2, 'SALE15': 0.15 };
+            if (coupon && coupons[coupon] !== undefined) {
+                const val = parseFloat(coupons[coupon]);
+                if (val >= 1) {
+                    return Math.round(subtotal * val / 100);
+                } else {
+                    return Math.round(subtotal * val);
+                }
             }
             return 0;
         },

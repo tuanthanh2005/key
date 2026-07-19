@@ -557,6 +557,7 @@ document.getElementById('seo-info-modal')?.addEventListener('click', function(e)
 <script>
     window.dbWishlist = @json(auth()->check() ? \App\Models\Wishlist::where('user_id', auth()->id())->pluck('product_id')->toArray() : null);
     window.csrfToken = '{{ csrf_token() }}';
+    window.publicCoupons = @json($publicCoupons ?? []);
 </script>
 <script src="{{ asset('js/app.js') }}?v={{ filemtime(public_path('js/app.js')) }}"></script>
 @yield('extra_js')
