@@ -10,7 +10,12 @@
 
     {{-- SEO Meta --}}
     @hasSection('title')
-        <title>@yield('title') | {{ $settings['store_name'] ?? 'VPN Store Pro' }}</title>
+        @php
+            $storeName = $settings['store_name'] ?? 'VPNStore';
+            $yieldedTitle = trim(View::yieldContent('title'));
+            $cleanTitle = preg_replace('/\s*[\|—–\-]\s*(' . preg_quote($storeName, '/') . '|VPNStore|VPN Store Pro)$/i', '', $yieldedTitle);
+        @endphp
+        <title>{{ $cleanTitle }} | {{ $storeName }}</title>
     @else
         <title>{{ !empty($settings['seo_title']) ? $settings['seo_title'] : ($settings['store_name'] ?? 'VPN Store Pro') }}</title>
     @endif

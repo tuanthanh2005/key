@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
 @if($selectedCategory)
-    @section('title', ($selectedCategory->seo_title ?: $selectedCategory->name) . ' - VPN Store Pro')
+    @section('title', $selectedCategory->seo_title ?: $selectedCategory->name)
     @section('meta_description', $selectedCategory->seo_description ?: 'Khám phá các phần mềm bản quyền chính hãng trong danh mục ' . $selectedCategory->name . ' với giá tốt nhất.')
 @else
-    @section('title', 'Sản Phẩm - VPN Store Pro')
+    @section('title', 'Danh Sách Sản Phẩm')
     @section('meta_description', 'Khám phá các phần mềm bản quyền chính hãng: VPN Premium, AI Code, Design Software, Xem Phim Premium với giá tốt nhất.')
 @endif
 
