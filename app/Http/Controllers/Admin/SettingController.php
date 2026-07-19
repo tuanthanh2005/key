@@ -22,7 +22,7 @@ class SettingController extends Controller
      */
     public function update(Request $request)
     {
-        $data = $request->except(['_token', '_method', 'favicon']);
+        $data = $request->except(['_token', '_method', 'favicon', 'store_logo']);
 
         // Validate một số field quan trọng
         $request->validate([
@@ -32,6 +32,7 @@ class SettingController extends Controller
             'dashboard_orders_per_page' => 'nullable|integer|min:5|max:100',
             'contact_email'           => 'nullable|email',
             'favicon'                 => 'nullable|image|mimes:ico,png,jpg,jpeg,gif,svg,webp|max:2048',
+            'store_logo'              => 'nullable|image|mimes:png,jpg,jpeg,gif,svg,webp|max:2048',
         ], [
             'auto_discount_rate.max'     => 'Tỷ lệ giảm giá tối đa 100%.',
             'dashboard_max_days.max'     => 'Không được vượt quá 365 ngày.',
@@ -39,6 +40,9 @@ class SettingController extends Controller
             'favicon.image'              => 'Favicon phải là một hình ảnh.',
             'favicon.mimes'              => 'Favicon phải thuộc định dạng: ico, png, jpg, jpeg, gif, svg, webp.',
             'favicon.max'                => 'Dung lượng favicon tối đa 2MB.',
+            'store_logo.image'           => 'Logo phải là một hình ảnh.',
+            'store_logo.mimes'           => 'Logo phải thuộc định dạng: png, jpg, jpeg, gif, svg, webp.',
+            'store_logo.max'             => 'Dung lượng logo tối đa 2MB.',
         ]);
 
         // Xử lý upload favicon
@@ -58,6 +62,25 @@ class SettingController extends Controller
 
             $file->move(public_path('uploads/settings'), $filename);
             Setting::set('favicon_path', 'uploads/settings/' . $filename);
+        }
+
+        // Xử lý upload logo
+        if ($request->hasFile('store_logo')) {
+            $file = $request->file('store_logo');
+            $filename = 'logo_' . time() . '.' . $file->getClientOriginalExtension();
+            
+            if (!file_exists(public_path('uploads/settings'))) {
+                mkdir(public_path('uploads/settings'), 0777, true);
+            }
+
+            // Xóa logo cũ nếu có
+            $oldLogo = Setting::get('logo_path');
+            if ($oldLogo && file_exists(public_path($oldLogo))) {
+                @unlink(public_path($oldLogo));
+            }
+
+            $file->move(public_path('uploads/settings'), $filename);
+            Setting::set('logo_path', 'uploads/settings/' . $filename);
         }
 
         foreach ($data as $key => $value) {

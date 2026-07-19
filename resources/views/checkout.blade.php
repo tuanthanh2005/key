@@ -17,7 +17,7 @@
             @csrf
             <div class="checkout-layout">
                 {{-- ===== LEFT: Payment & Inputs Info ===== --}}
-                <div style="display:flex; flex-direction:column; gap:20px;">
+                <div class="checkout-left-col" style="display:flex; flex-direction:column; gap:20px;">
                     
                     {{-- 1. Info Form --}}
                     <div class="card" style="padding:24px;">
@@ -94,7 +94,10 @@
                             </div>
                         </div>
                     </div>
+                </div>
 
+                {{-- ===== BOTTOM LEFT / INSTRUCTIONS COLUMN ===== --}}
+                <div class="checkout-instructions-col">
                     {{-- 3. Instructions --}}
                     <div class="card checkout-instructions" style="background:rgba(6,182,212,0.05); border-color:rgba(6,182,212,0.2); padding:24px;">
                         <h3 style="font-size:0.9rem; font-weight:700; margin-bottom:14px; color:var(--accent);"><i class="bi bi-info-circle-fill" style="margin-right:6px; color:var(--accent);"></i> Hướng Dẫn Thanh Toán</h3>
@@ -120,7 +123,7 @@
                 </div>
 
                 {{-- ===== RIGHT: Order Summary ===== --}}
-                <div>
+                <div class="checkout-right-col">
                     <div class="card" style="border-color:rgba(124,58,237,0.3); padding:24px; position:sticky; top:88px;">
                         <h3 style="font-size:1rem; font-weight:700; margin-bottom:20px;"><i class="bi bi-box-seam" style="margin-right:6px; color:var(--primary-light);"></i> Chi Tiết Đơn Hàng</h3>
 

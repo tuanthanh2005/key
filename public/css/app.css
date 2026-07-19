@@ -1780,6 +1780,21 @@ select.form-control {
   align-items: start;
 }
 
+.checkout-left-col {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.checkout-right-col {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.checkout-instructions-col {
+  grid-column: 1;
+  grid-row: 2;
+}
+
 .checkout-form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -2264,6 +2279,21 @@ body {
   .checkout-layout {
     grid-template-columns: 1fr;
     gap: 24px;
+  }
+
+  .checkout-left-col {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .checkout-right-col {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .checkout-instructions-col {
+    grid-column: 1;
+    grid-row: 3;
   }
 
   .footer-grid {
@@ -3088,4 +3118,8 @@ body {
   .page-header p {
     font-size: 0.8rem !important;
   }
+}
+
+.d-none {
+  display: none !important;
 }

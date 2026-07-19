@@ -21,9 +21,13 @@
 <aside class="admin-sidebar" id="adminSidebar">
     <!-- Logo -->
     <div class="sidebar-logo">
-        <div class="sidebar-logo-icon">
-            <i class="bi bi-shield-lock-fill"></i>
-        </div>
+        @if(!empty($settings['logo_path']))
+            <div class="sidebar-logo-icon" style="background:none; box-shadow:none;"><img src="{{ asset($settings['logo_path']) }}" alt="Logo" style="max-width:100%; max-height:100%; object-fit:contain;"></div>
+        @else
+            <div class="sidebar-logo-icon">
+                <i class="bi bi-shield-lock-fill"></i>
+            </div>
+        @endif
         <div>
             <div class="sidebar-logo-text">{{ $settings['store_name'] ?? 'VPNStore' }}</div>
             <div class="sidebar-logo-sub">Admin Panel</div>

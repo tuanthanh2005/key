@@ -164,10 +164,13 @@
 </head>
 <body>
     <div class="auth-card">
-        <!-- Logo -->
         <a href="{{ route('home') }}" class="auth-logo">
-            <div class="logo-icon"><i class="bi bi-shield-lock-fill"></i></div>
-            <span class="logo-text">VPNStore</span>
+            @if(!empty($settings['logo_path']))
+                <div class="logo-icon" style="background:none; box-shadow:none;"><img src="{{ asset($settings['logo_path']) }}" alt="Logo" style="max-width:100%; max-height:100%; object-fit:contain;"></div>
+            @else
+                <div class="logo-icon"><i class="bi bi-shield-lock-fill"></i></div>
+            @endif
+            <span class="logo-text">{{ $settings['store_name'] ?? 'VPNStore' }}</span>
         </a>
 
         @yield('content')

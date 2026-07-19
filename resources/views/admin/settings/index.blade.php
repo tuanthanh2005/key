@@ -258,6 +258,18 @@
                             </div>
                         </div>
                     </div>
+                    <div class="setting-row">
+                        <div class="setting-label">Logo Website (Thay thế icon lá chắn mặc định)</div>
+                        <div class="d-flex align-items-center gap-3 mt-2">
+                            <div class="logo-preview border p-2 rounded d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; background: var(--admin-hover);">
+                                <img src="{{ !empty($settings['logo_path']) ? asset($settings['logo_path']) : 'data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%237c3aed\'><path d=\'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z\'/></svg>' }}" alt="Logo" style="max-width: 100%; max-height: 100%; object-fit: contain;" id="logo-preview-img">
+                            </div>
+                            <div class="flex-grow-1">
+                                <input type="file" name="store_logo" class="form-control" accept="image/png,image/jpeg,image/gif,image/svg+xml,image/webp" id="logo-input">
+                                <div class="setting-hint">Hỗ trợ các định dạng .png, .jpg, .jpeg, .gif, .svg, .webp. Dung lượng tối đa 2MB.</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -395,6 +407,22 @@ if (faviconInput && faviconPreviewImg) {
             const reader = new FileReader();
             reader.onload = function(e) {
                 faviconPreviewImg.src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+}
+
+// Logo live preview
+const logoInput = document.getElementById('logo-input');
+const logoPreviewImg = document.getElementById('logo-preview-img');
+if (logoInput && logoPreviewImg) {
+    logoInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                logoPreviewImg.src = e.target.result;
             }
             reader.readAsDataURL(file);
         }

@@ -34,7 +34,11 @@
     <meta name="twitter:description" content="@yield('meta_description', $settings['meta_description'] ?? 'Mua phần mềm bản quyền giá tốt nhất')">
 
     {{-- Favicon --}}
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%237c3aed'><path d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'/></svg>">
+    @if(!empty($settings['favicon_path']))
+        <link rel="icon" href="{{ asset($settings['favicon_path']) }}">
+    @else
+        <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%237c3aed'><path d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'/></svg>">
+    @endif
 
     {{-- CSS --}}
     <link rel="stylesheet" href="{{ asset('css/app.css') }}?v={{ filemtime(public_path('css/app.css')) }}">
@@ -60,7 +64,11 @@
 {{-- NAVBAR --}}
 <nav class="navbar" id="main-navbar">
     <a href="{{ route('home') }}" class="navbar-brand">
-        <div class="brand-icon"><i class="bi bi-shield-lock-fill"></i></div>
+        @if(!empty($settings['logo_path']))
+            <div class="brand-icon" style="background:none; box-shadow:none;"><img src="{{ asset($settings['logo_path']) }}" alt="Logo" style="max-width:100%; max-height:100%; object-fit:contain;"></div>
+        @else
+            <div class="brand-icon"><i class="bi bi-shield-lock-fill"></i></div>
+        @endif
         <span>{{ $settings['store_name'] ?? 'VPNStore' }}</span>
     </a>
 
@@ -244,7 +252,11 @@
         <div class="footer-grid">
             <div class="footer-brand">
                 <div class="navbar-brand" style="margin-bottom:0;">
-                    <div class="brand-icon"><i class="bi bi-shield-lock-fill"></i></div>
+                    @if(!empty($settings['logo_path']))
+                        <div class="brand-icon" style="background:none; box-shadow:none;"><img src="{{ asset($settings['logo_path']) }}" alt="Logo" style="max-width:100%; max-height:100%; object-fit:contain;"></div>
+                    @else
+                        <div class="brand-icon"><i class="bi bi-shield-lock-fill"></i></div>
+                    @endif
                     <span class="gradient-text" style="font-size:1.2rem; font-weight:800;">{{ $settings['store_name'] ?? 'VPNStore' }}</span>
                 </div>
                 <p>Cửa hàng phần mềm bản quyền uy tín #1 Việt Nam. Cung cấp VPN Premium và Proxy chính hãng với giá tốt nhất và giao hàng tự động 24/7.</p>
