@@ -54,6 +54,7 @@ foreach ($dbProducts ?? [] as $dbProd) {
         'require_upgrade_email' => (bool)$dbProd->require_upgrade_email,
         'meta_title' => $dbProd->meta_title,
         'meta_description' => $dbProd->meta_description,
+        'specs' => $dbProd->specs,
     ];
 }
 
@@ -180,39 +181,67 @@ $curReviews = intval($defaultPlan['reviews'] ?? 120);
                 {{-- Specs Grid --}}
                 <div class="card" style="padding:24px; margin-bottom:32px;">
                     <h2 style="font-size:1.1rem; font-weight:800; color:var(--text-primary); margin-bottom:16px;">Thông Số Kỹ Thuật</h2>
-                    <div class="specs-grid">
-                        <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding-bottom:8px; font-size:0.875rem;">
-                            <span style="color:var(--text-muted);">Máy chủ (Servers)</span>
-                            <strong id="spec-servers">{{ $defaultPlan['servers'] }}</strong>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding-bottom:8px; font-size:0.875rem;">
-                            <span style="color:var(--text-muted);">Quốc gia (Countries)</span>
-                            <strong id="spec-countries">{{ $defaultPlan['countries'] }}</strong>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding-bottom:8px; font-size:0.875rem;">
-                            <span style="color:var(--text-muted);">Thiết bị đồng thời</span>
-                            <strong id="spec-devices">{{ $defaultPlan['devices'] }}</strong>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding-bottom:8px; font-size:0.875rem;">
-                            <span style="color:var(--text-muted);">Tốc độ kết nối</span>
-                            <strong id="spec-speed">{{ $defaultPlan['speed'] }}</strong>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding-bottom:8px; font-size:0.875rem;">
-                            <span style="color:var(--text-muted);">Giao thức hỗ trợ</span>
-                            <strong id="spec-protocol">{{ $defaultPlan['protocol'] }}</strong>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding-bottom:8px; font-size:0.875rem;">
-                            <span style="color:var(--text-muted);">Trụ sở quốc gia</span>
-                            <strong id="spec-headquarter">{{ $defaultPlan['headquarter'] }}</strong>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding-bottom:8px; font-size:0.875rem;">
-                            <span style="color:var(--text-muted);">Năm thành lập</span>
-                            <strong id="spec-founded">{{ $defaultPlan['founded'] }}</strong>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding-bottom:8px; font-size:0.875rem;">
-                            <span style="color:var(--text-muted);">Chính sách hoàn tiền</span>
-                            <strong id="spec-refund">{{ $defaultPlan['refund'] }}</strong>
-                        </div>
+                    <div class="specs-grid" id="specs-table-container">
+                        @if(!empty($defaultPlan['specs']) && is_array($defaultPlan['specs']))
+                            @foreach($defaultPlan['specs'] as $spec)
+                                @if(!empty($spec['name']) || !empty($spec['value']))
+                                <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding-bottom:8px; font-size:0.875rem;">
+                                    <span style="color:var(--text-muted);">{{ $spec['name'] }}</span>
+                                    <strong>{{ $spec['value'] }}</strong>
+                                </div>
+                                @endif
+                            @endforeach
+                        @else
+                            {{-- Fallback --}}
+                            @if(!empty($defaultPlan['servers']))
+                            <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding-bottom:8px; font-size:0.875rem;">
+                                <span style="color:var(--text-muted);">Máy chủ (Servers)</span>
+                                <strong id="spec-servers">{{ $defaultPlan['servers'] }}</strong>
+                            </div>
+                            @endif
+                            @if(!empty($defaultPlan['countries']))
+                            <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding-bottom:8px; font-size:0.875rem;">
+                                <span style="color:var(--text-muted);">Quốc gia (Countries)</span>
+                                <strong id="spec-countries">{{ $defaultPlan['countries'] }}</strong>
+                            </div>
+                            @endif
+                            @if(!empty($defaultPlan['devices']))
+                            <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding-bottom:8px; font-size:0.875rem;">
+                                <span style="color:var(--text-muted);">Thiết bị đồng thời</span>
+                                <strong id="spec-devices">{{ $defaultPlan['devices'] }}</strong>
+                            </div>
+                            @endif
+                            @if(!empty($defaultPlan['speed']))
+                            <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding-bottom:8px; font-size:0.875rem;">
+                                <span style="color:var(--text-muted);">Tốc độ kết nối</span>
+                                <strong id="spec-speed">{{ $defaultPlan['speed'] }}</strong>
+                            </div>
+                            @endif
+                            @if(!empty($defaultPlan['protocol']))
+                            <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding-bottom:8px; font-size:0.875rem;">
+                                <span style="color:var(--text-muted);">Giao thức hỗ trợ</span>
+                                <strong id="spec-protocol">{{ $defaultPlan['protocol'] }}</strong>
+                            </div>
+                            @endif
+                            @if(!empty($defaultPlan['headquarter']))
+                            <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding-bottom:8px; font-size:0.875rem;">
+                                <span style="color:var(--text-muted);">Trụ sở quốc gia</span>
+                                <strong id="spec-headquarter">{{ $defaultPlan['headquarter'] }}</strong>
+                            </div>
+                            @endif
+                            @if(!empty($defaultPlan['founded']))
+                            <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding-bottom:8px; font-size:0.875rem;">
+                                <span style="color:var(--text-muted);">Năm thành lập</span>
+                                <strong id="spec-founded">{{ $defaultPlan['founded'] }}</strong>
+                            </div>
+                            @endif
+                            @if(!empty($defaultPlan['refund']))
+                            <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding-bottom:8px; font-size:0.875rem;">
+                                <span style="color:var(--text-muted);">Chính sách hoàn tiền</span>
+                                <strong id="spec-refund">{{ $defaultPlan['refund'] }}</strong>
+                            </div>
+                            @endif
+                        @endif
                     </div>
                 </div>
 
@@ -297,6 +326,7 @@ $curReviews = intval($defaultPlan['reviews'] ?? 120);
                                  data-founded="{{ $p['founded'] }}"
                                  data-refund="{{ $p['refund'] }}"
                                  data-desc="{{ $p['description'] }}"
+                                 data-specs="{{ json_encode($p['specs'] ?? []) }}"
                                  data-require-email="{{ $p['require_upgrade_email'] ? '1' : '0' }}"
                                  style="padding:12px; border:1px solid var(--border); border-radius:var(--radius); cursor:pointer; background:var(--bg-elevated); transition:var(--transition); display:flex; justify-content:space-between; align-items:center;">
                                 <div style="display:flex; flex-direction:column; gap:2px;">
@@ -457,13 +487,62 @@ document.querySelectorAll('.plan-option').forEach(opt => {
         }
 
         // Update specs table dynamically
-        const ids = ['servers', 'countries', 'devices', 'speed', 'protocol', 'headquarter', 'founded', 'refund'];
-        ids.forEach(id => {
-            const el = document.getElementById('spec-' + id);
-            if (el && this.dataset[id]) {
-                el.textContent = this.dataset[id];
+        const specsContainer = document.getElementById('specs-table-container');
+        if (specsContainer) {
+            let specs = [];
+            try {
+                specs = JSON.parse(this.dataset.specs || '[]');
+            } catch (e) {
+                console.error("Error parsing plan specs dataset", e);
             }
-        });
+
+            function escapeHtml(text) {
+                if (!text) return '';
+                return String(text)
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
+            }
+
+            if (specs && specs.length > 0) {
+                let html = '';
+                specs.forEach(spec => {
+                    html += `
+                        <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding-bottom:8px; font-size:0.875rem;">
+                            <span style="color:var(--text-muted);">${escapeHtml(spec.name)}</span>
+                            <strong>${escapeHtml(spec.value)}</strong>
+                        </div>
+                    `;
+                });
+                specsContainer.innerHTML = html;
+            } else {
+                const ids = ['servers', 'countries', 'devices', 'speed', 'protocol', 'headquarter', 'founded', 'refund'];
+                const fallbackLabels = {
+                    servers: 'Máy chủ (Servers)',
+                    countries: 'Quốc gia (Countries)',
+                    devices: 'Thiết bị đồng thời',
+                    speed: 'Tốc độ kết nối',
+                    protocol: 'Giao thức hỗ trợ',
+                    headquarter: 'Trụ sở quốc gia',
+                    founded: 'Năm thành lập',
+                    refund: 'Chính sách hoàn tiền'
+                };
+                let html = '';
+                ids.forEach(id => {
+                    if (this.dataset[id]) {
+                        html += `
+                            <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding-bottom:8px; font-size:0.875rem;">
+                                <span style="color:var(--text-muted);">${fallbackLabels[id]}</span>
+                                <strong id="spec-${id}">${escapeHtml(this.dataset[id])}</strong>
+                            </div>
+                        `;
+                    }
+                });
+                specsContainer.innerHTML = html;
+            }
+        }
 
         // Update description dynamically
         const descEl = document.getElementById('main-product-description');

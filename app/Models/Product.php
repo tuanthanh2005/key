@@ -17,7 +17,7 @@ class Product extends Model
         'category_id', 'name', 'brand', 'slug', 'color', 'price', 'old_price',
         'plan', 'duration_days', 'rating', 'reviews', 'features', 'stock', 'sold', 'status',
         'image_path', 'servers', 'countries', 'devices', 'speed', 'protocol',
-        'headquarter', 'founded', 'refund', 'description', 'is_popular', 'require_upgrade_email',
+        'headquarter', 'founded', 'refund', 'description', 'is_popular', 'require_upgrade_email', 'specs',
         // Key_new fields
         'type', 'original_price', 'duration', 'image', 'is_active', 'is_featured',
         'sort_order', 'meta_title', 'meta_description', 'sold_count', 'review_count'
@@ -25,6 +25,7 @@ class Product extends Model
 
     protected $casts = [
         'features'      => 'array',
+        'specs'         => 'array',
         'price'         => 'decimal:0',
         'original_price'=> 'decimal:0',
         'old_price'     => 'float',

@@ -60,6 +60,23 @@
             </div>
 
             <div class="admin-card mb-4">
+                <div class="admin-card-header d-flex justify-content-between align-items-center">
+                    <div class="admin-card-title"><i class="bi bi-cpu text-primary"></i> Thông Số Kỹ Thuật</div>
+                    <button type="button" class="btn btn-sm btn-outline-primary" id="btn-add-spec">
+                        <i class="bi bi-plus-lg"></i> Thêm thông số
+                    </button>
+                </div>
+                <div class="admin-card-body">
+                    <div id="specs-container" class="d-flex flex-column gap-3">
+                        <!-- Dynamic rows will be inserted here by JavaScript -->
+                    </div>
+                    <div class="text-muted mt-2" style="font-size:12px;">
+                        <i class="bi bi-info-circle-fill text-primary"></i> Bạn có thể tự đặt tên nhãn thông số (bên trái) và giá trị tương ứng (bên phải). Kéo hoặc thêm để sắp xếp hiển thị ở frontend.
+                    </div>
+                </div>
+            </div>
+
+            <div class="admin-card mb-4">
                 <div class="admin-card-header">
                     <div class="admin-card-title"><i class="bi bi-search text-primary"></i> SEO Meta</div>
                 </div>
@@ -232,6 +249,62 @@ document.addEventListener('DOMContentLoaded', function() {
     if (select) {
         select.addEventListener('change', toggleCustom);
         toggleCustom();
+    }
+
+    // Dynamic specifications form
+    const specsContainer = document.getElementById('specs-container');
+    const btnAddSpec = document.getElementById('btn-add-spec');
+
+    function addSpecRow(name = '', value = '') {
+        const row = document.createElement('div');
+        row.className = 'row g-2 align-items-center spec-row';
+        row.innerHTML = `
+            <div class="col-md-5">
+                <input type="text" name="specs_names[]" class="form-control" value="${escapeHtml(name)}" placeholder="Nhãn (VD: Máy chủ, Tốc độ,...)">
+            </div>
+            <div class="col-md-6">
+                <input type="text" name="specs_values[]" class="form-control" value="${escapeHtml(value)}" placeholder="Giá trị (VD: 5,400+, Rất nhanh,...)">
+            </div>
+            <div class="col-md-1 text-end">
+                <button type="button" class="btn btn-outline-danger btn-sm btn-remove-spec" style="padding: 6px 10px;">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </div>
+        `;
+        specsContainer.appendChild(row);
+
+        row.querySelector('.btn-remove-spec').addEventListener('click', function() {
+            row.remove();
+        });
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        return String(text)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    // Default template specs for new product
+    const defaults = [
+        { name: 'Máy chủ (Servers)', value: '' },
+        { name: 'Quốc gia (Countries)', value: '' },
+        { name: 'Thiết bị đồng thời', value: '' },
+        { name: 'Tốc độ kết nối', value: '' },
+        { name: 'Giao thức hỗ trợ', value: '' },
+        { name: 'Trụ sở quốc gia', value: '' },
+        { name: 'Năm thành lập', value: '' },
+        { name: 'Chính sách hoàn tiền', value: '' }
+    ];
+    defaults.forEach(d => {
+        addSpecRow(d.name, d.value);
+    });
+
+    if (btnAddSpec) {
+        btnAddSpec.addEventListener('click', () => addSpecRow());
     }
 });
 </script>

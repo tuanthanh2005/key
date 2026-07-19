@@ -56,6 +56,18 @@ class ProductController extends Controller
             'meta_description' => 'nullable|string|max:500',
             'features'         => 'nullable|array',
             'features.*'       => 'string',
+            'servers'          => 'nullable|string|max:255',
+            'countries'        => 'nullable|string|max:255',
+            'devices'          => 'nullable|string|max:255',
+            'speed'            => 'nullable|string|max:255',
+            'protocol'         => 'nullable|string|max:255',
+            'headquarter'      => 'nullable|string|max:255',
+            'founded'          => 'nullable|string|max:255',
+            'refund'           => 'nullable|string|max:255',
+            'specs_names'      => 'nullable|array',
+            'specs_names.*'    => 'nullable|string|max:255',
+            'specs_values'     => 'nullable|array',
+            'specs_values.*'   => 'nullable|string|max:255',
         ]);
 
         $data['slug'] = Str::slug($data['name']) . '-' . Str::random(6);
@@ -63,6 +75,22 @@ class ProductController extends Controller
         $data['is_popular'] = $request->boolean('is_popular');
         $data['is_featured']= $request->boolean('is_featured');
         $data['require_upgrade_email'] = $request->boolean('require_upgrade_email');
+
+        $specs = [];
+        if ($request->has('specs_names') && $request->has('specs_values')) {
+            $names = $request->input('specs_names');
+            $values = $request->input('specs_values');
+            foreach ($names as $index => $name) {
+                $val = $values[$index] ?? '';
+                if (trim($name) !== '' || trim($val) !== '') {
+                    $specs[] = [
+                        'name' => trim($name),
+                        'value' => trim($val)
+                    ];
+                }
+            }
+        }
+        $data['specs'] = $specs;
 
         if ($request->hasFile('image')) {
             $data['image'] = $request->file('image')->store('uploads/products', 'public_uploads');
@@ -102,12 +130,40 @@ class ProductController extends Controller
             'meta_description' => 'nullable|string|max:500',
             'features'         => 'nullable|array',
             'features.*'       => 'string',
+            'servers'          => 'nullable|string|max:255',
+            'countries'        => 'nullable|string|max:255',
+            'devices'          => 'nullable|string|max:255',
+            'speed'            => 'nullable|string|max:255',
+            'protocol'         => 'nullable|string|max:255',
+            'headquarter'      => 'nullable|string|max:255',
+            'founded'          => 'nullable|string|max:255',
+            'refund'           => 'nullable|string|max:255',
+            'specs_names'      => 'nullable|array',
+            'specs_names.*'    => 'nullable|string|max:255',
+            'specs_values'     => 'nullable|array',
+            'specs_values.*'   => 'nullable|string|max:255',
         ]);
 
         $data['is_active']  = $request->boolean('is_active');
         $data['is_popular'] = $request->boolean('is_popular');
         $data['is_featured']= $request->boolean('is_featured');
         $data['require_upgrade_email'] = $request->boolean('require_upgrade_email');
+
+        $specs = [];
+        if ($request->has('specs_names') && $request->has('specs_values')) {
+            $names = $request->input('specs_names');
+            $values = $request->input('specs_values');
+            foreach ($names as $index => $name) {
+                $val = $values[$index] ?? '';
+                if (trim($name) !== '' || trim($val) !== '') {
+                    $specs[] = [
+                        'name' => trim($name),
+                        'value' => trim($val)
+                    ];
+                }
+            }
+        }
+        $data['specs'] = $specs;
 
         if ($request->hasFile('image')) {
             if ($product->image) {
