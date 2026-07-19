@@ -210,4 +210,66 @@ class ProductController extends Controller
 
         return back()->with('success', 'Đánh giá sản phẩm đã được cập nhật!');
     }
+
+    public function storeFakeReview(Request $request, $id)
+    {
+        $product = Product::findOrFail($id);
+
+        $request->validate([
+            'customer_name' => 'required|string|max:255',
+            'rating'        => 'required|integer|min:1|max:5',
+            'comment'       => 'required|string|max:1000',
+        ]);
+
+        // Create the fake order with a review
+        $orderCode = 'FAKE' . strtoupper(Str::random(8));
+        \App\Models\Order::create([
+            'order_code'     => $orderCode,
+            'user_id'        => null,
+            'customer_name'  => $request->customer_name,
+            'customer_email' => 'fake_' . Str::random(5) . '@gmail.com',
+            'customer_phone' => '090' . rand(1000000, 9999999),
+            'product_name'   => $product->name,
+            'brand'          => $product->brand,
+            'plan'           => $product->plan,
+            'quantity'       => 1,
+            'price'          => $product->price,
+            'total'          => $product->price,
+            'payment_method' => 'CK',
+            'payment_status' => 'paid',
+            'order_status'   => 'completed',
+            'is_reviewed'    => true,
+            'review_rating'  => $request->rating,
+            'review_comment' => $request->comment,
+            'created_at'     => now()->subHours(rand(1, 240)), // past 10 days
+            'updated_at'     => now()->subHours(rand(1, 240)),
+        ]);
+
+        // Recalculate product rating/reviews
+        $orders = \App\Models\Order::where('brand', $product->brand)
+            ->where('plan', $product->plan)
+            ->whereNotNull('review_rating')
+            ->get();
+
+        $totalRating = 0;
+        $count       = $orders->count();
+        foreach ($orders as $o) {
+            $totalRating += $o->review_rating;
+        }
+
+        // We use the base count from settings or model defaults, or direct database values
+        // Let's use the current database reviews (or default 120) and add the reviews count
+        // Wait, since we are inserting a real order, if we just want to update stats:
+        $baseReviews      = 120;
+        $baseRating       = 4.8;
+        $newReviewsCount  = $baseReviews + $count;
+        $newAverageRating = round((($baseRating * $baseReviews) + $totalRating) / $newReviewsCount, 1);
+
+        $product->update([
+            'rating'  => $newAverageRating,
+            'reviews' => $newReviewsCount,
+        ]);
+
+        return back()->with('success', 'Đã tạo đánh giá ảo thành công và cập nhật lại điểm trung bình!');
+    }
 }

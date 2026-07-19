@@ -122,32 +122,82 @@
 
             <!-- EDIT QUICK RATING MODAL -->
             <div class="modal fade" id="editRatingModal-{{ $product->id }}" tabindex="-1" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
+                <div class="modal-dialog modal-dialog-centered" style="max-width: 480px;">
                     <div class="modal-content" style="border-radius:16px; border:none; box-shadow:0 8px 30px rgba(0,0,0,0.12); background: var(--bg-surface);">
                         <div class="modal-header border-bottom py-3 px-4">
-                            <h6 class="modal-title fw-bold text-dark"><i class="bi bi-star-fill text-warning me-2"></i>Cài đặt đánh giá: {{ $product->name }}</h6>
+                            <div style="max-width: 85%;">
+                                <h6 class="modal-title fw-bold text-dark" style="word-break: break-word;"><i class="bi bi-star-fill text-warning me-2"></i>Đánh giá & Nhận xét</h6>
+                                <small class="text-muted d-block text-truncate" style="max-width: 320px;">{{ $product->name }}</small>
+                            </div>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <form action="{{ route('admin.products.update-rating', $product->id) }}" method="POST" style="margin:0;">
-                            @csrf
-                            @method('PUT')
-                            <div class="modal-body p-4">
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">Điểm Đánh Giá (Sao) <span class="text-danger">*</span></label>
-                                    <input type="number" name="rating" class="form-control" step="0.1" min="1" max="5" value="{{ $product->rating }}" required>
-                                    <div class="form-text" style="font-size: 11px;">Nhập số từ 1.0 đến 5.0 (Ví dụ: 4.8)</div>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-bold">Số Lượt Đánh Giá <span class="text-danger">*</span></label>
-                                    <input type="number" name="reviews" class="form-control" min="0" value="{{ $product->reviews }}" required>
-                                    <div class="form-text" style="font-size: 11px;">Số lượng đánh giá ảo ban đầu (Ví dụ: 120)</div>
-                                </div>
+                        
+                        <!-- Nav Tabs -->
+                        <ul class="nav nav-tabs px-4 pt-2" id="ratingTab-{{ $product->id }}" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active fw-600" id="stats-tab-{{ $product->id }}" data-bs-toggle="tab" data-bs-target="#stats-panel-{{ $product->id }}" type="button" role="tab" style="font-size: 13px;">Chỉ số mồi</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link fw-600" id="fake-tab-{{ $product->id }}" data-bs-toggle="tab" data-bs-target="#fake-panel-{{ $product->id }}" type="button" role="tab" style="font-size: 13px;">Tạo đánh giá ảo</button>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content" id="ratingTabContent-{{ $product->id }}">
+                            <!-- Tab 1: Stats -->
+                            <div class="tab-pane fade show active" id="stats-panel-{{ $product->id }}" role="tabpanel" aria-labelledby="stats-tab-{{ $product->id }}">
+                                <form action="{{ route('admin.products.update-rating', $product->id) }}" method="POST" style="margin:0;">
+                                    @csrf
+                                    @method('PUT')
+                                    <div class="modal-body p-4">
+                                        <div class="mb-3">
+                                            <label class="form-label fw-bold">Điểm Đánh Giá (Sao) <span class="text-danger">*</span></label>
+                                            <input type="number" name="rating" class="form-control" step="0.1" min="1" max="5" value="{{ $product->rating }}" required>
+                                            <div class="form-text" style="font-size: 11px;">Nhập số từ 1.0 đến 5.0 (Ví dụ: 4.8)</div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label fw-bold">Số Lượt Đánh Giá <span class="text-danger">*</span></label>
+                                            <input type="number" name="reviews" class="form-control" min="0" value="{{ $product->reviews }}" required>
+                                            <div class="form-text" style="font-size: 11px;">Số lượng đánh giá ảo ban đầu (Ví dụ: 120)</div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer border-top py-3 px-4" style="background:rgba(0,0,0,0.02);">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary px-3" data-bs-dismiss="modal" style="border-radius:20px;">Hủy</button>
+                                        <button type="submit" class="btn btn-sm btn-primary px-4" style="border-radius:20px;">Lưu Cài Đặt</button>
+                                    </div>
+                                </form>
                             </div>
-                            <div class="modal-footer border-top py-3 px-4" style="background:rgba(0,0,0,0.02);">
-                                <button type="button" class="btn btn-sm btn-outline-secondary px-3" data-bs-dismiss="modal" style="border-radius:20px;">Hủy</button>
-                                <button type="submit" class="btn btn-sm btn-primary px-4" style="border-radius:20px;">Lưu Cài Đặt</button>
+
+                            <!-- Tab 2: Fake Review -->
+                            <div class="tab-pane fade" id="fake-panel-{{ $product->id }}" role="tabpanel" aria-labelledby="fake-tab-{{ $product->id }}">
+                                <form action="{{ route('admin.products.fake-review', $product->id) }}" method="POST" style="margin:0;">
+                                    @csrf
+                                    <div class="modal-body p-4">
+                                        <div class="mb-3">
+                                            <label class="form-label fw-bold">Tên Khách Hàng <span class="text-danger">*</span></label>
+                                            <input type="text" name="customer_name" class="form-control" placeholder="Ví dụ: Nguyễn Văn Nam, Ngọc Thảo" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label fw-bold">Số Sao Đánh Giá <span class="text-danger">*</span></label>
+                                            <select name="rating" class="form-select" required>
+                                                <option value="5" selected>⭐⭐⭐⭐⭐ (5 Sao)</option>
+                                                <option value="4">⭐⭐⭐⭐ (4 Sao)</option>
+                                                <option value="3">⭐⭐⭐ (3 Sao)</option>
+                                                <option value="2">⭐⭐ (2 Sao)</option>
+                                                <option value="1">⭐ (1 Sao)</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label fw-bold">Nội dung nhận xét <span class="text-danger">*</span></label>
+                                            <textarea name="comment" class="form-control" rows="3" placeholder="Ví dụ: Dịch vụ rất tốt, giao key tự động cực nhanh, sẽ ủng hộ dài hạn!" required></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer border-top py-3 px-4" style="background:rgba(0,0,0,0.02);">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary px-3" data-bs-dismiss="modal" style="border-radius:20px;">Hủy</button>
+                                        <button type="submit" class="btn btn-sm btn-primary px-4" style="border-radius:20px;">Tạo Đánh Giá</button>
+                                    </div>
+                                </form>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>

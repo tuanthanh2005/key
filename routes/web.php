@@ -166,6 +166,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::post('/{id}/clone', [ProductController::class, 'clone'])->name('clone');
         Route::post('/{id}/toggle', [ProductController::class, 'toggleActive'])->name('toggle');
         Route::put('/{id}/rating', [ProductController::class, 'updateRating'])->name('update-rating');
+        Route::post('/{id}/fake-review', [ProductController::class, 'storeFakeReview'])->name('fake-review');
     });
 
     // Quản lý license
