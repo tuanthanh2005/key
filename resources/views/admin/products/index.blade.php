@@ -112,6 +112,10 @@
                     <div style="display:flex; gap:6px; align-items:center;">
                         <a href="{{ route('admin.licenses.index', ['product' => $product->id]) }}" class="btn btn-ghost btn-icon btn-sm" style="border: 1px solid var(--border); border-radius: 8px; color: var(--success); padding: 6px; text-decoration:none;" title="Xem License"><i class="bi bi-shield-check"></i></a>
                         <a href="{{ route('admin.products.edit', $product->id) }}" class="btn btn-ghost btn-icon btn-sm" style="border: 1px solid var(--border); border-radius: 8px; color: var(--info); padding: 6px; text-decoration:none;" title="Sửa"><i class="bi bi-pencil"></i></a>
+                        <form action="{{ route('admin.products.clone', $product->id) }}" method="POST" style="margin: 0; display: inline;">
+                            @csrf
+                            <button type="submit" class="btn btn-ghost btn-icon btn-sm" style="border: 1px solid var(--border); border-radius: 8px; color: #7c3aed; padding: 6px; background: none;" title="Nhân Bản (Clone)" onclick="return confirm('Nhân bản sản phẩm này?')"><i class="bi bi-copy"></i></button>
+                        </form>
                         <form action="{{ route('admin.products.destroy', $product->id) }}" method="POST" style="margin: 0; display: inline;">
                             @csrf @method('DELETE')
                             <button type="submit" class="btn btn-ghost btn-icon btn-sm" style="border: 1px solid var(--border); border-radius: 8px; color: var(--danger); padding: 6px; background: none;" title="Xóa" onclick="return confirm('Xóa sản phẩm này?')"><i class="bi bi-trash"></i></button>

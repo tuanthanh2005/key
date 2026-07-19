@@ -193,4 +193,29 @@ class ProductController extends Controller
         $product->update(['is_active' => !$product->is_active]);
         return back()->with('success', 'Trạng thái đã được cập nhật!');
     }
+
+    public function clone($id)
+    {
+        $product = Product::findOrFail($id);
+
+        $newProduct = $product->replicate();
+        $newProduct->name = $product->name . ' - Copy';
+        $newProduct->slug = \Illuminate\Support\Str::slug($newProduct->name) . '-' . \Illuminate\Support\Str::random(6);
+        $newProduct->rating = 0.0;
+        $newProduct->reviews = 0;
+        $newProduct->sold = 0;
+
+        // Duplicate the image file in storage if exists
+        if ($product->image && \Illuminate\Support\Facades\Storage::disk('public_uploads')->exists($product->image)) {
+            $pathInfo = pathinfo($product->image);
+            $newImageName = \Illuminate\Support\Str::random(40) . '.' . ($pathInfo['extension'] ?? 'jpg');
+            $newImagePath = 'uploads/products/' . $newImageName;
+            \Illuminate\Support\Facades\Storage::disk('public_uploads')->copy($product->image, $newImagePath);
+            $newProduct->image = $newImagePath;
+        }
+
+        $newProduct->save();
+
+        return redirect()->route('admin.products.index')->with('success', 'Nhân bản sản phẩm thành công!');
+    }
 }
