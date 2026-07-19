@@ -204,34 +204,18 @@ class Product extends Model
 
     public function getReviewsAttribute($value)
     {
-        if (!empty($value)) {
-            return (int) $value;
-        }
-
-        $reviewPool = [
-            87, 104, 118, 126, 95, 142, 115, 131, 99, 150, 
-            89, 112, 137, 108, 121, 145, 93, 119, 134, 128, 
-            102, 114, 91, 140, 123, 106, 139, 97, 125, 148
-        ];
-
-        $id = $this->id ?: 1;
-        return $reviewPool[$id % 30] ?? 120;
+        return \App\Models\Order::where('brand', $this->brand)
+            ->whereNotNull('review_rating')
+            ->count();
     }
 
     public function getRatingAttribute($value)
     {
-        if (!empty($value)) {
-            return (float) $value;
-        }
-
-        $ratingPool = [
-            4.8, 4.9, 4.7, 4.8, 4.9, 4.8, 4.7, 4.8, 4.9, 4.8,
-            4.9, 4.7, 4.8, 4.9, 4.8, 4.7, 4.8, 4.9, 4.8, 4.9,
-            4.7, 4.8, 4.9, 4.8, 4.7, 4.8, 4.9, 4.8, 4.9, 4.8
-        ];
-
-        $id = $this->id ?: 1;
-        return $ratingPool[$id % 30] ?? 4.8;
+        $avg = \App\Models\Order::where('brand', $this->brand)
+            ->whereNotNull('review_rating')
+            ->avg('review_rating');
+            
+        return $avg ? (float) $avg : 0.0;
     }
 
     public function getSeoTitleAttribute(): string

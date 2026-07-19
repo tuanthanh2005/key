@@ -173,8 +173,13 @@
                 </div>
             </div>
         @else
-            <a href="{{ route('auth.login') }}" class="btn btn-ghost btn-sm">Đăng Nhập</a>
-            <a href="{{ route('auth.register') }}" class="btn btn-primary btn-sm">Đăng Ký</a>
+            <div class="auth-buttons-desktop">
+                <a href="{{ route('auth.login') }}" class="btn btn-ghost btn-sm">Đăng Nhập</a>
+                <a href="{{ route('auth.register') }}" class="btn btn-primary btn-sm">Đăng Ký</a>
+            </div>
+            <a href="{{ route('auth.login') }}" class="auth-button-mobile" title="Đăng Nhập / Đăng Ký">
+                <i class="bi bi-person" style="font-size: 1.3rem;"></i>
+            </a>
         @endif
 
         <button class="hamburger" id="hamburger-btn" aria-label="Menu">

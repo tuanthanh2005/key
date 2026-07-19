@@ -55,18 +55,20 @@ foreach ($dbProducts ?? [] as $dbProd) {
         'meta_title' => $dbProd->meta_title,
         'meta_description' => $dbProd->meta_description,
         'specs' => $dbProd->specs,
+        'rating' => $dbProd->rating,
+        'reviews' => $dbProd->reviews,
     ];
 }
 
 if (empty($plans)) {
     $plans = [
-        ['id'=>1, 'key'=>'1month', 'label'=>'1 Tháng', 'price'=>120000, 'old'=>200000, 'save'=>null, 'popular'=>false, 'image_path'=>null, 'servers'=>'5,400+', 'countries'=>'60+', 'devices'=>'6', 'speed'=>'Nhanh', 'protocol'=>'WireGuard', 'headquarter'=>'Panama', 'founded'=>'2012', 'refund'=>'30 ngày', 'description'=>'NordVPN là một dịch vụ VPN phổ biến.', 'require_upgrade_email'=>false],
+        ['id'=>1, 'key'=>'1month', 'label'=>'1 Tháng', 'price'=>120000, 'old'=>200000, 'save'=>null, 'popular'=>false, 'image_path'=>null, 'servers'=>'5,400+', 'countries'=>'60+', 'devices'=>'6', 'speed'=>'Nhanh', 'protocol'=>'WireGuard', 'headquarter'=>'Panama', 'founded'=>'2012', 'refund'=>'30 ngày', 'description'=>'NordVPN là một dịch vụ VPN phổ biến.', 'require_upgrade_email'=>false, 'rating'=>0.0, 'reviews'=>0],
     ];
 }
 
 $defaultPlan = collect($plans)->firstWhere('popular', true) ?: ($plans[0] ?? null);
-$curRating = floatval($defaultPlan['rating'] ?? 4.8);
-$curReviews = intval($defaultPlan['reviews'] ?? 120);
+$curRating = floatval($defaultPlan['rating'] ?? 0.0);
+$curReviews = intval($defaultPlan['reviews'] ?? 0);
 @endphp
 
 @push('head')
@@ -291,8 +293,30 @@ $curReviews = intval($defaultPlan['reviews'] ?? 120);
             <div class="product-purchase-column product-sidebar-sticky">
                 <div class="product-purchase-card card" style="border-color:rgba(124,58,237,0.3); padding:24px;">
                     <span style="font-size:0.75rem; font-weight:800; color:var(--accent); text-transform:uppercase; letter-spacing:0.05em; display:block; margin-bottom:6px;">Premium Account</span>
-                    <h1 style="font-size:1.6rem; font-weight:800; margin-bottom:16px; color:var(--text-primary);">{{ $brand['name'] }}</h1>
+                    <h1 style="font-size:1.6rem; font-weight:800; margin-bottom:12px; color:var(--text-primary);">{{ $brand['name'] }}</h1>
                     
+                    {{-- Rating Stars --}}
+                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:20px;">
+                        <div class="stars" style="display:flex; gap:2px; color:var(--warning); font-size:0.85rem;">
+                            @if($curReviews > 0)
+                                @for($i = 1; $i <= 5; $i++)
+                                    @if($i <= floor($curRating))
+                                        <i class="bi bi-star-fill"></i>
+                                    @elseif($i - $curRating < 1)
+                                        <i class="bi bi-star-half"></i>
+                                    @else
+                                        <i class="bi bi-star" style="color:var(--border)"></i>
+                                    @endif
+                                @endfor
+                            @else
+                                @for($i = 1; $i <= 5; $i++)
+                                    <i class="bi bi-star" style="color:var(--border)"></i>
+                                @endfor
+                            @endif
+                        </div>
+                        <span style="font-size:0.85rem; font-weight:700; color:var(--text-primary);">{{ $curReviews > 0 ? number_format($curRating, 1) : '0.0' }}</span>
+                        <span style="font-size:0.85rem; color:var(--text-muted);">({{ number_format($curReviews) }} đánh giá)</span>
+                    </div>
                     {{-- Price Display --}}
                     <div style="margin-bottom:24px; padding-bottom:20px; border-bottom:1px solid var(--border);">
                         <div class="product-pricing" style="margin-bottom:6px; display:flex; align-items:baseline; gap:8px;">

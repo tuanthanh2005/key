@@ -74,9 +74,9 @@
                 </div>
             @endif
 
-            @if($prodRating > 0)
-                <div class="product-rating" style="margin-bottom:8px;">
-                    <div class="stars" style="display:flex; gap:2px;">
+            <div class="product-rating" style="margin-bottom:8px;">
+                <div class="stars" style="display:flex; gap:2px;">
+                    @if($prodReviews > 0)
                         @for($i = 1; $i <= 5; $i++)
                             @if($i <= floor($prodRating))
                                 <i class="bi bi-star-fill text-warning"></i>
@@ -86,11 +86,15 @@
                                 <i class="bi bi-star text-muted"></i>
                             @endif
                         @endfor
-                    </div>
-                    <span style="font-size:0.8rem; font-weight:600; margin-left:6px; color:var(--text-primary);">{{ number_format($prodRating, 1) }}</span>
-                    <span style="font-size:0.8rem; color:var(--text-muted); margin-left:4px;">({{ number_format($prodReviews) }})</span>
+                    @else
+                        @for($i = 1; $i <= 5; $i++)
+                            <i class="bi bi-star text-muted"></i>
+                        @endfor
+                    @endif
                 </div>
-            @endif
+                <span style="font-size:0.8rem; font-weight:600; margin-left:6px; color:var(--text-primary);">{{ $prodReviews > 0 ? number_format($prodRating, 1) : '0.0' }}</span>
+                <span style="font-size:0.8rem; color:var(--text-muted); margin-left:4px;">({{ number_format($prodReviews) }} đánh giá)</span>
+            </div>
 
             <div class="product-pricing" style="margin-top:auto;">
                 <span class="price-current" style="font-size:1.1rem; font-weight:800; color:var(--primary-light);">{{ number_format($prodPrice) }}đ</span>
