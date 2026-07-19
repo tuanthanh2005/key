@@ -169,14 +169,14 @@
                                 <i class="bi bi-star-fill text-warning me-2"></i>Đánh Giá Sản Phẩm
                             </h6>
                             
-                            @if($order->review_rating === null)
+                            @if(!$order->is_reviewed)
                             <!-- Form gửi đánh giá -->
                             <form action="{{ route('order.review.submit') }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="order_code" value="{{ $order->order_code }}">
                                 
                                 <div class="mb-3">
-                                    <label class="form-label fw-600 text-dark mb-1" style="font-size:13px">Chọn số sao đánh giá:</label>
+                                    <label class="form-label fw-600 text-dark mb-1" style="font-size:13px">Chọn số sao đánh giá (Không bắt buộc):</label>
                                     <div class="d-flex gap-2 rating-select" style="font-size:24px;cursor:pointer;color:#ccc">
                                         <i class="bi bi-star-fill star-option" data-value="1"></i>
                                         <i class="bi bi-star-fill star-option" data-value="2"></i>
@@ -184,7 +184,7 @@
                                         <i class="bi bi-star-fill star-option" data-value="4"></i>
                                         <i class="bi bi-star-fill star-option" data-value="5"></i>
                                     </div>
-                                    <input type="hidden" name="rating" id="reviewRatingInput" value="" required>
+                                    <input type="hidden" name="rating" id="reviewRatingInput" value="">
                                 </div>
                                 
                                 <div class="mb-3">
@@ -199,6 +199,7 @@
                             @else
                             <!-- Đã đánh giá xong -->
                             <div class="p-3 rounded-3 bg-light border border-light d-flex flex-column gap-2">
+                                @if($order->review_rating)
                                 <div class="d-flex align-items-center gap-2">
                                     <span class="fw-700 text-dark" style="font-size:13.5px">Đánh giá của bạn:</span>
                                     <div class="rating-stars" style="color:#ffb300;font-size:14px">
@@ -210,7 +211,13 @@
                                         @endfor
                                     </div>
                                 </div>
+                                @endif
+                                @if($order->review_comment)
                                 <p class="mb-0 text-muted" style="font-size:13px;font-style:italic">"{{ $order->review_comment }}"</p>
+                                @endif
+                                @if(!$order->review_rating && !$order->review_comment)
+                                <p class="mb-0 text-muted" style="font-size:13px;font-style:italic">Bạn đã gửi đánh giá hoàn thành đơn hàng này.</p>
+                                @endif
                             </div>
                             @endif
                         </div>

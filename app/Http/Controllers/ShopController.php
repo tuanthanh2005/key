@@ -209,7 +209,7 @@ class ShopController extends Controller
     {
         $request->validate([
             'order_code' => 'required|string|exists:orders,order_code',
-            'rating'     => 'required|integer|min:1|max:5',
+            'rating'     => 'nullable|integer|min:1|max:5',
             'comment'    => 'nullable|string|max:1000',
         ]);
 
@@ -219,41 +219,44 @@ class ShopController extends Controller
             return redirect()->back()->with('error', 'Chỉ có thể đánh giá đơn hàng đã hoàn tất.');
         }
 
-        if ($order->review_rating !== null) {
+        if ($order->is_reviewed) {
             return redirect()->back()->with('error', 'Đơn hàng này đã được đánh giá trước đó.');
         }
 
         $order->update([
             'review_rating'  => $request->rating,
             'review_comment' => $request->comment,
+            'is_reviewed'    => true,
         ]);
 
-        // Cập nhật rating và reviews cho sản phẩm tương ứng
-        $product = \App\Models\Product::where('brand', $order->brand)
-            ->where('plan', $order->plan)
-            ->first();
-
-        if ($product) {
-            $orders = \App\Models\Order::where('brand', $order->brand)
+        // Cập nhật rating và reviews cho sản phẩm tương ứng nếu khách hàng chọn số sao
+        if ($request->rating) {
+            $product = \App\Models\Product::where('brand', $order->brand)
                 ->where('plan', $order->plan)
-                ->whereNotNull('review_rating')
-                ->get();
+                ->first();
 
-            $totalRating = 0;
-            $count       = $orders->count();
-            foreach ($orders as $o) {
-                $totalRating += $o->review_rating;
+            if ($product) {
+                $orders = \App\Models\Order::where('brand', $order->brand)
+                    ->where('plan', $order->plan)
+                    ->whereNotNull('review_rating')
+                    ->get();
+
+                $totalRating = 0;
+                $count       = $orders->count();
+                foreach ($orders as $o) {
+                    $totalRating += $o->review_rating;
+                }
+
+                $baseReviews      = intval($product->reviews ?: Setting::get('default_product_reviews', 120));
+                $baseRating       = floatval($product->rating  ?: Setting::get('default_product_rating', 4.8));
+                $newReviewsCount  = $baseReviews + $count;
+                $newAverageRating = round((($baseRating * $baseReviews) + $totalRating) / $newReviewsCount, 1);
+
+                $product->update([
+                    'rating'  => $newAverageRating,
+                    'reviews' => $newReviewsCount,
+                ]);
             }
-
-            $baseReviews      = intval($product->reviews ?: Setting::get('default_product_reviews', 120));
-            $baseRating       = floatval($product->rating  ?: Setting::get('default_product_rating', 4.8));
-            $newReviewsCount  = $baseReviews + $count;
-            $newAverageRating = round((($baseRating * $baseReviews) + $totalRating) / $newReviewsCount, 1);
-
-            $product->update([
-                'rating'  => $newAverageRating,
-                'reviews' => $newReviewsCount,
-            ]);
         }
 
         return redirect()->route('order.check', ['order' => $order->order_code])

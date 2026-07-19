@@ -14,13 +14,14 @@ class Order extends Model
         'customer_phone', 'product_name', 'brand', 'plan',
         'quantity', 'price', 'discount', 'total', 'coupon',
         'payment_method', 'payment_status', 'order_status',
-        'license_key', 'note', 'review_rating', 'review_comment',
+        'license_key', 'note', 'review_rating', 'review_comment', 'is_reviewed',
         'start_date', 'end_date',
     ];
 
     protected $casts = [
         'start_date' => 'datetime',
         'end_date' => 'datetime',
+        'is_reviewed' => 'boolean',
     ];
 
     protected static function booted()
