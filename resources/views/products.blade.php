@@ -126,7 +126,7 @@
                 </div>
 
                 {{-- Category Tabs (top) --}}
-                <div class="category-tabs" style="margin-bottom:24px; overflow-x:auto; padding-bottom:4px; display:flex; gap:8px;">
+                <div class="category-tabs" style="margin-bottom:24px;">
                     <a href="#" class="category-tab active" data-category="all">
                         <i class="bi bi-grid-fill" style="margin-right:6px;"></i> Tất Cả
                     </a>

@@ -2492,14 +2492,10 @@ body {
   /* Horizontal Category Scroll Tabs */
   .category-tabs {
     display: flex !important;
-    flex-wrap: nowrap !important;
-    overflow-x: auto !important;
-    gap: 6px !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 8px !important;
     padding: 4px 0 12px !important;
-    white-space: nowrap !important;
-    -webkit-overflow-scrolling: touch !important;
-    scrollbar-width: none !important;
-    -ms-overflow-style: none !important;
     margin-bottom: 16px !important;
   }
 
