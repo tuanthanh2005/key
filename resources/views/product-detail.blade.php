@@ -12,7 +12,30 @@ $brandData = [
     'protonvpn'  => ['name'=>'ProtonVPN','color'=>'#6D28D9','bg'=>'#F5F3FF','icon'=>'bi-shield-fill-check','servers'=>'3,000+','countries'=>'67+','devices'=>10,'speed'=>'Nhanh','protocol'=>'WireGuard / OpenVPN','headquarter'=>'Switzerland','refund'=>'30 ngày','founded'=>'2017','desc'=>'ProtonVPN từ đội ngũ ProtonMail Thụy Sĩ - tập trung tuyệt đối vào quyền riêng tư. Tính năng Secure Core định tuyến lưu lượng qua nhiều máy chủ, cung cấp bảo vệ tốt nhất. Không bao giờ lưu log.'],
 ];
 
-$brand = $brandData[$slug] ?? $brandData['nordvpn'];
+$firstProduct = collect($dbProducts ?? [])->first();
+$firstBrand = $firstProduct ? strtolower($firstProduct->brand) : '';
+if (!empty($firstBrand) && isset($brandData[$firstBrand])) {
+    $brand = $brandData[$firstBrand];
+} elseif (isset($brandData[$slug])) {
+    $brand = $brandData[$slug];
+} else {
+    $brandName = $firstProduct ? ($firstProduct->brand ?: $firstProduct->name) : 'Sản phẩm';
+    $brand = [
+        'name'        => $brandName,
+        'color'       => ($firstProduct && $firstProduct->color) ? $firstProduct->color : '#7c3aed',
+        'bg'          => '#f5f3ff',
+        'icon'        => 'bi-box-seam-fill',
+        'servers'     => $firstProduct->servers ?? '',
+        'countries'   => $firstProduct->countries ?? '',
+        'devices'     => $firstProduct->devices ?? '',
+        'speed'       => $firstProduct->speed ?? '',
+        'protocol'    => $firstProduct->protocol ?? '',
+        'headquarter' => $firstProduct->headquarter ?? '',
+        'refund'      => $firstProduct->refund ?? '30 ngày',
+        'founded'     => $firstProduct->founded ?? '',
+        'desc'        => $firstProduct->description ?? '',
+    ];
+}
 
 $plans = [];
 $hasPopular = false;
