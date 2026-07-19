@@ -125,10 +125,11 @@
                             <option value="30" {{ old('duration_days', $product->duration_days ?? 30) == 30 ? 'selected' : '' }}>30 Ngày (1 Tháng)</option>
                             <option value="90" {{ old('duration_days', $product->duration_days) == 90 ? 'selected' : '' }}>90 Ngày (3 Tháng)</option>
                             <option value="180" {{ old('duration_days', $product->duration_days) == 180 ? 'selected' : '' }}>180 Ngày (6 Tháng)</option>
+                            <option value="270" {{ old('duration_days', $product->duration_days) == 270 ? 'selected' : '' }}>270 Ngày (9 Tháng)</option>
                             <option value="365" {{ old('duration_days', $product->duration_days) == 365 ? 'selected' : '' }}>365 Ngày (1 Năm)</option>
                             <option value="730" {{ old('duration_days', $product->duration_days) == 730 ? 'selected' : '' }}>730 Ngày (2 Năm)</option>
                             <option value="1095" {{ old('duration_days', $product->duration_days) == 1095 ? 'selected' : '' }}>1095 Ngày (3 Năm)</option>
-                            <option value="custom" {{ !in_array(old('duration_days', $product->duration_days ?? 30), [1,2,3,7,15,30,90,180,365,730,1095]) ? 'selected' : '' }}>Tự nhập số ngày...</option>
+                            <option value="custom" {{ !in_array(old('duration_days', $product->duration_days ?? 30), [1,2,3,7,15,30,90,180,270,365,730,1095]) ? 'selected' : '' }}>Tự nhập số ngày...</option>
                         </select>
                         <div id="custom_days_container" class="mt-2" style="display: none;">
                             <input type="number" id="custom_duration_days" class="form-control" min="1" value="{{ old('duration_days', $product->duration_days ?? 30) }}" placeholder="Nhập số ngày (Ví dụ: 45)...">
