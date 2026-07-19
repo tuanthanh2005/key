@@ -21,7 +21,7 @@
     @endif
     <meta name="description" content="@yield('meta_description', $settings['meta_description'] ?? 'VPN Store Pro - Mua VPN Premium, AI Code, Design Software, Xem Phim Premium giá tốt nhất. Giao hàng tự động, hỗ trợ 24/7.')">
     <meta name="keywords" content="@yield('meta_keywords', $settings['meta_keywords'] ?? 'vpn premium, nordvpn, expressvpn, mua vpn, ai code, design software, xem phim premium, phần mềm bản quyền')">
-    <meta name="robots" content="index, follow">
+    <meta name="robots" content="@yield('meta_robots', 'index, follow')">
     <link rel="canonical" href="{{ url()->current() }}">
 
     {{-- Open Graph --}}

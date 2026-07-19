@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Tra Cứu Đơn Hàng - VPNStore')
+@section('meta_robots', 'noindex, nofollow')
 
 @section('content')
 

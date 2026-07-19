@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Tìm Kiếm - ' . ($settings['store_name'] ?? 'VPNStore'))
+@section('meta_robots', 'noindex, nofollow')
 
 @section('content')
 

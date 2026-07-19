@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Thanh Toán - VPN Store Pro')
+@section('meta_robots', 'noindex, nofollow')
 
 @section('content')
 <section class="section">
