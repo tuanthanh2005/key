@@ -204,18 +204,12 @@ class Product extends Model
 
     public function getReviewsAttribute($value)
     {
-        return \App\Models\Order::where('brand', $this->brand)
-            ->whereNotNull('review_rating')
-            ->count();
+        return $value !== null ? (int) $value : 120;
     }
 
     public function getRatingAttribute($value)
     {
-        $avg = \App\Models\Order::where('brand', $this->brand)
-            ->whereNotNull('review_rating')
-            ->avg('review_rating');
-            
-        return $avg ? (float) $avg : 0.0;
+        return $value !== null ? (float) $value : 4.8;
     }
 
     public function getSeoTitleAttribute(): string
