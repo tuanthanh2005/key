@@ -28,7 +28,7 @@
 @endphp
 <div class="product-card animate-on-scroll">
     <div class="product-card-image">
-        <a href="{{ route('product.detail', $prodSlug) }}" style="display:block; width:100%; height:100%;">
+        <a href="{{ route('product.detail', $catSlug ?: $prodSlug) }}" style="display:block; width:100%; height:100%;">
             @if($prodImage)
                 <img src="{{ asset($prodImage) }}" alt="{{ $prodName }}" loading="lazy" style="width:100%; height:100%; object-fit:cover; display:block;">
             @else
@@ -57,7 +57,7 @@
         </div>
     </div>
 
-    <a href="{{ route('product.detail', $prodSlug) }}" style="flex:1; display:flex; flex-direction:column;">
+    <a href="{{ route('product.detail', $catSlug ?: $prodSlug) }}" style="flex:1; display:flex; flex-direction:column;">
         <div class="product-card-body">
             @if($catName)
                 <span class="product-category"><i class="bi bi-tag-fill" style="margin-right:4px;"></i>{{ $catName }}</span>

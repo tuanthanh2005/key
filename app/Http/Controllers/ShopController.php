@@ -47,9 +47,21 @@ class ShopController extends Controller
                 ->where('category_id', $category->id)
                 ->get();
         } else {
-            $dbProducts = \App\Models\Product::where('status', 'active')
+            $product = \App\Models\Product::where('status', 'active')
                 ->where('slug', $slug)
-                ->get();
+                ->first();
+            
+            if ($product) {
+                if ($product->category_id) {
+                    $cat = \App\Models\Category::find($product->category_id);
+                    if ($cat) {
+                        return redirect()->route('product.detail', ['slug' => $cat->slug], 301);
+                    }
+                }
+                $dbProducts = collect([$product]);
+            } else {
+                $dbProducts = collect();
+            }
         }
 
         if ($dbProducts->isEmpty()) {
