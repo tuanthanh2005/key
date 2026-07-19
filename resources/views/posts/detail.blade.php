@@ -41,10 +41,10 @@
 <div class="bg-light py-3 border-bottom">
     <div class="container">
         <nav aria-label="breadcrumb">
-            <ol class="breadcrumb mb-0" style="font-size: 13px;">
-                <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-decoration-none">Trang Chủ</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('posts.index') }}" class="text-decoration-none">Bài Viết</a></li>
-                <li class="breadcrumb-item active text-truncate" aria-current="page" style="max-width: 250px;">{{ $post->title }}</li>
+            <ol class="breadcrumb mb-0" style="font-size: 13px; display: flex; flex-wrap: wrap; list-style: none; padding: 0; margin: 0; gap: 8px; align-items: center;">
+                <li class="breadcrumb-item" style="display: flex; align-items: center; gap: 8px;"><a href="{{ route('home') }}" class="text-decoration-none" style="color: var(--primary-light);">Trang Chủ</a><span class="text-muted">/</span></li>
+                <li class="breadcrumb-item" style="display: flex; align-items: center; gap: 8px;"><a href="{{ route('posts.index') }}" class="text-decoration-none" style="color: var(--primary-light);">Bài Viết</a><span class="text-muted">/</span></li>
+                <li class="breadcrumb-item active text-truncate" aria-current="page" style="max-width: 250px; color: var(--text-secondary);">{{ $post->title }}</li>
             </ol>
         </nav>
     </div>
@@ -116,29 +116,23 @@
 
                 <!-- Featured Products Widget -->
                 <div class="bg-white p-4 shadow-sm" style="border-radius:16px;">
-                    <h3 class="fw-700 h5 mb-3 pb-2 border-bottom text-dark">VPN Bản Quyền Giá Tốt</h3>
+                    <h3 class="fw-700 h5 mb-3 pb-2 border-bottom text-dark">Sản Phẩm Hot</h3>
                     <div class="d-flex flex-column gap-3">
-                        <div class="d-flex justify-content-between align-items-center p-2 rounded hover-bg" style="border: 1px solid var(--gray-100);">
-                            <div class="d-flex align-items-center gap-2">
-                                <span class="brand-dot nord"></span>
-                                <span class="fw-700 text-dark small">NordVPN</span>
+                        @forelse($hotProducts as $prod)
+                        <div class="d-flex justify-content-between align-items-center p-2 rounded hover-bg" style="border: 1px solid rgba(0,0,0,0.05); gap: 12px;">
+                            <div class="d-flex align-items-center gap-2 min-w-0">
+                                @if($prod->image_path)
+                                    <img src="{{ asset($prod->image_path) }}" alt="{{ $prod->name }}" style="width:24px; height:24px; object-fit:contain; border-radius:4px;" class="flex-shrink-0">
+                                @else
+                                    <span class="brand-dot" style="background:var(--primary); width:8px; height:8px; border-radius:50%; display:inline-block;" class="flex-shrink-0"></span>
+                                @endif
+                                <span class="fw-700 text-dark small text-truncate" title="{{ $prod->name }}">{{ $prod->name }}</span>
                             </div>
-                            <a href="/san-pham/nordvpn" class="btn btn-sm btn-primary py-1 px-3 fw-600 rounded-pill" style="font-size:12px;">Xem Thêm</a>
+                            <a href="{{ route('product.detail', $prod->slug) }}" class="btn btn-sm btn-primary py-1 px-3 fw-600 rounded-pill flex-shrink-0" style="font-size:12px;">Xem Thêm</a>
                         </div>
-                        <div class="d-flex justify-content-between align-items-center p-2 rounded hover-bg" style="border: 1px solid var(--gray-100);">
-                            <div class="d-flex align-items-center gap-2">
-                                <span class="brand-dot express"></span>
-                                <span class="fw-700 text-dark small">ExpressVPN</span>
-                            </div>
-                            <a href="/san-pham/expressvpn" class="btn btn-sm btn-primary py-1 px-3 fw-600 rounded-pill" style="font-size:12px;">Xem Thêm</a>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center p-2 rounded hover-bg" style="border: 1px solid var(--gray-100);">
-                            <div class="d-flex align-items-center gap-2">
-                                <span class="brand-dot surf"></span>
-                                <span class="fw-700 text-dark small">Surfshark</span>
-                            </div>
-                            <a href="/san-pham/surfshark" class="btn btn-sm btn-primary py-1 px-3 fw-600 rounded-pill" style="font-size:12px;">Xem Thêm</a>
-                        </div>
+                        @empty
+                        <div class="text-muted small">Đang cập nhật sản phẩm...</div>
+                        @endforelse
                     </div>
                 </div>
             </div>

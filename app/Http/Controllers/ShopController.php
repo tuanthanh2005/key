@@ -509,6 +509,18 @@ class ShopController extends Controller
             ->limit(5)
             ->get();
 
-        return view('posts.detail', compact('post', 'recentPosts'));
+        // Sản phẩm hot
+        $hotProducts = \App\Models\Product::where('status', 'active')
+            ->where('is_popular', true)
+            ->limit(5)
+            ->get();
+
+        if ($hotProducts->isEmpty()) {
+            $hotProducts = \App\Models\Product::where('status', 'active')
+                ->limit(5)
+                ->get();
+        }
+
+        return view('posts.detail', compact('post', 'recentPosts', 'hotProducts'));
     }
 }
