@@ -92,9 +92,14 @@
                     @foreach($sharedCategories as $cat)
                         @php
                             $icon = 'bi-shield-lock-fill';
-                            if (str_contains(strtolower($cat->slug), 'proxy') || $cat->type === 'proxy') {
-                                $icon = 'bi-hdd-network-fill';
-                            }
+                            $slug = strtolower($cat->slug);
+                            $type = strtolower($cat->type);
+                            if (str_contains($slug, 'vpn') || $type === 'vpn') $icon = 'bi-shield-lock-fill';
+                            elseif (str_contains($slug, 'ai') || str_contains($slug, 'code')) $icon = 'bi-cpu-fill';
+                            elseif (str_contains($slug, 'design') || str_contains($slug, 'adobe') || str_contains($slug, 'canva')) $icon = 'bi-palette-fill';
+                            elseif (str_contains($slug, 'phim') || str_contains($slug, 'film') || str_contains($slug, 'movie') || str_contains($slug, 'youtube')) $icon = 'bi-play-btn-fill';
+                            elseif (str_contains($slug, 'proxy') || $type === 'proxy') $icon = 'bi-hdd-network-fill';
+                            else $icon = 'bi-folder-fill';
                         @endphp
                         <a href="{{ route('products', ['category' => $cat->slug]) }}" class="dropdown-item" style="padding: 8px 10px; display: inline-flex; align-items: center; gap: 8px;">
                             @if($cat->image_path)
@@ -206,9 +211,14 @@
         @foreach($sharedCategories as $cat)
             @php
                 $icon = 'bi-shield-lock-fill';
-                if (str_contains(strtolower($cat->slug), 'proxy') || $cat->type === 'proxy') {
-                    $icon = 'bi-hdd-network-fill';
-                }
+                $slug = strtolower($cat->slug);
+                $type = strtolower($cat->type);
+                if (str_contains($slug, 'vpn') || $type === 'vpn') $icon = 'bi-shield-lock-fill';
+                elseif (str_contains($slug, 'ai') || str_contains($slug, 'code')) $icon = 'bi-cpu-fill';
+                elseif (str_contains($slug, 'design') || str_contains($slug, 'adobe') || str_contains($slug, 'canva')) $icon = 'bi-palette-fill';
+                elseif (str_contains($slug, 'phim') || str_contains($slug, 'film') || str_contains($slug, 'movie') || str_contains($slug, 'youtube')) $icon = 'bi-play-btn-fill';
+                elseif (str_contains($slug, 'proxy') || $type === 'proxy') $icon = 'bi-hdd-network-fill';
+                else $icon = 'bi-folder-fill';
             @endphp
             <a href="{{ route('products', ['category' => $cat->slug]) }}" class="dropdown-item" style="display: flex; align-items: center; gap: 8px;">
                 @if($cat->image_path)

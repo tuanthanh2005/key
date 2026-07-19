@@ -62,8 +62,7 @@ class AppServiceProvider extends ServiceProvider
             static $publicCoupons = null;
             static $checkedSettingsTable = null;
             static $checkedCouponsTable = null;
-            static $sharedVpnCategories = null;
-            static $sharedProxyCategories = null;
+            static $sharedCategories = null;
             static $checkedCategoriesTable = null;
 
             if ($checkedCategoriesTable === null) {
@@ -71,16 +70,13 @@ class AppServiceProvider extends ServiceProvider
             }
 
             if ($checkedCategoriesTable) {
-                if ($sharedVpnCategories === null) {
-                    $sharedVpnCategories = \App\Models\Category::where('type', 'vpn')->get();
-                }
-                if ($sharedProxyCategories === null) {
-                    $sharedProxyCategories = \App\Models\Category::where('type', 'proxy')->get();
+                if ($sharedCategories === null) {
+                    $sharedCategories = \App\Models\Category::all();
                 }
                 $view->with([
-                    'sharedVpnCategories' => $sharedVpnCategories,
-                    'sharedProxyCategories' => $sharedProxyCategories,
-                    'sharedCategories' => $sharedVpnCategories->concat($sharedProxyCategories)
+                    'sharedVpnCategories' => $sharedCategories->where('type', 'vpn'),
+                    'sharedProxyCategories' => $sharedCategories->where('type', 'proxy'),
+                    'sharedCategories' => $sharedCategories
                 ]);
             }
 

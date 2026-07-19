@@ -33,13 +33,13 @@
             <div class="bg-white border rounded-4 p-4 mb-4" style="border-color:var(--border)!important; border-radius:16px; box-shadow: var(--shadow-card);">
                 <form id="orderCheckForm">
                     <label class="form-label fw-700 mb-2" style="font-size:14px; color: var(--text-primary); display:block;">Mã Đơn Hàng</label>
-                    <div style="display: flex; gap: 8px; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: var(--bg-input); padding: 4px;">
-                        <div style="display: flex; align-items: center; padding-left: 12px; color: var(--text-muted);">
+                    <div style="display: flex; gap: 8px; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; background: var(--bg-input); padding: 4px; align-items: center;">
+                        <div style="display: flex; align-items: center; padding-left: 12px; color: var(--text-muted); flex-shrink: 0;">
                             <i class="bi bi-search"></i>
                         </div>
-                        <input type="text" id="orderIdInput" placeholder="Ví dụ: VPN12345678" value="{{ request('order','') }}" style="flex: 1; border: none; outline: none; background: transparent; padding: 10px; color: var(--text-primary); font-family: var(--font-mono); font-weight: 700; letter-spacing: 0.5px;">
-                        <button class="btn btn-primary" type="submit" style="padding: 10px 24px; border-radius: var(--radius); font-weight: 600;">
-                            <i class="bi bi-search me-1"></i> Tra Cứu
+                        <input type="text" id="orderIdInput" placeholder="Ví dụ: VPN12345678" value="{{ request('order','') }}" style="flex: 1; min-width: 0; border: none; outline: none; background: transparent; padding: 10px 4px; color: var(--text-primary); font-family: var(--font-mono); font-weight: 700; letter-spacing: 0.5px;">
+                        <button class="btn btn-primary" type="submit" style="padding: 10px 16px; border-radius: var(--radius); font-weight: 600; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+                            <i class="bi bi-search"></i><span class="d-none d-sm-inline">Tra Cứu</span>
                         </button>
                     </div>
                     <div class="mt-2 d-flex gap-4">
