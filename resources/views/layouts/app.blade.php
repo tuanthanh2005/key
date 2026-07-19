@@ -104,6 +104,7 @@
             </div>
         </li>
         <li><a href="{{ route('posts.index') }}" class="{{ request()->routeIs('posts.*') ? 'active' : '' }}">Bài Viết</a></li>
+        <li><a href="{{ route('order.check') }}" class="{{ request()->routeIs('order.check') ? 'active' : '' }}">Tra Cứu Mã Đơn</a></li>
         <li><a href="{{ route('contact') }}" class="{{ request()->routeIs('contact') ? 'active' : '' }}">Liên Hệ</a></li>
         @if(auth()->check() && auth()->user()->isAdmin())
             <li><a href="{{ route('admin.dashboard') }}" style="color: var(--primary-light);"><i class="bi bi-speedometer2" style="margin-right:4px;"></i> Admin</a></li>
@@ -214,6 +215,7 @@
             </a>
         @endforeach
         <a href="{{ route('posts.index') }}" class="dropdown-item"><i class="bi bi-file-text" style="margin-right:8px;"></i> Bài Viết</a>
+        <a href="{{ route('order.check') }}" class="dropdown-item"><i class="bi bi-search" style="margin-right:8px;"></i> Tra Cứu Mã Đơn</a>
         <a href="{{ route('contact') }}" class="dropdown-item"><i class="bi bi-envelope" style="margin-right:8px;"></i> Liên Hệ</a>
         <div class="dropdown-divider"></div>
         @if(auth()->check())
