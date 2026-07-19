@@ -193,4 +193,21 @@ class ProductController extends Controller
         $product->update(['is_active' => !$product->is_active]);
         return back()->with('success', 'Trạng thái đã được cập nhật!');
     }
+
+    public function updateRating(Request $request, $id)
+    {
+        $product = Product::findOrFail($id);
+
+        $request->validate([
+            'rating'  => 'required|numeric|min:1|max:5',
+            'reviews' => 'required|integer|min:0',
+        ]);
+
+        $product->update([
+            'rating'  => $request->rating,
+            'reviews' => $request->reviews,
+        ]);
+
+        return back()->with('success', 'Đánh giá sản phẩm đã được cập nhật!');
+    }
 }

@@ -102,10 +102,10 @@
                     </span>
                 </td>
                 <td style="padding:16px;">
-                    <div style="display:flex; align-items:center; gap:6px;">
+                    <div style="display:flex; align-items:center; gap:6px; cursor:pointer;" data-bs-toggle="modal" data-bs-target="#editRatingModal-{{ $product->id }}" title="Click để sửa nhanh đánh giá">
                         <i class="bi bi-star-fill" style="color:#eab308; font-size: 0.85rem; display:inline-flex;"></i>
-                        <span style="font-weight: 600; color: var(--text-primary); font-size: 0.85rem;">{{ number_format($product->rating, 1) }}</span>
-                        <span style="color: #64748b; font-size: 0.85rem;">({{ $product->review_count }})</span>
+                        <span style="font-weight: 600; color: var(--text-primary); font-size: 0.85rem; border-bottom: 1px dashed var(--text-muted);">{{ number_format($product->rating, 1) }}</span>
+                        <span style="color: #64748b; font-size: 0.85rem;">({{ $product->reviews }})</span>
                     </div>
                 </td>
                 <td style="padding:16px;">
@@ -119,6 +119,38 @@
                     </div>
                 </td>
             </tr>
+
+            <!-- EDIT QUICK RATING MODAL -->
+            <div class="modal fade" id="editRatingModal-{{ $product->id }}" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;">
+                    <div class="modal-content" style="border-radius:16px; border:none; box-shadow:0 8px 30px rgba(0,0,0,0.12); background: var(--bg-surface);">
+                        <div class="modal-header border-bottom py-3 px-4">
+                            <h6 class="modal-title fw-bold text-dark"><i class="bi bi-star-fill text-warning me-2"></i>Cài đặt đánh giá: {{ $product->name }}</h6>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form action="{{ route('admin.products.update-rating', $product->id) }}" method="POST" style="margin:0;">
+                            @csrf
+                            @method('PUT')
+                            <div class="modal-body p-4">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Điểm Đánh Giá (Sao) <span class="text-danger">*</span></label>
+                                    <input type="number" name="rating" class="form-control" step="0.1" min="1" max="5" value="{{ $product->rating }}" required>
+                                    <div class="form-text" style="font-size: 11px;">Nhập số từ 1.0 đến 5.0 (Ví dụ: 4.8)</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">Số Lượt Đánh Giá <span class="text-danger">*</span></label>
+                                    <input type="number" name="reviews" class="form-control" min="0" value="{{ $product->reviews }}" required>
+                                    <div class="form-text" style="font-size: 11px;">Số lượng đánh giá ảo ban đầu (Ví dụ: 120)</div>
+                                </div>
+                            </div>
+                            <div class="modal-footer border-top py-3 px-4" style="background:rgba(0,0,0,0.02);">
+                                <button type="button" class="btn btn-sm btn-outline-secondary px-3" data-bs-dismiss="modal" style="border-radius:20px;">Hủy</button>
+                                <button type="submit" class="btn btn-sm btn-primary px-4" style="border-radius:20px;">Lưu Cài Đặt</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
             @empty
             <tr>
                 <td colspan="6" style="text-align:center; padding:40px; color:#64748b;">
