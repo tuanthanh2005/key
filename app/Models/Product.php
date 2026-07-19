@@ -204,12 +204,12 @@ class Product extends Model
 
     public function getReviewsAttribute($value)
     {
-        return $value !== null ? (int) $value : 120;
+        return $value !== null ? (int) $value : 0;
     }
 
     public function getRatingAttribute($value)
     {
-        return $value !== null ? (float) $value : 4.8;
+        return $value !== null ? (float) $value : 0.0;
     }
 
     public function getSeoTitleAttribute(): string

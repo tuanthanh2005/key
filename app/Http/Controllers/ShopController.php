@@ -239,6 +239,7 @@ class ShopController extends Controller
                 $orders = \App\Models\Order::where('brand', $order->brand)
                     ->where('plan', $order->plan)
                     ->whereNotNull('review_rating')
+                    ->where('review_rating', '>', 0)
                     ->get();
 
                 $totalRating = 0;
@@ -247,10 +248,8 @@ class ShopController extends Controller
                     $totalRating += $o->review_rating;
                 }
 
-                $baseReviews      = intval($product->reviews ?: Setting::get('default_product_reviews', 120));
-                $baseRating       = floatval($product->rating  ?: Setting::get('default_product_rating', 4.8));
-                $newReviewsCount  = $baseReviews + $count;
-                $newAverageRating = round((($baseRating * $baseReviews) + $totalRating) / $newReviewsCount, 1);
+                $newReviewsCount  = $count;
+                $newAverageRating = $count > 0 ? round($totalRating / $count, 1) : 0.0;
 
                 $product->update([
                     'rating'  => $newAverageRating,
