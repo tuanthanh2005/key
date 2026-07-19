@@ -20,7 +20,7 @@ class Product extends Model
         'headquarter', 'founded', 'refund', 'description', 'is_popular', 'require_upgrade_email', 'specs',
         // Key_new fields
         'type', 'original_price', 'duration', 'image', 'is_active', 'is_featured',
-        'sort_order', 'meta_title', 'meta_description', 'sold_count', 'review_count', 'show_in_list'
+        'sort_order', 'meta_title', 'meta_description', 'sold_count', 'review_count', 'show_in_list', 'plan_note'
     ];
 
     protected $casts = [

@@ -114,6 +114,10 @@
                         <input type="text" name="duration" class="form-control" value="{{ old('duration') }}" placeholder="1 Tháng / 1 Năm / Lifetime">
                     </div>
                     <div class="mb-3">
+                        <label class="form-label fw-bold">Nhãn Phụ / Ghi Chú Gói (Hiển thị ở ô chọn gói)</label>
+                        <input type="text" name="plan_note" class="form-control" value="{{ old('plan_note') }}" placeholder="VD: Tài khoản dùng chung, Nâng cấp chính chủ...">
+                    </div>
+                    <div class="mb-3">
                         <label class="form-label fw-bold">Tính Hạn Số Ngày <span class="text-danger">*</span></label>
                         <select class="form-select" id="duration_days_select" required>
                             <option value="1" {{ old('duration_days') == 1 ? 'selected' : '' }}>1 Ngày</option>

@@ -82,6 +82,7 @@ foreach ($dbProducts ?? [] as $dbProd) {
         'specs' => $dbProd->specs,
         'rating' => $dbProd->rating,
         'reviews' => $dbProd->reviews,
+        'plan_note' => $dbProd->plan_note,
     ];
 }
 
@@ -388,6 +389,9 @@ $curReviews = intval($defaultPlan['reviews'] ?? 0);
                                  style="padding:12px; border:1px solid var(--border); border-radius:var(--radius); cursor:pointer; background:var(--bg-elevated); transition:var(--transition); display:flex; justify-content:space-between; align-items:center;">
                                 <div style="display:flex; flex-direction:column; gap:2px;">
                                     <strong style="font-size:0.9rem; color:var(--text-primary);">Gói {{ $p['label'] }}</strong>
+                                    @if(!empty($p['plan_note']))
+                                        <span style="font-size:0.75rem; color:var(--text-muted); font-weight:500;">{{ $p['plan_note'] }}</span>
+                                    @endif
                                     @if($p['save'])
                                         <span class="badge badge-sale" style="font-size:0.65rem; width:fit-content; padding:2px 6px;">{{ $p['save'] }}</span>
                                     @endif
