@@ -36,7 +36,7 @@
                             <th>Tổng Tiền</th>
                             <th>Ngày Đặt</th>
                             <th>Trạng Thái</th>
-                            <th style="text-align:right;">License / Key Của Bạn</th>
+                            <th style="text-align:right;">KEY / TÀI KHOẢN</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -82,7 +82,7 @@
                                                     data-code="{{ $order->order_code }}"
                                                     data-product="{{ $order->product_name }}"
                                                     data-license="{{ $order->license_key }}">
-                                                <i class="bi bi-eye-fill me-1"></i> Xem Key
+                                                <i class="bi bi-eye-fill me-1"></i> Xem
                                             </button>
                                         @else
                                             <span style="font-size:0.8rem; color:var(--text-muted);"><i class="bi bi-hourglass-split me-1"></i>Đang tạo key...</span>
