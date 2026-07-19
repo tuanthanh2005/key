@@ -64,7 +64,7 @@
             <div class="hero-content animate-fade-up">
                 <div class="hero-eyebrow">
                     <div class="dot"></div>
-                    <i class="bi bi-fire text-warning" style="margin-right:6px;"></i> Hơn 50,000+ khách hàng tin dùng
+                    <i class="bi bi-fire text-warning" style="margin-right:6px;"></i> Kho cung cấp số 1 Việt Nam
                 </div>
 
                 <h1 class="hero-title">

@@ -175,6 +175,7 @@ $curReviews = intval($defaultPlan['reviews'] ?? 0);
 @section('title', $seoTitle)
 @section('meta_description', $seoDesc)
 @section('meta_keywords', strtolower($cleanBrandName) . ' ban quyen, mua ' . strtolower($cleanBrandName) . ', tai khoan ' . strtolower($cleanBrandName) . ' chinh hang, key ' . strtolower($cleanBrandName) . ' gia tot, ' . strtolower($storeName))
+@section('og_image', !empty($defaultPlan['image_path']) ? asset($defaultPlan['image_path']) : '')
 
 @section('content')
 

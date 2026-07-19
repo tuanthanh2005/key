@@ -25,11 +25,23 @@
     <link rel="canonical" href="{{ url()->current() }}">
 
     {{-- Open Graph --}}
+    @php
+        $ogImage = trim(View::yieldContent('og_image'));
+        if (empty($ogImage)) {
+            if (!empty($settings['logo_path'])) {
+                $ogImage = asset($settings['logo_path']);
+            } elseif (!empty($settings['favicon_path'])) {
+                $ogImage = asset($settings['favicon_path']);
+            } else {
+                $ogImage = asset('images/og-banner.png');
+            }
+        }
+    @endphp
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:title" content="@yield('title', !empty($settings['seo_title']) ? $settings['seo_title'] : ($settings['store_name'] ?? 'VPN Store Pro'))">
     <meta property="og:description" content="@yield('meta_description', $settings['meta_description'] ?? 'Mua phần mềm bản quyền giá tốt nhất')">
-    <meta property="og:image" content="@yield('og_image', asset('images/og-banner.png'))">
+    <meta property="og:image" content="{{ $ogImage }}">
     <meta property="og:site_name" content="{{ $settings['store_name'] ?? 'VPN Store Pro' }}">
     <meta property="og:locale" content="vi_VN">
 
@@ -37,6 +49,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="@yield('title', !empty($settings['seo_title']) ? $settings['seo_title'] : ($settings['store_name'] ?? 'VPN Store Pro'))">
     <meta name="twitter:description" content="@yield('meta_description', $settings['meta_description'] ?? 'Mua phần mềm bản quyền giá tốt nhất')">
+    <meta name="twitter:image" content="{{ $ogImage }}">
 
     {{-- Favicon --}}
     @if(!empty($settings['favicon_path']))
