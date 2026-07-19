@@ -13,7 +13,7 @@ class ShopController extends Controller
      */
     public function home()
     {
-        $allProducts = \App\Models\Product::where('status', 'active')->get()->toArray();
+        $allProducts = \App\Models\Product::where('status', 'active')->where('show_in_list', true)->get()->toArray();
         return view('home', compact('allProducts'));
     }
 
@@ -22,9 +22,9 @@ class ShopController extends Controller
      */
     public function products(Request $request)
     {
-        $allProducts = \App\Models\Product::with('category')->where('status', 'active')->get()->toArray();
+        $allProducts = \App\Models\Product::with('category')->where('status', 'active')->where('show_in_list', true)->get()->toArray();
         $categories = \App\Models\Category::withCount(['products' => function($q) {
-            $q->where('status', 'active');
+            $q->where('status', 'active')->where('show_in_list', true);
         }])->get();
 
         $categorySlug = $request->query('category');
@@ -444,7 +444,7 @@ class ShopController extends Controller
     public function search(Request $request)
     {
         $q                = strtolower($request->q ?? '');
-        $allProductsQuery = \App\Models\Product::where('status', 'active');
+        $allProductsQuery = \App\Models\Product::where('status', 'active')->where('show_in_list', true);
         if ($q) {
             $allProductsQuery->where(function ($sub) use ($q) {
                 // 1. Exact match in name, brand, or description
@@ -513,12 +513,14 @@ class ShopController extends Controller
 
         // Sản phẩm hot
         $hotProducts = \App\Models\Product::where('status', 'active')
+            ->where('show_in_list', true)
             ->where('is_popular', true)
             ->limit(5)
             ->get();
 
         if ($hotProducts->isEmpty()) {
             $hotProducts = \App\Models\Product::where('status', 'active')
+                ->where('show_in_list', true)
                 ->limit(5)
                 ->get();
         }

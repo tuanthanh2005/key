@@ -8,10 +8,10 @@
 
 @php
     // Query items using Eloquent models directly in Blade to bypass controller constraints
-    $featuredProducts = \App\Models\Product::where('status', 'active')->where('is_popular', true)->with('category')
+    $featuredProducts = \App\Models\Product::where('status', 'active')->where('show_in_list', true)->where('is_popular', true)->with('category')
         ->orderBy('id', 'desc')->limit(8)->get();
 
-    $popularProducts = \App\Models\Product::where('status', 'active')
+    $popularProducts = \App\Models\Product::where('status', 'active')->where('show_in_list', true)
         ->orderBy('sold', 'desc')->limit(6)->get();
 
     $categories = \App\Models\Category::withCount('products')->get();

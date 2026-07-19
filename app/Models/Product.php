@@ -20,7 +20,7 @@ class Product extends Model
         'headquarter', 'founded', 'refund', 'description', 'is_popular', 'require_upgrade_email', 'specs',
         // Key_new fields
         'type', 'original_price', 'duration', 'image', 'is_active', 'is_featured',
-        'sort_order', 'meta_title', 'meta_description', 'sold_count', 'review_count'
+        'sort_order', 'meta_title', 'meta_description', 'sold_count', 'review_count', 'show_in_list'
     ];
 
     protected $casts = [
@@ -36,6 +36,7 @@ class Product extends Model
         'is_featured'   => 'boolean',
         'require_upgrade_email' => 'boolean',
         'duration_days' => 'integer',
+        'show_in_list'  => 'boolean',
     ];
 
     protected $appends = ['image_url'];

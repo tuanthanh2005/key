@@ -51,6 +51,7 @@ class ProductController extends Controller
             'is_active'        => 'boolean',
             'is_popular'       => 'boolean',
             'is_featured'      => 'boolean',
+            'show_in_list'     => 'boolean',
             'require_upgrade_email' => 'boolean',
             'meta_title'       => 'nullable|string|max:255',
             'meta_description' => 'nullable|string|max:500',
@@ -74,6 +75,7 @@ class ProductController extends Controller
         $data['is_active']  = $request->boolean('is_active');
         $data['is_popular'] = $request->boolean('is_popular');
         $data['is_featured']= $request->boolean('is_featured');
+        $data['show_in_list'] = $request->has('show_in_list') ? $request->boolean('show_in_list') : true;
         $data['require_upgrade_email'] = $request->boolean('require_upgrade_email');
 
         $specs = [];
@@ -125,6 +127,7 @@ class ProductController extends Controller
             'is_active'        => 'boolean',
             'is_popular'       => 'boolean',
             'is_featured'      => 'boolean',
+            'show_in_list'     => 'boolean',
             'require_upgrade_email' => 'boolean',
             'meta_title'       => 'nullable|string|max:255',
             'meta_description' => 'nullable|string|max:500',
@@ -147,6 +150,7 @@ class ProductController extends Controller
         $data['is_active']  = $request->boolean('is_active');
         $data['is_popular'] = $request->boolean('is_popular');
         $data['is_featured']= $request->boolean('is_featured');
+        $data['show_in_list'] = $request->boolean('show_in_list');
         $data['require_upgrade_email'] = $request->boolean('require_upgrade_email');
 
         $specs = [];

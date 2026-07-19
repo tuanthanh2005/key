@@ -179,6 +179,10 @@
                             <input class="form-check-input" type="checkbox" name="is_popular" value="1" {{ old('is_popular') ? 'checked' : '' }} style="cursor:pointer; margin-left:0; float:none;">
                         </div>
                         <div class="form-check form-switch d-flex justify-content-between align-items-center p-2" style="background:var(--admin-bg); border-radius:8px; border:1px solid var(--admin-border);">
+                            <label class="form-check-label fw-bold" style="cursor:pointer; margin-left:8px;">Hiển thị ở trang danh sách</label>
+                            <input class="form-check-input" type="checkbox" name="show_in_list" value="1" {{ old('show_in_list', true) ? 'checked' : '' }} style="cursor:pointer; margin-left:0; float:none;">
+                        </div>
+                        <div class="form-check form-switch d-flex justify-content-between align-items-center p-2" style="background:var(--admin-bg); border-radius:8px; border:1px solid var(--admin-border);">
                             <label class="form-check-label fw-bold" style="cursor:pointer; margin-left:8px;">Cần Nhập Email Nâng Cấp</label>
                             <input class="form-check-input" type="checkbox" name="require_upgrade_email" value="1" {{ old('require_upgrade_email') ? 'checked' : '' }} style="cursor:pointer; margin-left:0; float:none;">
                         </div>
