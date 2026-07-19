@@ -100,12 +100,12 @@ $curReviews = intval($defaultPlan['reviews'] ?? 0);
 {
   "@@context": "https://schema.org/",
   "@@type": "Product",
-  "name": "{{ $brand['name'] }} {{ $defaultPlan['label'] }}",
+  "name": "{{ $firstProduct ? $firstProduct->name : ($brand['name'] . ' ' . $defaultPlan['label']) }}",
   "image": "{{ !empty($defaultPlan['image_path']) ? asset($defaultPlan['image_path']) : '' }}",
   "description": "{{ strip_tags($defaultPlan['description'] ?? $brand['desc']) }}",
   "brand": {
     "@@type": "Brand",
-    "name": "{{ $brand['name'] }}"
+    "name": "{{ $cleanBrandName }}"
   },
   "offers": {
     "@@type": "Offer",
@@ -144,12 +144,18 @@ $curReviews = intval($defaultPlan['reviews'] ?? 0);
 @extends('layouts.app')
 
 @php
+    $storeName = $settings['store_name'] ?? 'VPNStore';
+    
     $seoTitle = isset($category) && !empty($category->seo_title) ? $category->seo_title : null;
     if (!$seoTitle && $defaultPlan && !empty($defaultPlan['meta_title'])) {
         $seoTitle = $defaultPlan['meta_title'];
     }
+    
     if (!$seoTitle) {
-        $seoTitle = 'Tài Khoản ' . $brand['name'] . ' Bản Quyền Chính Hãng — ' . ($settings['store_name'] ?? 'VPNStore');
+        $seoTitle = 'Tài Khoản ' . ($firstProduct ? $firstProduct->name : $brand['name']) . ' Bản Quyền Chính Hãng';
+    } else {
+        // Strip store suffix from DB meta_title if already present to avoid duplication in layout
+        $seoTitle = preg_replace('/\s*[\|—–\-]\s*' . preg_quote($storeName, '/') . '$/i', '', $seoTitle);
     }
 
     $seoDesc = isset($category) && !empty($category->seo_description) ? $category->seo_description : null;
@@ -157,13 +163,15 @@ $curReviews = intval($defaultPlan['reviews'] ?? 0);
         $seoDesc = $defaultPlan['meta_description'];
     }
     if (!$seoDesc) {
-        $seoDesc = 'Mua tài khoản / key ' . $brand['name'] . ' bản quyền chính hãng tại ' . ($settings['store_name'] ?? 'VPNStore') . ' với giá tốt nhất thị trường. Giao key tự động nhanh chóng, hỗ trợ kích hoạt miễn phí và bảo hành uy tín 1 đổi 1.';
+        $seoDesc = 'Mua tài khoản / key ' . ($firstProduct ? $firstProduct->name : $brand['name']) . ' bản quyền chính hãng tại ' . $storeName . ' với giá tốt nhất thị trường. Giao key tự động nhanh chóng, hỗ trợ kích hoạt miễn phí và bảo hành uy tín 1 đổi 1.';
     }
+
+    $cleanBrandName = str_replace('-', ' ', $brand['name']);
 @endphp
 
 @section('title', $seoTitle)
 @section('meta_description', $seoDesc)
-@section('meta_keywords', strtolower($brand['name']) . ' ban quyen, mua ' . strtolower($brand['name']) . ', tai khoan ' . strtolower($brand['name']) . ' chinh hang, key ' . strtolower($brand['name']) . ' gia tot, ' . strtolower($settings['store_name'] ?? 'vpnstore'))
+@section('meta_keywords', strtolower($cleanBrandName) . ' ban quyen, mua ' . strtolower($cleanBrandName) . ', tai khoan ' . strtolower($cleanBrandName) . ' chinh hang, key ' . strtolower($cleanBrandName) . ' gia tot, ' . strtolower($storeName))
 
 @section('content')
 
