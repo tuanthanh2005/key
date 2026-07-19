@@ -37,6 +37,8 @@ if (!empty($firstBrand) && isset($brandData[$firstBrand])) {
     ];
 }
 
+$cleanBrandName = str_replace('-', ' ', $brand['name']);
+
 $plans = [];
 $hasPopular = false;
 foreach ($dbProducts ?? [] as $dbProd) {
