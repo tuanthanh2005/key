@@ -303,24 +303,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // ============================
-    // CONTACT FORM
+    // CONTACT FORM (Handled in contact.blade.php)
     // ============================
-    const contactForm = document.getElementById('contactForm');
-    if (contactForm) {
-        contactForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-            const btn = this.querySelector('button[type="submit"]');
-            if (btn) {
-                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Đang gửi...';
-                btn.disabled = true;
-            }
-            setTimeout(() => {
-                showToast('Tin nhắn đã được gửi thành công! Chúng tôi sẽ phản hồi trong vòng 24 giờ.', 'success');
-                this.reset();
-                if (btn) { btn.innerHTML = '<i class="bi bi-send me-2"></i>Gửi Tin Nhắn'; btn.disabled = false; }
-            }, 1500);
-        });
-    }
 
     // ============================
     // BACK TO TOP
@@ -339,29 +323,51 @@ document.addEventListener('DOMContentLoaded', function () {
     // HELPERS
     // ============================
     function showToast(msg, type = 'success') {
-        const toast = document.getElementById('mainToast');
-        const msgEl = document.getElementById('toastMessage');
-        if (!toast || !msgEl) return;
+        let container = document.getElementById('toast-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'toast-container';
+            container.className = 'toast-container';
+            document.body.appendChild(container);
+        }
 
+        const toast = document.createElement('div');
+        const toastClass = type === 'danger' ? 'error' : type;
+        toast.className = `toast ${toastClass}`;
+        
         const icons = {
-            success: 'bi-check-circle',
-            warning: 'bi-exclamation-triangle',
-            danger:  'bi-x-circle',
-            info:    'bi-info-circle'
+            success: 'bi-check-circle-fill',
+            warning: 'bi-exclamation-triangle-fill',
+            danger:  'bi-x-circle-fill',
+            info:    'bi-info-circle-fill',
+            error:   'bi-x-circle-fill'
         };
-        const colors = {
-            success: 'text-bg-success',
-            warning: 'text-bg-warning',
-            danger:  'text-bg-danger',
-            info:    'text-bg-primary'
+        const iconColor = {
+            success: 'var(--success)',
+            warning: 'var(--warning)',
+            danger:  'var(--danger)',
+            error:   'var(--danger)',
+            info:    'var(--primary-light)'
         };
-        // Reset classes
-        toast.className = 'toast align-items-center border-0';
-        toast.classList.add(colors[type] || 'text-bg-success');
-        msgEl.innerHTML = `<i class="bi ${icons[type] || 'bi-check-circle'} me-2"></i>${msg}`;
 
-        const bsToast = bootstrap.Toast.getOrCreateInstance(toast, { delay: 3500 });
-        bsToast.show();
+        const icon = icons[type] || 'bi-check-circle-fill';
+        const color = iconColor[type] || 'var(--success)';
+
+        toast.innerHTML = `
+            <span style="color:${color}; font-size:1.1rem; display:inline-flex; align-items:center;"><i class="bi ${icon}"></i></span>
+            <span>${msg}</span>
+            <button onclick="this.parentElement.remove()" style="margin-left:auto; background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:1rem;">✕</button>
+        `;
+
+        container.appendChild(toast);
+
+        setTimeout(() => {
+            toast.style.transition = 'opacity 0.4s ease';
+            toast.style.opacity = '0';
+            setTimeout(() => {
+                toast.remove();
+            }, 400);
+        }, 4000);
     }
     window.showToast = showToast;
 

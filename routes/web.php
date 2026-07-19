@@ -70,6 +70,7 @@ Route::post('/wishlist/toggle', [ShopController::class, 'toggleWishlist'])->name
 Route::get('/san-pham-yeu-thich', [ShopController::class, 'wishlistPage'])->name('wishlist.index')->middleware('auth');
 Route::get('/gioi-thieu', [ShopController::class, 'about'])->name('about');
 Route::get('/lien-he', [ShopController::class, 'contact'])->name('contact');
+Route::post('/lien-he', [ShopController::class, 'storeContact'])->name('contact.store');
 Route::get('/tim-kiem', [ShopController::class, 'search'])->name('search');
 Route::get('/tin-tuc', [ShopController::class, 'postList'])->name('posts.index');
 Route::get('/tin-tuc/{slug}', [ShopController::class, 'postDetail'])->name('posts.show');
@@ -209,6 +210,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::get('/{id}/sua', [\App\Http\Controllers\Admin\PostController::class, 'edit'])->name('edit');
         Route::put('/{id}', [\App\Http\Controllers\Admin\PostController::class, 'update'])->name('update');
         Route::delete('/{id}', [\App\Http\Controllers\Admin\PostController::class, 'destroy'])->name('destroy');
+    });
+
+    // Tiếp nhận email (Liên hệ)
+    Route::prefix('tiep-nhan-email')->name('contacts.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\ContactController::class, 'index'])->name('index');
+        Route::get('/{contact}', [\App\Http\Controllers\Admin\ContactController::class, 'show'])->name('show');
+        Route::post('/{contact}/reply', [\App\Http\Controllers\Admin\ContactController::class, 'reply'])->name('reply');
+        Route::delete('/{contact}', [\App\Http\Controllers\Admin\ContactController::class, 'destroy'])->name('destroy');
     });
 });
 

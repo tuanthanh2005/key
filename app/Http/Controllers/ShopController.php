@@ -412,6 +412,31 @@ class ShopController extends Controller
     }
 
     /**
+     * Lưu tin nhắn liên hệ
+     */
+    public function storeContact(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'subject' => 'required|string|max:255',
+            'message' => 'required|string|max:5000',
+        ]);
+
+        \App\Models\Contact::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'subject' => $request->subject,
+            'message' => $request->message,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Tin nhắn của bạn đã được gửi thành công! Chúng tôi sẽ phản hồi qua email sớm nhất.',
+        ]);
+    }
+
+    /**
      * Tìm kiếm sản phẩm
      */
     public function search(Request $request)

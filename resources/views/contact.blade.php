@@ -80,32 +80,32 @@
             {{-- Contact Form --}}
             <div class="card" style="padding:32px;">
                 <h3 style="font-size:1.2rem; font-weight:700; margin-bottom:20px; color:var(--text-primary);">Gửi Tin Nhắn Hỗ Trợ</h3>
-                <form action="#" method="POST" id="contactForm">
+                <form action="{{ route('contact.store') }}" method="POST" id="contactForm">
                     @csrf
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
                         <div>
                             <label style="display:block; font-size:0.8rem; font-weight:600; color:var(--text-secondary); margin-bottom:6px;">Họ Tên</label>
-                            <input type="text" placeholder="Nguyễn Văn A" required style="width:100%; padding:10px 14px; border:1px solid var(--border); border-radius:var(--radius-md); background:var(--bg-input); color:var(--text-primary); outline:none;">
+                            <input type="text" name="name" placeholder="Nguyễn Văn A" required style="width:100%; padding:10px 14px; border:1px solid var(--border); border-radius:var(--radius-md); background:var(--bg-input); color:var(--text-primary); outline:none;">
                         </div>
                         <div>
                             <label style="display:block; font-size:0.8rem; font-weight:600; color:var(--text-secondary); margin-bottom:6px;">Email</label>
-                            <input type="email" placeholder="example@gmail.com" required style="width:100%; padding:10px 14px; border:1px solid var(--border); border-radius:var(--radius-md); background:var(--bg-input); color:var(--text-primary); outline:none;">
+                            <input type="email" name="email" placeholder="example@gmail.com" required style="width:100%; padding:10px 14px; border:1px solid var(--border); border-radius:var(--radius-md); background:var(--bg-input); color:var(--text-primary); outline:none;">
                         </div>
                     </div>
 
                     <div style="margin-bottom:16px;">
                         <label style="display:block; font-size:0.8rem; font-weight:600; color:var(--text-secondary); margin-bottom:6px;">Chủ Đề</label>
-                        <select required style="width:100%; padding:10px 14px; border:1px solid var(--border); border-radius:var(--radius-md); background:var(--bg-input); color:var(--text-primary); outline:none;">
+                        <select name="subject" required style="width:100%; padding:10px 14px; border:1px solid var(--border); border-radius:var(--radius-md); background:var(--bg-input); color:var(--text-primary); outline:none;">
                             <option value="">-- Chọn vấn đề cần hỗ trợ --</option>
-                            <option value="buy">Tư vấn mua tài khoản</option>
-                            <option value="warranty">Bảo hành tài khoản</option>
-                            <option value="other">Ý kiến đóng góp khác</option>
+                            <option value="Tư vấn mua tài khoản">Tư vấn mua tài khoản</option>
+                            <option value="Bảo hành tài khoản">Bảo hành tài khoản</option>
+                            <option value="Ý kiến đóng góp khác">Ý kiến đóng góp khác</option>
                         </select>
                     </div>
 
                     <div style="margin-bottom:20px;">
                         <label style="display:block; font-size:0.8rem; font-weight:600; color:var(--text-secondary); margin-bottom:6px;">Nội Dung Tin Nhắn</label>
-                        <textarea placeholder="Nhập tin nhắn chi tiết tại đây..." rows="5" required style="width:100%; padding:10px 14px; border:1px solid var(--border); border-radius:var(--radius-md); background:var(--bg-input); color:var(--text-primary); outline:none; resize:vertical;"></textarea>
+                        <textarea name="message" placeholder="Nhập tin nhắn chi tiết tại đây..." rows="5" required style="width:100%; padding:10px 14px; border:1px solid var(--border); border-radius:var(--radius-md); background:var(--bg-input); color:var(--text-primary); outline:none; resize:vertical;"></textarea>
                     </div>
 
                     <button type="submit" class="btn btn-primary btn-full btn-lg">Gửi Liên Hệ <i class="bi bi-send-fill" style="margin-left:6px;"></i></button>
@@ -128,11 +128,39 @@ if (contactForm) {
             btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Đang gửi...';
             btn.disabled = true;
         }
-        setTimeout(() => {
-            showToast('Tin nhắn đã được gửi thành công! Chúng tôi sẽ phản hồi trong thời gian sớm nhất.', 'success');
-            this.reset();
-            if (btn) { btn.innerHTML = 'Gửi Liên Hệ <i class="bi bi-send-fill" style="margin-left:6px;"></i>'; btn.disabled = false; }
-        }, 1500);
+        
+        const formData = new FormData(this);
+        
+        fetch(this.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json().then(data => ({ status: response.status, body: data })))
+        .then(({ status, body }) => {
+            if (status === 200 && body.success) {
+                showToast(body.message, 'success');
+                this.reset();
+            } else {
+                let errorMsg = body.message || 'Có lỗi xảy ra, vui lòng thử lại sau.';
+                if (body.errors) {
+                    errorMsg = Object.values(body.errors).flat().join('\n');
+                }
+                showToast(errorMsg, 'danger');
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            showToast('Có lỗi kết nối, vui lòng thử lại sau.', 'danger');
+        })
+        .finally(() => {
+            if (btn) {
+                btn.innerHTML = 'Gửi Liên Hệ <i class="bi bi-send-fill" style="margin-left:6px;"></i>';
+                btn.disabled = false;
+            }
+        });
     });
 }
 </script>

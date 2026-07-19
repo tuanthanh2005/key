@@ -94,6 +94,14 @@
             <i class="bi bi-people-fill"></i>
             <span>Người Dùng</span>
         </a>
+        <a href="{{ route('admin.contacts.index') }}" class="sidebar-link {{ request()->routeIs('admin.contacts.*') ? 'active' : '' }}">
+            <i class="bi bi-envelope-paper-fill"></i>
+            <span>Tiếp Nhận Email</span>
+            @php $unreadContacts = \App\Models\Contact::whereNull('replied_at')->count(); @endphp
+            @if($unreadContacts > 0)
+            <span class="sidebar-badge badge-orange">{{ $unreadContacts }}</span>
+            @endif
+        </a>
 
         <div class="sidebar-section-label mt-2">HỆ THỐNG</div>
         <a href="{{ route('admin.settings.index') }}" class="sidebar-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
