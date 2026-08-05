@@ -3,9 +3,16 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class Coupon extends Model
 {
+    protected static function booted(): void
+    {
+        static::saved(fn () => Cache::forget('public_coupons_js'));
+        static::deleted(fn () => Cache::forget('public_coupons_js'));
+    }
+
     protected $fillable = [
         'code',
         'discount_type',
@@ -21,12 +28,12 @@ class Coupon extends Model
 
     protected $casts = [
         'discount_value' => 'float',
-        'min_order'      => 'integer',
-        'max_uses'       => 'integer',
-        'used_count'     => 'integer',
-        'active'         => 'boolean',
-        'expires_at'     => 'datetime',
-        'user_id'        => 'integer',
+        'min_order' => 'integer',
+        'max_uses' => 'integer',
+        'used_count' => 'integer',
+        'active' => 'boolean',
+        'expires_at' => 'datetime',
+        'user_id' => 'integer',
     ];
 
     /**
@@ -45,11 +52,11 @@ class Coupon extends Model
         return $query->where('active', true)
             ->where(function ($q) {
                 $q->whereNull('expires_at')
-                  ->orWhere('expires_at', '>', now());
+                    ->orWhere('expires_at', '>', now());
             })
             ->where(function ($q) {
                 $q->whereNull('max_uses')
-                  ->orWhereColumn('used_count', '<', 'max_uses');
+                    ->orWhereColumn('used_count', '<', 'max_uses');
             });
     }
 
@@ -76,17 +83,13 @@ class Coupon extends Model
     public static function getValidForJs(?int $userId = null): array
     {
         $query = self::valid();
-        $hasUserId = \Illuminate\Support\Facades\Schema::hasColumn('coupons', 'user_id');
-
-        if ($hasUserId) {
-            if ($userId !== null) {
-                $query->where(function ($q) use ($userId) {
-                    $q->whereNull('user_id')
-                      ->orWhere('user_id', $userId);
-                });
-            } else {
-                $query->whereNull('user_id');
-            }
+        if ($userId !== null) {
+            $query->where(function ($q) use ($userId) {
+                $q->whereNull('user_id')
+                    ->orWhere('user_id', $userId);
+            });
+        } else {
+            $query->whereNull('user_id');
         }
 
         return $query->get()->mapWithKeys(function ($coupon) {
@@ -94,6 +97,7 @@ class Coupon extends Model
             if ($coupon->discount_type === 'percent') {
                 return [$coupon->code => $coupon->discount_value];
             }
+
             return [];
         })->toArray();
     }

@@ -2,9 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Setting;
+use App\Models\Category;
+use App\Models\Contact;
 use App\Models\Coupon;
+use App\Models\Order;
+use App\Models\Post;
+use App\Models\Product;
+use App\Models\Setting;
+use App\Models\Wishlist;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 
 class ShopController extends Controller
 {
@@ -13,7 +22,8 @@ class ShopController extends Controller
      */
     public function home()
     {
-        $allProducts = \App\Models\Product::where('status', 'active')->where('show_in_list', true)->get()->toArray();
+        $allProducts = Product::where('status', 'active')->where('show_in_list', true)->get()->toArray();
+
         return view('home', compact('allProducts'));
     }
 
@@ -22,8 +32,8 @@ class ShopController extends Controller
      */
     public function products(Request $request)
     {
-        $allProducts = \App\Models\Product::with('category')->where('status', 'active')->where('show_in_list', true)->get()->toArray();
-        $categories = \App\Models\Category::withCount(['products' => function($q) {
+        $allProducts = Product::with('category')->where('status', 'active')->where('show_in_list', true)->get()->toArray();
+        $categories = Category::withCount(['products' => function ($q) {
             $q->where('status', 'active')->where('show_in_list', true);
         }])->get();
 
@@ -41,19 +51,19 @@ class ShopController extends Controller
      */
     public function productDetail($slug)
     {
-        $category = \App\Models\Category::where('slug', $slug)->first();
+        $category = Category::where('slug', $slug)->first();
         if ($category) {
-            $dbProducts = \App\Models\Product::where('status', 'active')
+            $dbProducts = Product::where('status', 'active')
                 ->where('category_id', $category->id)
                 ->get();
         } else {
-            $product = \App\Models\Product::where('status', 'active')
+            $product = Product::where('status', 'active')
                 ->where('slug', $slug)
                 ->first();
-            
+
             if ($product) {
                 if ($product->category_id) {
-                    $cat = \App\Models\Category::find($product->category_id);
+                    $cat = Category::find($product->category_id);
                     if ($cat) {
                         return redirect()->route('product.detail', ['slug' => $cat->slug], 301);
                     }
@@ -71,12 +81,13 @@ class ShopController extends Controller
         $defaultProduct = $dbProducts->first();
         $brandName = $defaultProduct ? $defaultProduct->brand : '';
 
-        $dbReviews = \App\Models\Order::where('brand', $brandName)
+        $dbReviews = Order::where('brand', $brandName)
             ->whereNotNull('review_rating')
             ->whereNotNull('review_comment')
             ->where('review_comment', '!=', '')
             ->orderBy('updated_at', 'desc')
-            ->get();
+            ->limit(20)
+            ->get(['customer_name', 'review_rating', 'review_comment', 'updated_at']);
 
         $realReviews = [];
         foreach ($dbReviews as $o) {
@@ -84,11 +95,9 @@ class ShopController extends Controller
                 'name' => $o->customer_name,
                 'star' => $o->review_rating,
                 'date' => $o->updated_at->diffForHumans(),
-                'text' => $o->review_comment
+                'text' => $o->review_comment,
             ];
         }
-
-
 
         return view('product-detail', compact('slug', 'dbProducts', 'realReviews', 'category'));
     }
@@ -98,12 +107,13 @@ class ShopController extends Controller
      */
     public function cart()
     {
-        $products = \App\Models\Product::get(['brand', 'plan', 'stock']);
+        $products = Product::get(['brand', 'plan', 'stock']);
         $stockMap = [];
         foreach ($products as $p) {
-            $key = strtolower(str_replace(' ', '', $p->brand)) . '_' . strtolower($p->plan);
+            $key = strtolower(str_replace(' ', '', $p->brand)).'_'.strtolower($p->plan);
             $stockMap[$key] = $p->stock;
         }
+
         return view('cart', ['stockMap' => $stockMap]);
     }
 
@@ -112,17 +122,18 @@ class ShopController extends Controller
      */
     public function checkout()
     {
-        $products = \App\Models\Product::get(['id', 'brand', 'plan', 'stock', 'require_upgrade_email']);
+        $products = Product::get(['id', 'brand', 'plan', 'stock', 'require_upgrade_email']);
         $stockMap = [];
         $emailRequireMap = [];
         foreach ($products as $p) {
-            $key = strtolower(str_replace(' ', '', $p->brand)) . '_' . strtolower($p->plan);
+            $key = strtolower(str_replace(' ', '', $p->brand)).'_'.strtolower($p->plan);
             $stockMap[$key] = $p->stock;
-            $emailRequireMap[$p->id] = (bool)$p->require_upgrade_email;
+            $emailRequireMap[$p->id] = (bool) $p->require_upgrade_email;
         }
+
         return view('checkout', [
             'stockMap' => $stockMap,
-            'emailRequireMap' => $emailRequireMap
+            'emailRequireMap' => $emailRequireMap,
         ]);
     }
 
@@ -131,24 +142,24 @@ class ShopController extends Controller
      */
     public function toggleWishlist(Request $request)
     {
-        if (!auth()->check()) {
+        if (! auth()->check()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Vui lòng đăng nhập để thêm sản phẩm vào danh sách yêu thích!'
+                'message' => 'Vui lòng đăng nhập để thêm sản phẩm vào danh sách yêu thích!',
             ], 401);
         }
 
         $id = $request->product_id;
-        if (!$id) {
+        if (! $id) {
             return response()->json(['success' => false, 'message' => 'Sản phẩm không hợp lệ!'], 400);
         }
 
-        $product = \App\Models\Product::find($id);
-        if (!$product) {
+        $product = Product::find($id);
+        if (! $product) {
             return response()->json(['success' => false, 'message' => 'Sản phẩm không tồn tại!'], 404);
         }
 
-        $wishlist = \App\Models\Wishlist::where('user_id', auth()->id())
+        $wishlist = Wishlist::where('user_id', auth()->id())
             ->where('product_id', $id)
             ->first();
 
@@ -157,15 +168,15 @@ class ShopController extends Controller
             $action = 'removed';
             $msg = 'Đã xóa khỏi danh sách yêu thích!';
         } else {
-            \App\Models\Wishlist::create([
+            Wishlist::create([
                 'user_id' => auth()->id(),
-                'product_id' => $id
+                'product_id' => $id,
             ]);
             $action = 'added';
             $msg = 'Đã thêm vào danh sách yêu thích!';
         }
 
-        $userWishlistIds = \App\Models\Wishlist::where('user_id', auth()->id())
+        $userWishlistIds = Wishlist::where('user_id', auth()->id())
             ->pluck('product_id')
             ->toArray();
 
@@ -173,7 +184,7 @@ class ShopController extends Controller
             'success' => true,
             'action' => $action,
             'message' => $msg,
-            'wishlist' => $userWishlistIds
+            'wishlist' => $userWishlistIds,
         ]);
     }
 
@@ -182,11 +193,11 @@ class ShopController extends Controller
      */
     public function wishlistPage()
     {
-        $wishlistIds = \App\Models\Wishlist::where('user_id', auth()->id())
+        $wishlistIds = Wishlist::where('user_id', auth()->id())
             ->pluck('product_id')
             ->toArray();
 
-        $allProducts = \App\Models\Product::where('status', 'active')
+        $allProducts = Product::where('status', 'active')
             ->whereIn('id', $wishlistIds)
             ->get()
             ->toArray();
@@ -209,8 +220,9 @@ class ShopController extends Controller
     {
         $order = null;
         if ($request->order) {
-            $order = \App\Models\Order::where('order_code', $request->order)->first();
+            $order = Order::where('order_code', $request->order)->first();
         }
+
         return view('order-check', compact('order'));
     }
 
@@ -221,11 +233,11 @@ class ShopController extends Controller
     {
         $request->validate([
             'order_code' => 'required|string|exists:orders,order_code',
-            'rating'     => 'nullable|integer|min:1|max:5',
-            'comment'    => 'nullable|string|max:1000',
+            'rating' => 'nullable|integer|min:1|max:5',
+            'comment' => 'nullable|string|max:1000',
         ]);
 
-        $order = \App\Models\Order::where('order_code', $request->order_code)->firstOrFail();
+        $order = Order::where('order_code', $request->order_code)->firstOrFail();
 
         if ($order->order_status !== 'completed') {
             return redirect()->back()->with('error', 'Chỉ có thể đánh giá đơn hàng đã hoàn tất.');
@@ -236,35 +248,35 @@ class ShopController extends Controller
         }
 
         $order->update([
-            'review_rating'  => $request->rating,
+            'review_rating' => $request->rating,
             'review_comment' => $request->comment,
-            'is_reviewed'    => true,
+            'is_reviewed' => true,
         ]);
 
         // Cập nhật rating và reviews cho sản phẩm tương ứng nếu khách hàng chọn số sao
         if ($request->rating) {
-            $product = \App\Models\Product::where('brand', $order->brand)
+            $product = Product::where('brand', $order->brand)
                 ->where('plan', $order->plan)
                 ->first();
 
             if ($product) {
-                $orders = \App\Models\Order::where('brand', $order->brand)
+                $orders = Order::where('brand', $order->brand)
                     ->where('plan', $order->plan)
                     ->whereNotNull('review_rating')
                     ->where('review_rating', '>', 0)
                     ->get();
 
                 $totalRating = 0;
-                $count       = $orders->count();
+                $count = $orders->count();
                 foreach ($orders as $o) {
                     $totalRating += $o->review_rating;
                 }
 
-                $newReviewsCount  = $count;
+                $newReviewsCount = $count;
                 $newAverageRating = $count > 0 ? round($totalRating / $count, 1) : 0.0;
 
                 $product->update([
-                    'rating'  => $newAverageRating,
+                    'rating' => $newAverageRating,
                     'reviews' => $newReviewsCount,
                 ]);
             }
@@ -281,65 +293,65 @@ class ShopController extends Controller
     {
         try {
             $request->validate([
-                'order_code'     => 'required|string|max:50|unique:orders,order_code',
-                'customer_name'  => 'required|string|max:255',
+                'order_code' => 'required|string|max:50|unique:orders,order_code',
+                'customer_name' => 'required|string|max:255',
                 'customer_email' => 'required|email|max:255',
                 'customer_phone' => 'required|string|max:20',
-                'telegram'       => 'nullable|string|max:255',
-                'note'           => 'nullable|string',
+                'telegram' => 'nullable|string|max:255',
+                'note' => 'nullable|string',
                 'payment_method' => 'required|in:bank_transfer,momo,zalopay,crypto',
-                'coupon'         => 'nullable|string|max:50',
-                'cart'           => 'required|array|min:1',
+                'coupon' => 'nullable|string|max:50',
+                'cart' => 'required|array|min:1',
             ]);
 
-            $cart         = $request->cart;
+            $cart = $request->cart;
             $productNames = [];
-            $brands       = [];
-            $plans        = [];
-            $totalQty     = 0;
-            $subtotal     = 0;
+            $brands = [];
+            $plans = [];
+            $totalQty = 0;
+            $subtotal = 0;
 
             foreach ($cart as $item) {
-                $qty   = intval($item['qty'] ?? 1);
+                $qty = intval($item['qty'] ?? 1);
                 $price = floatval($item['price'] ?? 0);
 
                 // Backend verification: verify stock level in DB
-                $dbProd = \App\Models\Product::where('brand', $item['brand'] ?? '')
+                $dbProd = Product::where('brand', $item['brand'] ?? '')
                     ->where('plan', $item['plan'] ?? '')
                     ->first();
                 if ($dbProd && $dbProd->stock <= 0) {
                     return response()->json([
                         'success' => false,
-                        'message' => 'Sản phẩm ' . ($item['name'] ?? 'VPN') . ' hiện đang hết hàng. Vui lòng xóa khỏi giỏ hàng.'
+                        'message' => 'Sản phẩm '.($item['name'] ?? 'VPN').' hiện đang hết hàng. Vui lòng xóa khỏi giỏ hàng.',
                     ], 422);
                 }
 
-                $productNames[] = ($item['name'] ?? 'VPN Product') . ' (' . ($item['plan'] ?? '1 Year') . ') x' . $qty;
-                $brands[]       = $item['brand'] ?? 'VPN';
-                $plans[]        = $item['plan'] ?? '1year';
-                $totalQty       += $qty;
-                $subtotal       += $price * $qty;
+                $productNames[] = ($item['name'] ?? 'VPN Product').' ('.($item['plan'] ?? '1 Year').') x'.$qty;
+                $brands[] = $item['brand'] ?? 'VPN';
+                $plans[] = $item['plan'] ?? '1year';
+                $totalQty += $qty;
+                $subtotal += $price * $qty;
             }
 
             $productName = implode(', ', $productNames);
-            $brand       = !empty($brands) ? $brands[0] : 'VPN';
-            $plan        = !empty($plans)  ? $plans[0]  : '1year';
+            $brand = ! empty($brands) ? $brands[0] : 'VPN';
+            $plan = ! empty($plans) ? $plans[0] : '1year';
 
             // Auto Discount: lấy ngưỡng và tỷ lệ từ settings
-            $threshold    = (float) Setting::get('auto_discount_threshold', 500000);
-            $rate         = (float) Setting::get('auto_discount_rate', 5);
+            $threshold = (float) Setting::get('auto_discount_threshold', 500000);
+            $rate = (float) Setting::get('auto_discount_rate', 5);
             $autoDiscount = $subtotal > $threshold ? round($subtotal * $rate / 100) : 0;
 
             // Coupon Discount: validate từ DB
-            $coupon         = $request->coupon;
+            $coupon = $request->coupon;
             $couponDiscount = 0;
 
             if ($coupon) {
                 $couponModel = Coupon::valid()->where('code', strtoupper($coupon));
-                if (\Illuminate\Support\Facades\Schema::hasColumn('coupons', 'user_id')) {
+                if (Schema::hasColumn('coupons', 'user_id')) {
                     $couponModel->where(function ($q) {
                         $q->whereNull('user_id')
-                          ->orWhere('user_id', auth()->id());
+                            ->orWhere('user_id', auth()->id());
                     });
                 }
                 $couponModel = $couponModel->first();
@@ -350,25 +362,25 @@ class ShopController extends Controller
             }
 
             $totalDiscount = $autoDiscount + $couponDiscount;
-            $total         = max(0, $subtotal - $totalDiscount);
+            $total = max(0, $subtotal - $totalDiscount);
 
-            $order = \App\Models\Order::create([
-                'order_code'     => $request->order_code,
-                'user_id'        => auth()->id(),
-                'customer_name'  => $request->customer_name,
+            $order = Order::create([
+                'order_code' => $request->order_code,
+                'user_id' => auth()->id(),
+                'customer_name' => $request->customer_name,
                 'customer_email' => $request->customer_email,
                 'customer_phone' => $request->customer_phone,
-                'product_name'   => $productName,
-                'brand'          => $brand,
-                'plan'           => $plan,
-                'quantity'       => $totalQty,
-                'price'          => count($cart) === 1 ? floatval($cart[0]['price'] ?? 0) : $subtotal,
-                'discount'       => $totalDiscount,
-                'coupon'         => $coupon,
-                'total'          => $total,
+                'product_name' => $productName,
+                'brand' => $brand,
+                'plan' => $plan,
+                'quantity' => $totalQty,
+                'price' => count($cart) === 1 ? floatval($cart[0]['price'] ?? 0) : $subtotal,
+                'discount' => $totalDiscount,
+                'coupon' => $coupon,
+                'total' => $total,
                 'payment_method' => $request->payment_method,
                 'payment_status' => 'pending',
-                'order_status'   => 'pending',
+                'order_status' => 'pending',
             ]);
 
             // Send Telegram Notification
@@ -378,33 +390,33 @@ class ShopController extends Controller
 
                 if ($botToken && $chatId) {
                     $text = "🔔 *ĐƠN HÀNG MỚI TỪ AI CỦA TÔI . COM*\n\n"
-                          . "📦 *Mã đơn*: `" . $order->order_code . "`\n"
-                          . "👤 *Khách hàng*: " . $order->customer_name . "\n"
-                          . "✉️ *Email*: " . $order->customer_email . "\n"
-                          . "📞 *Số điện thoại*: " . $order->customer_phone . "\n"
-                          . "🛍️ *Sản phẩm*: " . $order->product_name . "\n"
-                          . "💰 *Tổng tiền*: " . number_format($order->total) . "đ\n"
-                          . "💳 *Phương thức*: " . ($order->payment_method === 'bank_transfer' ? 'Chuyển khoản ngân hàng' : $order->payment_method) . "\n"
-                          . "📝 *Ghi chú*: " . ($order->note ?: 'Không có');
+                          .'📦 *Mã đơn*: `'.$order->order_code."`\n"
+                          .'👤 *Khách hàng*: '.$order->customer_name."\n"
+                          .'✉️ *Email*: '.$order->customer_email."\n"
+                          .'📞 *Số điện thoại*: '.$order->customer_phone."\n"
+                          .'🛍️ *Sản phẩm*: '.$order->product_name."\n"
+                          .'💰 *Tổng tiền*: '.number_format($order->total)."đ\n"
+                          .'💳 *Phương thức*: '.($order->payment_method === 'bank_transfer' ? 'Chuyển khoản ngân hàng' : $order->payment_method)."\n"
+                          .'📝 *Ghi chú*: '.($order->note ?: 'Không có');
 
-                    \Illuminate\Support\Facades\Http::timeout(3)->post("https://api.telegram.org/bot{$botToken}/sendMessage", [
+                    Http::timeout(3)->post("https://api.telegram.org/bot{$botToken}/sendMessage", [
                         'chat_id' => $chatId,
                         'text' => $text,
                         'parse_mode' => 'Markdown',
                     ]);
                 }
             } catch (\Exception $e) {
-                \Illuminate\Support\Facades\Log::error('Telegram notification error: ' . $e->getMessage());
+                Log::error('Telegram notification error: '.$e->getMessage());
             }
 
             return response()->json([
-                'success'    => true,
-                'order_code' => $order->order_code
+                'success' => true,
+                'order_code' => $order->order_code,
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], 422);
         }
     }
@@ -437,7 +449,7 @@ class ShopController extends Controller
             'message' => 'required|string|max:5000',
         ]);
 
-        \App\Models\Contact::create([
+        Contact::create([
             'name' => $request->name,
             'email' => $request->email,
             'subject' => $request->subject,
@@ -455,22 +467,22 @@ class ShopController extends Controller
      */
     public function search(Request $request)
     {
-        $q                = strtolower($request->q ?? '');
-        $allProductsQuery = \App\Models\Product::where('status', 'active')->where('show_in_list', true);
+        $q = strtolower($request->q ?? '');
+        $allProductsQuery = Product::where('status', 'active')->where('show_in_list', true);
         if ($q) {
             $allProductsQuery->where(function ($sub) use ($q) {
                 // 1. Exact match in name, brand, or description
                 $sub->where('name', 'like', "%{$q}%")
                     ->orWhere('brand', 'like', "%{$q}%")
                     ->orWhere('description', 'like', "%{$q}%");
-                
+
                 // 2. Space-stripped match (e.g. "chat gpt" -> "chatgpt")
                 $stripped = str_replace(' ', '', $q);
                 if ($stripped !== $q) {
                     $sub->orWhere('name', 'like', "%{$stripped}%")
                         ->orWhere('brand', 'like', "%{$stripped}%");
                 }
-                
+
                 // 3. Keyword matching (words >= 2 chars)
                 $words = array_filter(explode(' ', $q));
                 if (count($words) > 1) {
@@ -484,16 +496,17 @@ class ShopController extends Controller
             });
         }
         $allProducts = $allProductsQuery->get()->toArray();
+
         return view('search', compact('allProducts'));
     }
 
     public function orderHistory()
     {
-        $user   = auth()->user();
-        $orders = \App\Models\Order::where(function ($query) use ($user) {
-                $query->where('user_id', $user->id)
-                      ->orWhere('customer_email', $user->email);
-            })
+        $user = auth()->user();
+        $orders = Order::where(function ($query) use ($user) {
+            $query->where('user_id', $user->id)
+                ->orWhere('customer_email', $user->email);
+        })
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -505,7 +518,8 @@ class ShopController extends Controller
      */
     public function postList()
     {
-        $posts = \App\Models\Post::published()->orderBy('created_at', 'desc')->paginate(9);
+        $posts = Post::published()->orderBy('created_at', 'desc')->paginate(9);
+
         return view('posts.index', compact('posts'));
     }
 
@@ -514,24 +528,24 @@ class ShopController extends Controller
      */
     public function postDetail($slug)
     {
-        $post = \App\Models\Post::published()->where('slug', $slug)->firstOrFail();
-        
+        $post = Post::published()->where('slug', $slug)->firstOrFail();
+
         // Bài viết liên quan / mới nhất khác
-        $recentPosts = \App\Models\Post::published()
+        $recentPosts = Post::published()
             ->where('id', '!=', $post->id)
             ->orderBy('created_at', 'desc')
             ->limit(5)
             ->get();
 
         // Sản phẩm hot
-        $hotProducts = \App\Models\Product::where('status', 'active')
+        $hotProducts = Product::where('status', 'active')
             ->where('show_in_list', true)
             ->where('is_popular', true)
             ->limit(5)
             ->get();
 
         if ($hotProducts->isEmpty()) {
-            $hotProducts = \App\Models\Product::where('status', 'active')
+            $hotProducts = Product::where('status', 'active')
                 ->where('show_in_list', true)
                 ->limit(5)
                 ->get();

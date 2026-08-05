@@ -168,7 +168,7 @@
                class="card animate-on-scroll category-card"
                style="cursor:pointer; text-decoration:none;">
                 @if($cat->image_path)
-                    <img src="{{ $cat->image_url }}" alt="{{ $cat->name }}" style="width:50px; height:50px; object-fit:contain; margin-bottom:12px;">
+                    <img src="{{ $cat->image_url }}" alt="{{ $cat->name }}" width="50" height="50" loading="lazy" decoding="async" style="width:50px; height:50px; object-fit:contain; margin-bottom:12px;">
                 @else
                     <div style="font-size:2.2rem; margin-bottom:12px; color:var(--primary-light);"><i class="{{ $iconClass }}"></i></div>
                 @endif

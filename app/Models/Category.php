@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class Category extends Model
 {
@@ -15,8 +16,14 @@ class Category extends Model
         'type',
         'seo_title',
         'seo_description',
-        'image_path'
+        'image_path',
     ];
+
+    protected static function booted(): void
+    {
+        static::saved(fn () => Cache::forget('shared_categories'));
+        static::deleted(fn () => Cache::forget('shared_categories'));
+    }
 
     /**
      * Một danh mục có nhiều sản phẩm
@@ -41,11 +48,13 @@ class Category extends Model
             if (file_exists(public_path($this->image_path))) {
                 return asset($this->image_path);
             }
-            if (file_exists(storage_path('app/public/' . $this->image_path))) {
-                return asset('storage/' . $this->image_path);
+            if (file_exists(storage_path('app/public/'.$this->image_path))) {
+                return asset('storage/'.$this->image_path);
             }
+
             return asset($this->image_path);
         }
-        return asset('storage/' . $this->image_path);
+
+        return asset('storage/'.$this->image_path);
     }
 }

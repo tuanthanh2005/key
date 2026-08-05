@@ -1,55 +1,40 @@
 <?php
-  
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ShopController;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\SocialAuthController;
+
 use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\Admin\OrderController;
-use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\Admin\ProductController;
-use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\CategoryTypeController;
+use App\Http\Controllers\Admin\ContactController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\IndexingController;
-use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\LicenseController;
+use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\PostController;
+use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\SubscriptionController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ShopController;
+use App\Http\Controllers\SocialAuthController;
+use App\Models\Category;
+use App\Models\Post;
+use App\Models\Product;
 use Illuminate\Support\Facades\Artisan;
-   
+use Illuminate\Support\Facades\Route;
+
 /*
 |--------------------------------------------------------------------------
 | VPNStore - Web Routes
 |--------------------------------------------------------------------------
 */
 
-Route::get('/clear-cache', function() {
-    Artisan::call('config:clear');
-    Artisan::call('cache:clear');
-    Artisan::call('view:clear');
-    if (function_exists('opcache_reset')) {
-        opcache_reset();
-    }
-    return "All Laravel caches cleared successfully! (OPcache cleared too)";
-});
+if (app()->isLocal()) {
+    Route::get('/clear-cache', function () {
+        Artisan::call('optimize:clear');
 
-Route::get('/debug-view', function() {
-    return response()->json([
-        'content' => base64_encode(file_get_contents(resource_path('views/product-detail.blade.php')))
-    ]);
-});
-
-Route::get('/debug-line/{start}/{end}', function($start, $end) {
-    $lines = explode("\n", file_get_contents(resource_path('views/product-detail.blade.php')));
-    return bin2hex(implode("\n", array_slice($lines, $start - 1, $end - $start + 1)));
-});
-
-Route::get('/debug-log', function() {
-    $logPath = storage_path('logs/laravel.log');
-    if (!file_exists($logPath)) {
-        return "Log file does not exist.";
-    }
-    $content = file_get_contents($logPath);
-    $lines = explode("\n", $content);
-    return response(implode("\n", array_slice($lines, -100)), 200, ['Content-Type' => 'text/plain']);
-});
+        return 'Laravel caches cleared successfully.';
+    });
+}
 
 // =============================================
 // TRANG CÔNG KHAI (SHOP)
@@ -80,10 +65,10 @@ Route::get('/tin-tuc/{slug}', [ShopController::class, 'postDetail'])->name('post
 // =============================================
 Route::get('/sitemap.xml', function () {
     // Get all Category slugs (e.g. vpn, chatgpt, netflix brand pages)
-    $categorySlugs = \App\Models\Category::pluck('slug')->toArray();
+    $categorySlugs = Category::pluck('slug')->toArray();
 
     // Get all active Product slugs
-    $productSlugs = \App\Models\Product::where('status', 'active')
+    $productSlugs = Product::where('status', 'active')
         ->whereNotNull('slug')
         ->pluck('slug')
         ->toArray();
@@ -92,7 +77,7 @@ Route::get('/sitemap.xml', function () {
     $brands = array_unique(array_filter(array_merge($categorySlugs, $productSlugs)));
 
     // Get published posts
-    $posts = \App\Models\Post::published()
+    $posts = Post::published()
         ->orderBy('created_at', 'desc')
         ->get(['slug', 'updated_at']);
 
@@ -169,16 +154,16 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 
     // Quản lý license
     Route::prefix('licenses')->name('licenses.')->group(function () {
-        Route::get('/', [\App\Http\Controllers\Admin\LicenseController::class, 'index'])->name('index');
-        Route::post('/', [\App\Http\Controllers\Admin\LicenseController::class, 'store'])->name('store');
-        Route::post('/send-email', [\App\Http\Controllers\Admin\LicenseController::class, 'sendEmail'])->name('send_email');
-        Route::delete('/{license}', [\App\Http\Controllers\Admin\LicenseController::class, 'destroy'])->name('destroy');
+        Route::get('/', [LicenseController::class, 'index'])->name('index');
+        Route::post('/', [LicenseController::class, 'store'])->name('store');
+        Route::post('/send-email', [LicenseController::class, 'sendEmail'])->name('send_email');
+        Route::delete('/{license}', [LicenseController::class, 'destroy'])->name('destroy');
     });
 
     // Quản lý hạn dùng khách hàng (Subscriptions)
     Route::prefix('han-khach-hang')->name('subscriptions.')->group(function () {
-        Route::get('/', [\App\Http\Controllers\Admin\SubscriptionController::class, 'index'])->name('index');
-        Route::put('/{id}/gia-han', [\App\Http\Controllers\Admin\SubscriptionController::class, 'extend'])->name('extend');
+        Route::get('/', [SubscriptionController::class, 'index'])->name('index');
+        Route::put('/{id}/gia-han', [SubscriptionController::class, 'extend'])->name('extend');
     });
 
     // Quản lý danh mục
@@ -186,10 +171,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 
     // Quản lý loại danh mục (Category Types)
     Route::prefix('loai-danh-muc')->name('category-types.')->group(function () {
-        Route::get('/', [\App\Http\Controllers\Admin\CategoryTypeController::class, 'index'])->name('index');
-        Route::post('/', [\App\Http\Controllers\Admin\CategoryTypeController::class, 'store'])->name('store');
-        Route::put('/{id}', [\App\Http\Controllers\Admin\CategoryTypeController::class, 'update'])->name('update');
-        Route::delete('/{id}', [\App\Http\Controllers\Admin\CategoryTypeController::class, 'destroy'])->name('destroy');
+        Route::get('/', [CategoryTypeController::class, 'index'])->name('index');
+        Route::post('/', [CategoryTypeController::class, 'store'])->name('store');
+        Route::put('/{id}', [CategoryTypeController::class, 'update'])->name('update');
+        Route::delete('/{id}', [CategoryTypeController::class, 'destroy'])->name('destroy');
     });
 
     // Quản lý người dùng
@@ -212,21 +197,19 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 
     // Quản lý bài viết
     Route::prefix('bai-viet')->name('posts.')->group(function () {
-        Route::get('/', [\App\Http\Controllers\Admin\PostController::class, 'index'])->name('index');
-        Route::get('/them-moi', [\App\Http\Controllers\Admin\PostController::class, 'create'])->name('create');
-        Route::post('/', [\App\Http\Controllers\Admin\PostController::class, 'store'])->name('store');
-        Route::get('/{id}/sua', [\App\Http\Controllers\Admin\PostController::class, 'edit'])->name('edit');
-        Route::put('/{id}', [\App\Http\Controllers\Admin\PostController::class, 'update'])->name('update');
-        Route::delete('/{id}', [\App\Http\Controllers\Admin\PostController::class, 'destroy'])->name('destroy');
+        Route::get('/', [PostController::class, 'index'])->name('index');
+        Route::get('/them-moi', [PostController::class, 'create'])->name('create');
+        Route::post('/', [PostController::class, 'store'])->name('store');
+        Route::get('/{id}/sua', [PostController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [PostController::class, 'update'])->name('update');
+        Route::delete('/{id}', [PostController::class, 'destroy'])->name('destroy');
     });
 
     // Tiếp nhận email (Liên hệ)
     Route::prefix('tiep-nhan-email')->name('contacts.')->group(function () {
-        Route::get('/', [\App\Http\Controllers\Admin\ContactController::class, 'index'])->name('index');
-        Route::get('/{contact}', [\App\Http\Controllers\Admin\ContactController::class, 'show'])->name('show');
-        Route::post('/{contact}/reply', [\App\Http\Controllers\Admin\ContactController::class, 'reply'])->name('reply');
-        Route::delete('/{contact}', [\App\Http\Controllers\Admin\ContactController::class, 'destroy'])->name('destroy');
+        Route::get('/', [ContactController::class, 'index'])->name('index');
+        Route::get('/{contact}', [ContactController::class, 'show'])->name('show');
+        Route::post('/{contact}/reply', [ContactController::class, 'reply'])->name('reply');
+        Route::delete('/{contact}', [ContactController::class, 'destroy'])->name('destroy');
     });
 });
-
-
