@@ -23,6 +23,8 @@ class Category extends Model
     {
         static::saved(fn () => Cache::forget('shared_categories'));
         static::deleted(fn () => Cache::forget('shared_categories'));
+        static::saved(fn () => Cache::forget('shared_categories_v2'));
+        static::deleted(fn () => Cache::forget('shared_categories_v2'));
     }
 
     /**

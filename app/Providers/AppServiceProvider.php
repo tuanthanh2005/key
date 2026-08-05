@@ -64,11 +64,24 @@ class AppServiceProvider extends ServiceProvider
             static $sharedCategories = null;
 
             if ($sharedCategories === null) {
-                $sharedCategories = Cache::remember('shared_categories', 600, fn () => Category::query()
+                // Cache only plain arrays. Serialized Eloquent collections can become
+                // incomplete objects when a production deploy replaces loaded classes.
+                $categoryRows = Cache::remember('shared_categories_v2', 600, fn () => Category::query()
                     ->select(['id', 'name', 'slug', 'type', 'image_path'])
                     ->orderBy('name')
                     ->get()
+                    ->map(fn (Category $category) => [
+                        'id' => $category->id,
+                        'name' => $category->name,
+                        'slug' => $category->slug,
+                        'type' => $category->type,
+                        'image_path' => $category->image_path,
+                        'image_url' => $category->image_url,
+                    ])
+                    ->all()
                 );
+                $sharedCategories = collect($categoryRows)
+                    ->map(fn (array $category) => (object) $category);
             }
             $view->with([
                 'sharedVpnCategories' => $sharedCategories->where('type', 'vpn'),
