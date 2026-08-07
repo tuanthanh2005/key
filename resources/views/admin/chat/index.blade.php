@@ -17,7 +17,7 @@
     <div class="card shadow-sm border-0 overflow-hidden" style="min-height: 700px; max-height: calc(100vh - 180px);">
         <div class="row g-0 h-100" style="min-height: 700px;">
             <!-- SIDEBAR: SESSIONS LIST -->
-            <div class="col-md-4 col-lg-3 border-end bg-light d-flex flex-column" style="min-height: 700px;">
+            <div class="col-md-4 col-lg-3 border-end bg-light d-flex flex-column" style="min-height: 600px;" id="sidebar-sessions-col">
                 <div class="p-3 border-bottom bg-white">
                     <div class="input-group input-group-sm">
                         <span class="input-group-text bg-light border-end-0"><i class="bi bi-search text-muted"></i></span>
@@ -25,7 +25,7 @@
                     </div>
                 </div>
 
-                <div class="flex-grow-1 overflow-auto" id="sessions-list" style="height: 620px;">
+                <div class="flex-grow-1 overflow-auto" id="sessions-list" style="height: 580px;">
                     <div class="text-center p-4 text-muted">
                         <div class="spinner-border spinner-border-sm text-primary mb-2"></div>
                         <div>Đang tải danh sách hội thoại...</div>
@@ -34,7 +34,7 @@
             </div>
 
             <!-- CHAT AREA -->
-            <div class="col-md-8 col-lg-9 d-flex flex-column bg-white" style="min-height: 700px;" id="chat-area-wrap">
+            <div class="col-md-8 col-lg-9 d-none d-md-flex flex-column bg-white" style="min-height: 600px;" id="chat-area-wrap">
                 <!-- EMPTY STATE -->
                 <div id="chat-empty-state" class="d-flex flex-column align-items-center justify-content-center h-100 text-muted p-5">
                     <i class="bi bi-chat-square-text text-primary display-3 opacity-50 mb-3"></i>
@@ -46,16 +46,17 @@
                 <div id="chat-active-box" class="d-flex flex-column h-100" style="display: none !important;">
                     <!-- HEADER -->
                     <div class="p-3 border-bottom d-flex justify-content-between align-items-center bg-white shadow-sm">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 42px; height: 42px;" id="active-customer-avatar">
+                        <div class="d-flex align-items-center gap-2">
+                            <button class="btn btn-sm btn-outline-primary d-md-none" onclick="backToSessionsList()"><i class="bi bi-arrow-left"></i> Danh sách</button>
+                            <div class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 38px; height: 38px;" id="active-customer-avatar">
                                 K
                             </div>
                             <div>
-                                <h6 class="fw-bold mb-0" id="active-customer-name">Khách hàng</h6>
-                                <small class="text-muted" id="active-session-id">Session ID: ---</small>
+                                <h6 class="fw-bold mb-0 text-truncate" style="max-width: 140px;" id="active-customer-name">Khách hàng</h6>
+                                <small class="text-muted" style="font-size: 0.7rem;" id="active-session-id">Session ID: ---</small>
                             </div>
                         </div>
-                        <button class="btn btn-sm btn-outline-secondary" onclick="refreshMessages()"><i class="bi bi-arrow-clockwise"></i> Làm mới</button>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="refreshMessages()"><i class="bi bi-arrow-clockwise"></i> <span class="d-none d-sm-inline">Làm mới</span></button>
                     </div>
 
                     <!-- MESSAGES BODY -->
@@ -224,6 +225,14 @@ function selectSession(sessionId) {
 
     document.getElementById('active-session-id').textContent = `Session ID: ${sessionId}`;
 
+    // Mobile view handling
+    const sidebar = document.getElementById('sidebar-sessions-col');
+    const chatWrap = document.getElementById('chat-area-wrap');
+    if (sidebar && chatWrap && window.innerWidth < 768) {
+        sidebar.classList.add('d-none');
+        chatWrap.classList.remove('d-none');
+    }
+
     loadMessages(sessionId);
 
     if (messagePollInterval) clearInterval(messagePollInterval);
@@ -232,6 +241,15 @@ function selectSession(sessionId) {
     }, 3000);
 
     loadSessions();
+}
+
+function backToSessionsList() {
+    const sidebar = document.getElementById('sidebar-sessions-col');
+    const chatWrap = document.getElementById('chat-area-wrap');
+    if (sidebar && chatWrap) {
+        sidebar.classList.remove('d-none');
+        chatWrap.classList.add('d-none');
+    }
 }
 
 function loadMessages(sessionId) {
