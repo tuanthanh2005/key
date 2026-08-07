@@ -197,36 +197,16 @@ class ChatController extends Controller
                 }
 
                 if ($chatMsg->image_path) {
-                    $text .= "🖼️ *Đính kèm*: Có hình ảnh\n";
+                    $text .= "🖼️ *Đính kèm*: 📸 Khách đã gửi 1 hình ảnh\n";
                 }
 
                 $text .= "\n👉 [Click vào đây để trả lời khách]({$adminChatUrl})";
 
-                $fullImagePath = null;
-                if ($chatMsg->image_path) {
-                    if (file_exists(public_path($chatMsg->image_path))) {
-                        $fullImagePath = public_path($chatMsg->image_path);
-                    } elseif (Storage::disk('public')->exists($chatMsg->image_path)) {
-                        $fullImagePath = Storage::disk('public')->path($chatMsg->image_path);
-                    }
-                }
-
-                if ($fullImagePath && file_exists($fullImagePath)) {
-                    // Send photo if available
-                    Http::attach(
-                        'photo', file_get_contents($fullImagePath), basename($fullImagePath)
-                    )->post("https://api.telegram.org/bot{$botToken}/sendPhoto", [
-                        'chat_id' => $chatId,
-                        'caption' => $text,
-                        'parse_mode' => 'Markdown',
-                    ]);
-                } else {
-                    Http::timeout(3)->post("https://api.telegram.org/bot{$botToken}/sendMessage", [
-                        'chat_id' => $chatId,
-                        'text' => $text,
-                        'parse_mode' => 'Markdown',
-                    ]);
-                }
+                Http::timeout(3)->post("https://api.telegram.org/bot{$botToken}/sendMessage", [
+                    'chat_id' => $chatId,
+                    'text' => $text,
+                    'parse_mode' => 'Markdown',
+                ]);
             }
         } catch (\Exception $e) {
             Log::error('Telegram Chat notification error: ' . $e->getMessage());
