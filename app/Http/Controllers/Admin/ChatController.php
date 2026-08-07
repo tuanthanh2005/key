@@ -24,32 +24,32 @@ class ChatController extends Controller
      */
     public function getSessions()
     {
-        $sessions = ChatMessage::select('session_id', DB::raw('MAX(created_at) as last_activity'))
-            ->groupBy('session_id')
-            ->orderBy('last_activity', 'desc')
-            ->get()
-            ->map(function ($item) {
-                $lastMsg = ChatMessage::where('session_id', $item->session_id)
-                    ->orderBy('id', 'desc')
-                    ->first();
+        $sessionIds = ChatMessage::select('session_id')->distinct()->pluck('session_id');
 
-                $unreadCount = ChatMessage::where('session_id', $item->session_id)
-                    ->where('sender_type', 'customer')
-                    ->where('is_read', false)
-                    ->count();
+        $sessions = $sessionIds->map(function ($sessionId) {
+            $lastMsg = ChatMessage::where('session_id', $sessionId)
+                ->orderBy('id', 'desc')
+                ->first();
 
-                $customerName = ChatMessage::where('session_id', $item->session_id)
-                    ->where('sender_type', 'customer')
-                    ->value('sender_name') ?? 'Khách hàng #' . substr($item->session_id, 0, 6);
+            $unreadCount = ChatMessage::where('session_id', $sessionId)
+                ->where('sender_type', 'customer')
+                ->where('is_read', false)
+                ->count();
 
-                return [
-                    'session_id' => $item->session_id,
-                    'customer_name' => $customerName,
-                    'last_message' => $lastMsg ? ($lastMsg->message ?: '[Hình ảnh]') : '',
-                    'unread_count' => $unreadCount,
-                    'last_activity' => $lastMsg ? $lastMsg->created_at->diffForHumans() : '',
-                ];
-            });
+            $customerName = ChatMessage::where('session_id', $sessionId)
+                ->where('sender_type', 'customer')
+                ->whereNotNull('sender_name')
+                ->value('sender_name') ?: 'Khách hàng #' . substr($sessionId, 0, 6);
+
+            return [
+                'session_id' => $sessionId,
+                'customer_name' => $customerName,
+                'last_message' => $lastMsg ? ($lastMsg->message ?: '[Hình ảnh]') : '',
+                'unread_count' => $unreadCount,
+                'last_activity' => $lastMsg ? $lastMsg->created_at->diffForHumans() : '',
+                'timestamp' => $lastMsg ? $lastMsg->created_at->timestamp : 0,
+            ];
+        })->sortByDesc('timestamp')->values();
 
         $totalUnread = ChatMessage::where('sender_type', 'customer')->where('is_read', false)->count();
 

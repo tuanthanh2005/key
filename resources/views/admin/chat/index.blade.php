@@ -21,7 +21,7 @@
                 <div class="p-3 border-bottom bg-white">
                     <div class="input-group input-group-sm">
                         <span class="input-group-text bg-light border-end-0"><i class="bi bi-search text-muted"></i></span>
-                        <input type="text" id="search-session" class="form-control border-start-0 bg-light" placeholder="Tìm theo tên hoặc ID...">
+                        <input type="text" id="search-session" class="form-control border-start-0 bg-light" placeholder="Tìm theo tên hoặc ID..." oninput="loadSessions()">
                     </div>
                 </div>
 
