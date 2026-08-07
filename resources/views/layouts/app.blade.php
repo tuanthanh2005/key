@@ -990,7 +990,7 @@ function toggleCustomerLiveChat() {
 function pollCustomerMessages() {
     if (!customerChatSessionId || document.hidden) return;
 
-    fetch(`{{ route('chat.messages') }}?session_id=${customerChatSessionId}`)
+    fetch("{{ route('chat.messages', [], false) }}?session_id=" + encodeURIComponent(customerChatSessionId))
         .then(res => res.json())
         .then(data => {
             if (data.success) {
@@ -1101,7 +1101,7 @@ function scrollFeedToBottom() {
 }
 
 function markCustomerMessagesRead() {
-    fetch("{{ route('chat.mark-read') }}", {
+    fetch("{{ route('chat.mark-read', [], false) }}", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -1175,7 +1175,7 @@ function sendCustomerChatMessage(e) {
     if (text) formData.append('message', text);
     if (selectedCustomerImageFile) formData.append('image', selectedCustomerImageFile);
 
-    fetch("{{ route('chat.send') }}", {
+    fetch("{{ route('chat.send', [], false) }}", {
         method: 'POST',
         body: formData
     })

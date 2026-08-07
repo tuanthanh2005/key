@@ -132,7 +132,7 @@ document.addEventListener('visibilitychange', function() {
 
 function loadSessions() {
     if (document.hidden) return;
-    fetch("{{ route('admin.chat.sessions') }}")
+    fetch("{{ route('admin.chat.sessions', [], false) }}")
         .then(res => res.json())
         .then(data => {
             if (data.success) {
@@ -204,7 +204,7 @@ function selectSession(sessionId) {
 
 function loadMessages(sessionId) {
     if (document.hidden) return;
-    fetch(`{{ url('admin/chat/messages') }}/${sessionId}`)
+    fetch("{{ url('admin/chat/messages', [], false) }}/${sessionId}")
         .then(res => res.json())
         .then(data => {
             if (data.success) {
@@ -298,7 +298,7 @@ function sendAdminMessage(e) {
     if (text) formData.append('message', text);
     if (selectedAdminImageFile) formData.append('image', selectedAdminImageFile);
 
-    fetch("{{ route('admin.chat.send') }}", {
+    fetch("{{ route('admin.chat.send', [], false) }}", {
         method: 'POST',
         body: formData
     })
