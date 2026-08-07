@@ -1168,6 +1168,7 @@ function sendCustomerChatMessage(e) {
 
     const btn = document.getElementById('customer-send-btn');
     btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="width: 1rem; height: 1rem; border-width: 2px;"></span>';
 
     const formData = new FormData();
     formData.append('_token', '{{ csrf_token() }}');
@@ -1188,11 +1189,13 @@ function sendCustomerChatMessage(e) {
             start5sCooldown();
         } else {
             btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-send-fill"></i>';
             alert(data.message || 'Không thể gửi tin nhắn.');
         }
     })
     .catch(err => {
         btn.disabled = false;
+        btn.innerHTML = '<i class="bi bi-send-fill"></i>';
         console.error(err);
     });
 }

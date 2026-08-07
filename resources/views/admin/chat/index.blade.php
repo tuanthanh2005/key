@@ -344,7 +344,9 @@ function sendAdminMessage(e) {
     if (!text && !selectedAdminImageFile) return;
 
     const btn = document.getElementById('admin-send-btn');
+    const oldBtnHtml = btn.innerHTML;
     btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Gửi...';
 
     const formData = new FormData();
     formData.append('_token', '{{ csrf_token() }}');
@@ -359,6 +361,7 @@ function sendAdminMessage(e) {
     .then(res => res.json())
     .then(data => {
         btn.disabled = false;
+        btn.innerHTML = oldBtnHtml;
         if (data.success) {
             input.value = '';
             clearAdminImage();
@@ -370,6 +373,7 @@ function sendAdminMessage(e) {
     })
     .catch(err => {
         btn.disabled = false;
+        btn.innerHTML = oldBtnHtml;
         console.error(err);
     });
 }
