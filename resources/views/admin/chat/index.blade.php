@@ -105,7 +105,7 @@
 
 @endsection
 
-@push('scripts')
+@section('extra_js')
 <script>
 let currentSessionId = "{{ $selectedSession ?? '' }}";
 let sessionPollInterval = null;
@@ -367,4 +367,4 @@ function escapeHtml(str) {
     return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 }
 </script>
-@endpush
+@endsection

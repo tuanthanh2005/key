@@ -340,6 +340,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="{{ asset('js/admin.js') }}"></script>
 @yield('extra_js')
+@stack('scripts')
 
 <script>
 function toggleSidebar() {
