@@ -66,6 +66,14 @@
         </a>
 
         <div class="sidebar-section-label mt-2">QUẢN LÝ</div>
+        <a href="{{ route('admin.chat.index') }}" class="sidebar-link {{ request()->routeIs('admin.chat.*') ? 'active' : '' }}">
+            <i class="bi bi-chat-dots-fill text-warning"></i>
+            <span>Live Chat</span>
+            @php $unreadChats = \App\Models\ChatMessage::where('sender_type', 'customer')->where('is_read', false)->count(); @endphp
+            @if($unreadChats > 0)
+            <span class="sidebar-badge badge-orange">{{ $unreadChats }}</span>
+            @endif
+        </a>
         <a href="{{ route('admin.orders.index') }}" class="sidebar-link {{ request()->routeIs('admin.orders.*') ? 'active' : '' }}">
             <i class="bi bi-bag-check-fill"></i>
             <span>Đơn Hàng</span>

@@ -584,6 +584,668 @@ document.getElementById('seo-info-modal')?.addEventListener('click', function(e)
 });
 </script>
 
+{{-- ===== FLOATING ACTION BUBBLES & LIVE CHAT ===== --}}
+<style>
+.floating-widgets-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9990;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-end;
+}
+.float-bubble {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    text-decoration: none;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    border: none;
+    cursor: pointer;
+    outline: none;
+}
+.float-bubble:hover {
+    transform: scale(1.12) translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+    color: #fff;
+}
+.bubble-tooltip {
+    position: absolute;
+    right: 62px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(15, 23, 42, 0.9);
+    color: #fff;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 6px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.float-bubble:hover .bubble-tooltip {
+    opacity: 1;
+    transform: translateY(-50%) translateX(-4px);
+}
+.bubble-zalo {
+    background: linear-gradient(135deg, #0068ff, #0043a8);
+}
+.bubble-telegram {
+    background: linear-gradient(135deg, #0088cc, #005580);
+}
+.bubble-livechat {
+    background: linear-gradient(135deg, #7c3aed, #4c1d95);
+    animation: livechat-pulse 2s infinite;
+}
+@keyframes livechat-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.6); }
+    70% { box-shadow: 0 0 0 14px rgba(124, 58, 237, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(124, 58, 237, 0); }
+}
+.livechat-unread-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: #ef4444;
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 800;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #fff;
+}
+
+#customer-livechat-modal {
+    display: none;
+    position: fixed;
+    bottom: 86px;
+    right: 24px;
+    width: 360px;
+    max-width: calc(100vw - 32px);
+    height: 480px;
+    max-height: calc(100vh - 120px);
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    box-shadow: 0 20px 48px -12px rgba(0, 0, 0, 0.25), 0 0 1px rgba(0, 0, 0, 0.15);
+    z-index: 9995;
+    flex-direction: column;
+    overflow: hidden;
+    animation: floatUp 0.3s ease-out;
+}
+@keyframes floatUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.chat-modal-header {
+    background: linear-gradient(135deg, #7c3aed, #6d28d9);
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #ffffff;
+}
+.chat-admin-status-dot {
+    width: 10px;
+    height: 10px;
+    background: #22c55e;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #22c55e;
+}
+.chat-close-btn {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 1.4rem;
+    cursor: pointer;
+    line-height: 1;
+    opacity: 0.85;
+    transition: opacity 0.2s;
+}
+.chat-close-btn:hover { opacity: 1; }
+
+#customer-chat-feed {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: #f8fafc;
+}
+.chat-system-welcome {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    color: #334155;
+    font-size: 0.82rem;
+    padding: 12px 14px;
+    border-radius: 12px;
+    line-height: 1.5;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+.chat-msg-row {
+    display: flex;
+    flex-direction: column;
+    max-width: 82%;
+}
+.chat-msg-row.customer { align-self: flex-end; }
+.chat-msg-row.admin { align-self: flex-start; }
+.chat-msg-sender {
+    font-size: 0.7rem;
+    color: #64748b;
+    margin-bottom: 3px;
+    font-weight: 500;
+}
+.chat-msg-row.customer .chat-msg-sender { text-align: right; }
+.chat-msg-bubble {
+    padding: 10px 14px;
+    border-radius: 16px;
+    font-size: 0.88rem;
+    line-height: 1.45;
+    word-break: break-word;
+}
+.chat-msg-row.customer .chat-msg-bubble {
+    background: linear-gradient(135deg, #7c3aed, #6d28d9);
+    color: #ffffff;
+    border-bottom-right-radius: 3px;
+    box-shadow: 0 3px 10px rgba(124, 58, 237, 0.25);
+}
+.chat-msg-row.admin .chat-msg-bubble {
+    background: #ffffff;
+    color: #0f172a;
+    border: 1px solid #e2e8f0;
+    border-bottom-left-radius: 3px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+.chat-msg-img {
+    max-width: 100%;
+    max-height: 180px;
+    border-radius: 10px;
+    margin-top: 6px;
+    cursor: pointer;
+    border: 1px solid #e2e8f0;
+}
+
+#customer-chat-form {
+    padding: 12px 14px;
+    background: #ffffff;
+    border-top: 1px solid #f1f5f9;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.chat-attach-btn {
+    background: none;
+    border: none;
+    color: #64748b;
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: 4px;
+    transition: color 0.2s;
+}
+.chat-attach-btn:hover { color: #7c3aed; }
+#customer-chat-input {
+    flex: 1;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 24px;
+    padding: 9px 16px;
+    color: #0f172a;
+    font-size: 0.88rem;
+    outline: none;
+    transition: all 0.2s ease;
+}
+#customer-chat-input::placeholder {
+    color: #94a3b8;
+    opacity: 1;
+}
+#customer-chat-input:focus {
+    background: #ffffff;
+    border-color: #7c3aed;
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
+}
+.chat-send-btn {
+    background: linear-gradient(135deg, #7c3aed, #6d28d9);
+    color: #ffffff;
+    border: none;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(124, 58, 237, 0.3);
+    transition: all 0.2s ease;
+}
+.chat-send-btn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 5px 14px rgba(124, 58, 237, 0.4);
+}
+
+#customer-image-preview-bar {
+    padding: 8px 14px;
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+#customer-preview-img {
+    max-height: 50px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+}
+.remove-img-btn {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: #ef4444;
+    color: #ffffff;
+    border: none;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 12px;
+    line-height: 1;
+    cursor: pointer;
+}
+</style>
+
+<div class="floating-widgets-container">
+    <!-- 1. Zalo Bubble -->
+    <a href="https://zalo.me/0569012134" target="_blank" class="float-bubble bubble-zalo" title="Zalo: 0569012134">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12.49 10.2722v-.4496h1.3467v6.3218h-.7704a.576.576 0 01-.5763-.5729l-.0006.0005a3.273 3.273 0 01-1.9372.6321c-1.8138 0-3.2844-1.4697-3.2844-3.2823 0-1.8125 1.4706-3.2822 3.2844-3.2822a3.273 3.273 0 011.9372.6321l.0006.0005zM6.9188 7.7896v.205c0 .3823-.051.6944-.2995 1.0605l-.03.0343c-.0542.0615-.1815.206-.2421.2843L2.024 14.8h4.8948v.7682a.5764.5764 0 01-.5767.5761H0v-.3622c0-.4436.1102-.6414.2495-.8476L4.8582 9.23H.1922V7.7896h6.7266zm8.5513 8.3548a.4805.4805 0 01-.4803-.4798v-7.875h1.4416v8.3548H15.47zM20.6934 9.6C22.52 9.6 24 11.0807 24 12.9044c0 1.8252-1.4801 3.306-3.3066 3.306-1.8264 0-3.3066-1.4808-3.3066-3.306 0-1.8237 1.4802-3.3044 3.3066-3.3044zm-10.1412 5.253c1.0675 0 1.9324-.8645 1.9324-1.9312 0-1.065-.865-1.9295-1.9324-1.9295s-1.9324.8644-1.9324 1.9295c0 1.0667.865 1.9312 1.9324 1.9312zm10.1412-.0033c1.0737 0 1.945-.8707 1.945-1.9453 0-1.073-.8713-1.9436-1.945-1.9436-1.0753 0-1.945.8706-1.945 1.9453 0 1.0746.8697 1.9453 1.945 1.9453z"/>
+        </svg>
+        <span class="bubble-tooltip">Zalo: 0569012134</span>
+    </a>
+
+    <!-- 2. Telegram Bubble -->
+    <a href="https://t.me/specademy" target="_blank" class="float-bubble bubble-telegram" title="Telegram: @specademy">
+        <i class="bi bi-telegram" style="font-size: 1.4rem;"></i>
+        <span class="bubble-tooltip">Telegram: @specademy</span>
+    </a>
+
+    <!-- 3. Live Chat with Admin -->
+    <button class="float-bubble bubble-livechat" id="livechat-trigger-btn" onclick="toggleCustomerLiveChat()" title="Chat trực tiếp với Admin">
+        <i class="bi bi-chat-dots-fill" style="font-size: 1.3rem;"></i>
+        <span class="livechat-unread-badge" id="livechat-badge" style="display:none;">0</span>
+        <span class="bubble-tooltip">Chat Trực Tiếp Admin</span>
+    </button>
+</div>
+
+<!-- LIVE CHAT MODAL POPUP -->
+<div id="customer-livechat-modal">
+    <div class="chat-modal-header">
+        <div style="display:flex; align-items:center; gap:10px;">
+            <div class="chat-admin-status-dot"></div>
+            <div>
+                <div style="font-weight:700; font-size:0.92rem; color:#fff;">Hỗ Trợ Trực Tuyến 24/7</div>
+                <div style="font-size:0.72rem; color:rgba(255,255,255,0.85);">Giải đáp & Hỗ trợ ngay lập tức</div>
+            </div>
+        </div>
+        <button onclick="toggleCustomerLiveChat()" class="chat-close-btn">&times;</button>
+    </div>
+
+    <div id="customer-chat-feed">
+        <div class="chat-system-welcome">
+            👋 Xin chào! Bạn cần hỗ trợ mua hàng hoặc gặp vấn đề gì hãy nhắn tin ở đây nhé, Admin hỗ trợ bạn ngay!
+        </div>
+    </div>
+
+    <div id="customer-image-preview-bar" style="display:none;">
+        <div style="position:relative; display:inline-block;">
+            <img id="customer-preview-img" src="" alt="Preview">
+            <button type="button" onclick="clearCustomerImage()" class="remove-img-btn">&times;</button>
+        </div>
+        <span id="customer-preview-filename" style="font-size:0.75rem; color:var(--text-muted,#94a3b8);"></span>
+    </div>
+
+    <!-- 5 Messages Limit Notice -->
+    <div id="customer-chat-limit-notice" style="display:none; padding:8px 14px; background:#fff1f2; border-top:1px solid #ffe4e6; color:#e11d48; font-size:0.78rem; text-align:center; font-weight:600;">
+        <i class="bi bi-exclamation-circle-fill me-1"></i> Bạn đã gửi 5 tin nhắn. Vui lòng chờ Admin phản hồi trước khi nhắn tiếp.
+    </div>
+
+    <form id="customer-chat-form" onsubmit="sendCustomerChatMessage(event)">
+        <input type="file" id="customer-image-input" accept="image/*" style="display:none;" onchange="handleCustomerImageSelect(this)">
+        <button type="button" class="chat-attach-btn" onclick="document.getElementById('customer-image-input').click()" title="Gửi hình ảnh">
+            <i class="bi bi-image"></i>
+        </button>
+        <input type="text" id="customer-chat-input" placeholder="Nhập tin nhắn..." autocomplete="off">
+        <button type="submit" class="chat-send-btn" id="customer-send-btn">
+            <i class="bi bi-send-fill"></i>
+        </button>
+    </form>
+</div>
+
+<div id="customer-lightbox" onclick="closeCustomerLightbox()" style="display:none; position:fixed; inset:0; z-index:99999; background:rgba(0,0,0,0.85); align-items:center; justify-content:center; padding:16px;">
+    <img id="customer-lightbox-img" src="" style="max-width:90vw; max-height:85vh; border-radius:8px; box-shadow:0 8px 32px rgba(0,0,0,0.5);">
+</div>
+
+<script>
+let customerChatSessionId = localStorage.getItem('vpnstore_chat_session_id');
+if (!customerChatSessionId) {
+    customerChatSessionId = 'sess_' + Math.random().toString(36).substring(2, 11) + Date.now().toString(36);
+    localStorage.setItem('vpnstore_chat_session_id', customerChatSessionId);
+}
+
+let lastKnownAdminMsgCount = 0;
+let isChatOpen = false;
+let selectedCustomerImageFile = null;
+let isCooldownActive = false;
+let lastRenderedHash = '';
+let currentPollTimeout = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+    pollCustomerMessages();
+});
+
+document.addEventListener('visibilitychange', function() {
+    if (!document.hidden) {
+        pollCustomerMessages();
+    }
+});
+
+function scheduleNextPoll() {
+    if (currentPollTimeout) clearTimeout(currentPollTimeout);
+    if (document.hidden) return; // Pause polling when tab is inactive
+
+    const delay = isChatOpen ? 3000 : 8000;
+    currentPollTimeout = setTimeout(pollCustomerMessages, delay);
+}
+
+function toggleCustomerLiveChat() {
+    const modal = document.getElementById('customer-livechat-modal');
+    if (!modal) return;
+
+    if (modal.style.display === 'flex') {
+        modal.style.display = 'none';
+        isChatOpen = false;
+        scheduleNextPoll();
+    } else {
+        modal.style.display = 'flex';
+        isChatOpen = true;
+        markCustomerMessagesRead();
+        scrollFeedToBottom();
+        scheduleNextPoll();
+    }
+}
+
+function pollCustomerMessages() {
+    if (!customerChatSessionId || document.hidden) return;
+
+    fetch(`{{ route('chat.messages') }}?session_id=${customerChatSessionId}`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                const adminMsgs = data.messages.filter(m => m.sender_type === 'admin');
+                const unreadAdminCount = data.unread_admin_count || 0;
+
+                if (adminMsgs.length > lastKnownAdminMsgCount) {
+                    if (lastKnownAdminMsgCount > 0) {
+                        playCustomerAudioChime();
+                    }
+                    lastKnownAdminMsgCount = adminMsgs.length;
+                }
+
+                const badge = document.getElementById('livechat-badge');
+                if (badge) {
+                    if (unreadAdminCount > 0 && !isChatOpen) {
+                        badge.textContent = unreadAdminCount;
+                        badge.style.display = 'flex';
+                    } else {
+                        badge.style.display = 'none';
+                    }
+                }
+
+                // Check 5 consecutive messages limit
+                const limitNotice = document.getElementById('customer-chat-limit-notice');
+                const chatInput = document.getElementById('customer-chat-input');
+                const sendBtn = document.getElementById('customer-send-btn');
+                const attachBtn = document.querySelector('.chat-attach-btn');
+
+                if (data.can_send === false) {
+                    if (limitNotice) limitNotice.style.display = 'block';
+                    if (chatInput) {
+                        chatInput.disabled = true;
+                        chatInput.placeholder = "Đang chờ Admin phản hồi...";
+                    }
+                    if (sendBtn) sendBtn.disabled = true;
+                    if (attachBtn) attachBtn.style.pointerEvents = 'none';
+                } else {
+                    if (limitNotice) limitNotice.style.display = 'none';
+                    if (chatInput && !isCooldownActive) {
+                        chatInput.disabled = false;
+                        chatInput.placeholder = "Nhập tin nhắn...";
+                    }
+                    if (sendBtn && !isCooldownActive) sendBtn.disabled = false;
+                    if (attachBtn) attachBtn.style.pointerEvents = 'auto';
+                }
+
+                renderCustomerChatFeed(data.messages);
+            }
+            scheduleNextPoll();
+        })
+        .catch(err => {
+            console.error(err);
+            scheduleNextPoll();
+        });
+}
+
+function renderCustomerChatFeed(messages) {
+    const feed = document.getElementById('customer-chat-feed');
+    if (!feed) return;
+
+    // DOM Render Guard: skip innerHTML rewrite if data hasn't changed
+    const newHash = messages.map(m => m.id + '_' + m.is_read + '_' + (m.message || '')).join('|');
+    if (newHash === lastRenderedHash) {
+        return;
+    }
+    lastRenderedHash = newHash;
+
+    const isAtBottom = feed.scrollHeight - feed.clientHeight <= feed.scrollTop + 50;
+
+    let html = `<div class="chat-system-welcome">
+        👋 Xin chào! Bạn cần hỗ trợ mua hàng hoặc gặp vấn đề gì hãy nhắn tin ở đây nhé, Admin hỗ trợ bạn ngay!
+    </div>`;
+
+    messages.forEach(m => {
+        const isCustomer = m.sender_type === 'customer';
+        const roleClass = isCustomer ? 'customer' : 'admin';
+        const senderLabel = isCustomer ? 'Bạn' : (m.sender_name || 'Admin Support');
+
+        let imgHtml = '';
+        if (m.image_url) {
+            imgHtml = `<div><img src="${m.image_url}" onclick="openCustomerLightbox('${m.image_url}')" class="chat-msg-img"></div>`;
+        }
+
+        let textHtml = m.message ? `<div>${escapeHtml(m.message)}</div>` : '';
+
+        html += `
+            <div class="chat-msg-row ${roleClass}">
+                <div class="chat-msg-sender">${escapeHtml(senderLabel)} • ${m.created_at}</div>
+                <div class="chat-msg-bubble">
+                    ${textHtml}
+                    ${imgHtml}
+                </div>
+            </div>
+        `;
+    });
+
+    feed.innerHTML = html;
+
+    if (isAtBottom || isChatOpen) {
+        scrollFeedToBottom();
+    }
+}
+
+function scrollFeedToBottom() {
+    const feed = document.getElementById('customer-chat-feed');
+    if (feed) feed.scrollTop = feed.scrollHeight;
+}
+
+function markCustomerMessagesRead() {
+    fetch("{{ route('chat.mark-read') }}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({ session_id: customerChatSessionId })
+    }).then(() => {
+        const badge = document.getElementById('livechat-badge');
+        if (badge) badge.style.display = 'none';
+    });
+}
+
+function handleCustomerImageSelect(input) {
+    if (input.files && input.files[0]) {
+        selectedCustomerImageFile = input.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('customer-preview-img').src = e.target.result;
+            document.getElementById('customer-preview-filename').textContent = selectedCustomerImageFile.name;
+            document.getElementById('customer-image-preview-bar').style.display = 'flex';
+        };
+        reader.readAsDataURL(selectedCustomerImageFile);
+    }
+}
+
+function clearCustomerImage() {
+    selectedCustomerImageFile = null;
+    document.getElementById('customer-image-input').value = '';
+    document.getElementById('customer-image-preview-bar').style.display = 'none';
+}
+
+function start5sCooldown() {
+    isCooldownActive = true;
+    const btn = document.getElementById('customer-send-btn');
+    const input = document.getElementById('customer-chat-input');
+    if (!btn) return;
+
+    let seconds = 5;
+    btn.disabled = true;
+    btn.innerHTML = `<span style="font-size:0.75rem; font-weight:700;">${seconds}s</span>`;
+    if (input) input.disabled = true;
+
+    const timer = setInterval(() => {
+        seconds--;
+        if (seconds > 0) {
+            btn.innerHTML = `<span style="font-size:0.75rem; font-weight:700;">${seconds}s</span>`;
+        } else {
+            clearInterval(timer);
+            isCooldownActive = false;
+            btn.innerHTML = `<i class="bi bi-send-fill"></i>`;
+            pollCustomerMessages();
+        }
+    }, 1000);
+}
+
+function sendCustomerChatMessage(e) {
+    e.preventDefault();
+    if (isCooldownActive) return;
+
+    const input = document.getElementById('customer-chat-input');
+    const text = input.value.trim();
+
+    if (!text && !selectedCustomerImageFile) return;
+
+    const btn = document.getElementById('customer-send-btn');
+    btn.disabled = true;
+
+    const formData = new FormData();
+    formData.append('_token', '{{ csrf_token() }}');
+    formData.append('session_id', customerChatSessionId);
+    if (text) formData.append('message', text);
+    if (selectedCustomerImageFile) formData.append('image', selectedCustomerImageFile);
+
+    fetch("{{ route('chat.send') }}", {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            input.value = '';
+            clearCustomerImage();
+            scrollFeedToBottom();
+            start5sCooldown();
+        } else {
+            btn.disabled = false;
+            alert(data.message || 'Không thể gửi tin nhắn.');
+        }
+    })
+    .catch(err => {
+        btn.disabled = false;
+        console.error(err);
+    });
+}
+
+function openCustomerLightbox(url) {
+    document.getElementById('customer-lightbox-img').src = url;
+    document.getElementById('customer-lightbox').style.display = 'flex';
+}
+
+function closeCustomerLightbox() {
+    document.getElementById('customer-lightbox').style.display = 'none';
+}
+
+function playCustomerAudioChime() {
+    try {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) return;
+        const ctx = new AudioContextClass();
+
+        const now = ctx.currentTime;
+
+        const osc1 = ctx.createOscillator();
+        const gain1 = ctx.createGain();
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(880, now);
+        gain1.gain.setValueAtTime(0.25, now);
+        gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+        osc1.connect(gain1);
+        gain1.connect(ctx.destination);
+        osc1.start(now);
+        osc1.stop(now + 0.25);
+
+        const osc2 = ctx.createOscillator();
+        const gain2 = ctx.createGain();
+        osc2.type = 'sine';
+        osc2.frequency.setValueAtTime(1174.66, now + 0.12);
+        gain2.gain.setValueAtTime(0.3, now + 0.12);
+        gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+        osc2.connect(gain2);
+        gain2.connect(ctx.destination);
+        osc2.start(now + 0.12);
+        osc2.stop(now + 0.45);
+    } catch (e) {
+        console.log("Audio chime error:", e);
+    }
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
+</script>
+
 <!-- Custom JS -->
 <script>
     window.dbWishlist = @json(auth()->check() ? \App\Models\Wishlist::where('user_id', auth()->id())->pluck('product_id')->toArray() : null);

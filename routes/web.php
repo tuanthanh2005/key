@@ -13,7 +13,9 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\SubscriptionController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\ChatController as AdminChatController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\SocialAuthController;
 use App\Models\Category;
@@ -109,6 +111,11 @@ Route::prefix('auth')->name('auth.')->group(function () {
     Route::get('/google', [SocialAuthController::class, 'redirectToGoogle'])->name('google');
     Route::get('/google/callback', [SocialAuthController::class, 'handleGoogleCallback'])->name('google.callback');
 });
+
+// Live Chat Public API
+Route::get('/chat/messages', [ChatController::class, 'getMessages'])->name('chat.messages');
+Route::post('/chat/send', [ChatController::class, 'sendMessage'])->name('chat.send');
+Route::post('/chat/mark-read', [ChatController::class, 'markAsRead'])->name('chat.mark-read');
 
 // =============================================
 // ADMIN DASHBOARD
@@ -211,5 +218,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
         Route::get('/{contact}', [ContactController::class, 'show'])->name('show');
         Route::post('/{contact}/reply', [ContactController::class, 'reply'])->name('reply');
         Route::delete('/{contact}', [ContactController::class, 'destroy'])->name('destroy');
+    });
+
+    // Live Chat Admin
+    Route::prefix('chat')->name('chat.')->group(function () {
+        Route::get('/', [AdminChatController::class, 'index'])->name('index');
+        Route::get('/sessions', [AdminChatController::class, 'getSessions'])->name('sessions');
+        Route::get('/messages/{sessionId}', [AdminChatController::class, 'getMessages'])->name('messages');
+        Route::post('/send', [AdminChatController::class, 'sendMessage'])->name('send');
     });
 });

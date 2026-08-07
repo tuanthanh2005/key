@@ -15,36 +15,7 @@
         ->orderBy('sold', 'desc')->limit(6)->get();
 
     $categories = \App\Models\Category::withCount('products')->get();
-
-    // Query actual completed orders
-    $realOrders = \App\Models\Order::where('order_status', 'completed')
-        ->orderBy('id', 'desc')
-        ->limit(8)
-        ->get();
 @endphp
-
-{{-- ===== SOCIAL PROOF TICKER ===== --}}
-@if($realOrders->isNotEmpty())
-<div class="social-proof-bar">
-    <div class="ticker-track">
-        @php $doubled = $realOrders->concat($realOrders); @endphp
-        @foreach($doubled as $order)
-        @php
-            $nameParts = explode(' ', trim($order->customer_name));
-            $displayName = count($nameParts) > 1 ? implode(' ', array_slice($nameParts, 0, -1)) . ' *' : $order->customer_name;
-        @endphp
-        <div class="ticker-item">
-            <div class="ticker-avatar">{{ mb_substr($order->customer_name, 0, 1) }}</div>
-            <span><span class="ticker-name">{{ $displayName }}</span> vừa mua</span>
-            <span style="color:var(--text-primary); font-weight:600;">{{ $order->product_name }}</span>
-            <span class="ticker-amount">{{ number_format($order->total, 0, ',', '.') }}đ</span>
-            <span style="color:var(--text-muted); display: inline-flex; align-items: center; gap: 4px;"><i class="bi bi-clock"></i> {{ $order->created_at->diffForHumans() }}</span>
-            <span style="color:var(--border); margin:0 4px;">•</span>
-        </div>
-        @endforeach
-    </div>
-</div>
-@endif
 
 {{-- ===== HERO SECTION ===== --}}
 <section class="hero">
