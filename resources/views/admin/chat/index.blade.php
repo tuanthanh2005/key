@@ -133,49 +133,81 @@ document.addEventListener('visibilitychange', function() {
 function loadSessions() {
     if (document.hidden) return;
     fetch("{{ route('admin.chat.sessions', [], false) }}")
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) {
+                throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+            }
+            return res.json();
+        })
         .then(data => {
-            if (data.success) {
-                renderSessions(data.sessions);
-                document.getElementById('admin-unread-total').textContent = `${data.total_unread} tin nhắn mới`;
+            if (data && data.success) {
+                renderSessions(data.sessions || []);
+                const badge = document.getElementById('admin-unread-total');
+                if (badge) badge.textContent = `${data.total_unread || 0} tin nhắn mới`;
+            } else {
+                const container = document.getElementById('sessions-list');
+                if (container) {
+                    container.innerHTML = `<div class="text-center p-3 text-danger small">Lỗi tải dữ liệu: ${escapeHtml(data ? data.message : 'Không xác định')}</div>`;
+                }
             }
         })
-        .catch(err => console.error(err));
+        .catch(err => {
+            console.error('loadSessions error:', err);
+            const container = document.getElementById('sessions-list');
+            if (container) {
+                container.innerHTML = `<div class="text-center p-3 text-danger small"><i class="bi bi-exclamation-triangle-fill me-1"></i> Lỗi: ${escapeHtml(err.message)}</div>`;
+            }
+        });
 }
 
 function renderSessions(sessions) {
     const container = document.getElementById('sessions-list');
-    const search = document.getElementById('search-session').value.toLowerCase();
+    if (!container) return;
 
-    const filtered = sessions.filter(s => 
-        s.customer_name.toLowerCase().includes(search) || 
-        s.session_id.toLowerCase().includes(search)
-    );
+    const searchInput = document.getElementById('search-session');
+    const search = (searchInput && searchInput.value) ? searchInput.value.toLowerCase().trim() : '';
+
+    if (!Array.isArray(sessions) || sessions.length === 0) {
+        container.innerHTML = `<div class="text-center p-4 text-muted">Chưa có cuộc hội thoại nào.</div>`;
+        return;
+    }
+
+    const filtered = sessions.filter(s => {
+        const name = (s.customer_name || '').toString().toLowerCase();
+        const id = (s.session_id || '').toString().toLowerCase();
+        return name.includes(search) || id.includes(search);
+    });
 
     if (filtered.length === 0) {
-        container.innerHTML = `<div class="text-center p-4 text-muted">Chưa có cuộc hội thoại nào.</div>`;
+        container.innerHTML = `<div class="text-center p-4 text-muted">Không tìm thấy hội thoại phù hợp.</div>`;
         return;
     }
 
     let html = '';
     filtered.forEach(s => {
-        const isActive = s.session_id === currentSessionId ? 'active bg-primary bg-opacity-10 border-start border-primary border-4' : '';
-        const unreadBadge = s.unread_count > 0 ? `<span class="badge bg-danger rounded-pill">${s.unread_count}</span>` : '';
-        const initial = (s.customer_name || 'K').charAt(0).toUpperCase();
+        const sessionId = (s.session_id || '').toString();
+        const customerName = (s.customer_name || 'Khách hàng').toString();
+        const lastMsg = (s.last_message || '').toString();
+        const lastActivity = (s.last_activity || '').toString();
+        const unreadCount = parseInt(s.unread_count) || 0;
+
+        const isActive = sessionId === currentSessionId ? 'active bg-primary bg-opacity-10 border-start border-primary border-4' : '';
+        const unreadBadge = unreadCount > 0 ? `<span class="badge bg-danger rounded-pill">${unreadCount}</span>` : '';
+        const initial = customerName.charAt(0).toUpperCase();
 
         html += `
-            <div class="p-3 border-bottom session-item cursor-pointer ${isActive}" style="cursor: pointer;" onclick="selectSession('${s.session_id}')">
+            <div class="p-3 border-bottom session-item cursor-pointer ${isActive}" style="cursor: pointer;" onclick="selectSession('${escapeHtml(sessionId)}')">
                 <div class="d-flex justify-content-between align-items-center mb-1">
                     <div class="d-flex align-items-center gap-2">
                         <div class="avatar bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 32px; height: 32px; font-size: 0.85rem;">
-                            ${initial}
+                            ${escapeHtml(initial)}
                         </div>
-                        <strong class="text-dark text-truncate" style="max-width: 130px;">${escapeHtml(s.customer_name)}</strong>
+                        <strong class="text-dark text-truncate" style="max-width: 130px;">${escapeHtml(customerName)}</strong>
                     </div>
-                    <small class="text-muted" style="font-size: 0.75rem;">${s.last_activity}</small>
+                    <small class="text-muted" style="font-size: 0.75rem;">${escapeHtml(lastActivity)}</small>
                 </div>
                 <div class="d-flex justify-content-between align-items-center">
-                    <p class="text-muted small text-truncate mb-0" style="max-width: 170px;">${escapeHtml(s.last_message)}</p>
+                    <p class="text-muted small text-truncate mb-0" style="max-width: 170px;">${escapeHtml(lastMsg)}</p>
                     ${unreadBadge}
                 </div>
             </div>
@@ -203,14 +235,18 @@ function selectSession(sessionId) {
 }
 
 function loadMessages(sessionId) {
-    if (document.hidden) return;
-    fetch("{{ url('admin/chat/messages', [], false) }}/${sessionId}")
-        .then(res => res.json())
+    if (document.hidden || !sessionId) return;
+    fetch("{{ url('admin/chat/messages', [], false) }}/" + encodeURIComponent(sessionId))
+        .then(res => {
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            return res.json();
+        })
         .then(data => {
-            if (data.success) {
-                renderMessages(data.messages);
+            if (data && data.success) {
+                renderMessages(data.messages || []);
             }
-        });
+        })
+        .catch(err => console.error('loadMessages error:', err));
 }
 
 function refreshMessages() {
