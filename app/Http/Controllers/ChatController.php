@@ -146,7 +146,7 @@ class ChatController extends Controller
 
         $imagePath = null;
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('chat_images', 'public');
+            $imagePath = $request->file('image')->store('uploads/chat_images', 'public_uploads');
         }
 
         $chatMsg = ChatMessage::create([
@@ -186,7 +186,6 @@ class ChatController extends Controller
             $chatId = Setting::get('telegram_chat_id', env('TELEGRAM_CHAT_ID'));
 
             if ($botToken && $chatId) {
-                $siteUrl = config('app.url', url('/'));
                 $adminChatUrl = route('admin.chat.index', ['session' => $sessionId]);
 
                 $text = "💬 *TIN NHẮN HỖ TRỢ MỚI*\n\n"
@@ -203,9 +202,16 @@ class ChatController extends Controller
 
                 $text .= "\n👉 [Click vào đây để trả lời khách]({$adminChatUrl})";
 
-                if ($chatMsg->image_path && Storage::disk('public')->exists($chatMsg->image_path)) {
-                    $fullImagePath = Storage::disk('public')->path($chatMsg->image_path);
-                    
+                $fullImagePath = null;
+                if ($chatMsg->image_path) {
+                    if (file_exists(public_path($chatMsg->image_path))) {
+                        $fullImagePath = public_path($chatMsg->image_path);
+                    } elseif (Storage::disk('public')->exists($chatMsg->image_path)) {
+                        $fullImagePath = Storage::disk('public')->path($chatMsg->image_path);
+                    }
+                }
+
+                if ($fullImagePath && file_exists($fullImagePath)) {
                     // Send photo if available
                     Http::attach(
                         'photo', file_get_contents($fullImagePath), basename($fullImagePath)

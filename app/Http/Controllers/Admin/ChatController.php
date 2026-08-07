@@ -112,7 +112,7 @@ class ChatController extends Controller
 
         $imagePath = null;
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('chat_images', 'public');
+            $imagePath = $request->file('image')->store('uploads/chat_images', 'public_uploads');
         }
 
         $adminName = auth()->user()->name ?? 'Admin Support';

@@ -30,9 +30,28 @@ class ChatMessage extends Model
 
     public function getImageUrlAttribute()
     {
-        if ($this->image_path) {
-            return asset('storage/' . $this->image_path);
+        if (empty($this->image_path)) {
+            return null;
         }
-        return null;
+
+        if (str_starts_with($this->image_path, 'http://') || str_starts_with($this->image_path, 'https://')) {
+            return $this->image_path;
+        }
+
+        if (str_starts_with($this->image_path, 'storage/')) {
+            return asset($this->image_path);
+        }
+
+        if (str_starts_with($this->image_path, 'uploads/') || str_starts_with($this->image_path, 'chat_images/')) {
+            if (file_exists(public_path($this->image_path))) {
+                return asset($this->image_path);
+            }
+            if (file_exists(storage_path('app/public/' . $this->image_path))) {
+                return asset('storage/' . $this->image_path);
+            }
+            return asset($this->image_path);
+        }
+
+        return asset('storage/' . $this->image_path);
     }
 }
