@@ -76,6 +76,30 @@
     </div>
 </section>
 
+<style>
+.categories-grid {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    max-height: 72px;
+    overflow: hidden;
+    transition: max-height 0.4s ease-in-out;
+}
+.categories-grid.expanded {
+    max-height: 4000px !important;
+}
+@media (max-width: 768px) {
+    .categories-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+        max-height: 64px !important;
+    }
+}
+</style>
+
 {{-- ===== CATEGORIES SECTION ===== --}}
 <section class="home-brands-section" style="background:var(--bg-elevated); padding: 16px 0;">
     <div class="container-fluid" style="width:100%; padding: 0 32px;">
@@ -127,7 +151,7 @@
                 else $iconClass = 'bi bi-grid-fill';
             @endphp
             <a href="{{ route('products', ['brand' => $cSlug]) }}"
-               class="card animate-on-scroll category-card @if($index >= 2) category-card-hidden-mobile @endif"
+               class="card animate-on-scroll category-card"
                style="cursor:pointer; text-decoration:none;">
                 @if(!empty($cImgUrl) && strlen($cImgUrl) > 5)
                     <img src="{{ $cImgUrl }}" alt="{{ $cName }}" width="32" height="32" loading="lazy" decoding="async" style="width:32px; height:32px; object-fit:contain; flex-shrink:0;" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';">
@@ -143,10 +167,11 @@
             @endforeach
         </div>
 
-        @if(count(collect($categories)) > 2)
-        <div class="toggle-categories-mobile" style="text-align:center; margin-top:10px;">
-            <button type="button" class="btn btn-outline btn-sm" id="toggle-cats-btn" onclick="toggleMobileCategories()" aria-label="Xem thêm danh mục" style="border-radius:50%; width:36px; height:36px; padding:0; display:inline-flex; align-items:center; justify-content:center; font-size:0.9rem; background:var(--bg-card);">
-                <i class="bi bi-chevron-down"></i>
+        @if(count(collect($categories)) > 6)
+        <div style="text-align:center; margin-top:14px;">
+            <button type="button" class="btn btn-outline btn-sm" id="toggle-cats-btn" onclick="toggleCategories()" style="border-radius:20px; padding:6px 22px; font-weight:600; font-size:0.85rem; background:var(--bg-card); border:1px solid var(--border); color:var(--text-primary); cursor:pointer; display:inline-flex; align-items:center; gap:6px;">
+                <span id="toggle-cats-text">Xem thêm {{ count(collect($categories)) - 6 }}+ danh mục</span>
+                <i class="bi bi-chevron-down" id="toggle-cats-icon"></i>
             </button>
         </div>
         @endif
@@ -154,17 +179,24 @@
 </section>
 
 <script>
-function toggleMobileCategories() {
+function toggleCategories() {
     const grid = document.getElementById('categories-grid');
-    const btn = document.getElementById('toggle-cats-btn');
-    if (!grid || !btn) return;
+    const btnText = document.getElementById('toggle-cats-text');
+    const btnIcon = document.getElementById('toggle-cats-icon');
+    if (!grid) return;
 
     grid.classList.toggle('expanded');
     const isExpanded = grid.classList.contains('expanded');
 
-    btn.innerHTML = isExpanded
-        ? '<i class="bi bi-chevron-up"></i>'
-        : '<i class="bi bi-chevron-down"></i>';
+    if (btnText && btnIcon) {
+        if (isExpanded) {
+            btnText.textContent = 'Thu gọn danh mục';
+            btnIcon.className = 'bi bi-chevron-up';
+        } else {
+            btnText.textContent = 'Xem thêm {{ count(collect($categories)) - 6 }}+ danh mục';
+            btnIcon.className = 'bi bi-chevron-down';
+        }
+    }
 }
 </script>
 
