@@ -317,8 +317,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const productWrappers = Array.from(document.querySelectorAll('.product-card-wrap'));
     const totalCount = productWrappers.length;
 
-    // Update "Tất Cả" count
-    document.getElementById('count-all').textContent = totalCount;
+    // Safely update "Tất Cả" count if element exists
+    const countAllEl = document.getElementById('count-all');
+    if (countAllEl) countAllEl.textContent = totalCount;
 
     let activeCategory = 'all';
     let searchQuery    = '';
@@ -333,13 +334,19 @@ document.addEventListener("DOMContentLoaded", function () {
         activeCategory = catSlug;
         currentPage = 1;
 
-        sidebarItems.forEach(item => item.classList.toggle('active', item.dataset.category === catSlug));
-        tabItems.forEach(item     => item.classList.toggle('active', item.dataset.category === catSlug));
+        if (sidebarItems && sidebarItems.length > 0) {
+            sidebarItems.forEach(item => item.classList.toggle('active', item.dataset.category === catSlug));
+        }
+        if (tabItems && tabItems.length > 0) {
+            tabItems.forEach(item => item.classList.toggle('active', item.dataset.category === catSlug));
+        }
 
         const meta = catMetaFromDB[catSlug] || catMetaFromDB['all'];
-        headerTitle.textContent = meta.title;
-        headerIcon.className    = meta.icon;
-        categoryNameSpan.textContent = (catSlug !== 'all') ? ` trong danh mục ${meta.title}` : '';
+        if (meta) {
+            if (headerTitle) headerTitle.textContent = meta.title;
+            if (headerIcon) headerIcon.className = meta.icon;
+            if (categoryNameSpan) categoryNameSpan.textContent = (catSlug !== 'all') ? ` trong danh mục ${meta.title}` : '';
+        }
 
         // Dynamically update page URL without reload
         if (!skipPushState) {
@@ -369,7 +376,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function filterProducts() {
-        searchQuery = searchInput.value.toLowerCase().trim();
+        searchQuery = searchInput ? searchInput.value.toLowerCase().trim() : '';
+        const normActiveCategory = activeCategory.replace(/-/g, ' ').toLowerCase();
 
         const matchingWrappers = productWrappers.filter(wrap => {
             const name     = wrap.dataset.name     || '';
@@ -380,7 +388,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const stock    = parseInt(wrap.dataset.stock) || 0;
 
             const matchesSearch   = !searchQuery || name.includes(searchQuery) || brand.includes(searchQuery);
-            const matchesCategory = activeCategory === 'all' || cat === activeCategory;
+            const matchesCategory = activeCategory === 'all' || cat === activeCategory || name.includes(normActiveCategory) || brand.includes(normActiveCategory);
             const matchesPrice    = price >= minPrice && price <= maxPrice;
             const matchesPlan     = activePlan === 'all' || plan.includes(activePlan);
             const matchesStock    = !inStockOnly || (stock > 0 || stock === -1);
@@ -406,20 +414,20 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
 
-        productCountText.textContent = visibleCount;
+        if (productCountText) productCountText.textContent = visibleCount;
 
         if (visibleCount > 0) {
-            productsGrid.style.display = 'grid';
-            emptyState.style.display   = 'none';
+            if (productsGrid) productsGrid.style.display = 'grid';
+            if (emptyState) emptyState.style.display   = 'none';
             renderPagination(totalPages);
         } else {
-            productsGrid.style.display = 'none';
-            emptyState.style.display   = 'block';
-            paginationContainer.innerHTML = '';
+            if (productsGrid) productsGrid.style.display = 'none';
+            if (emptyState) emptyState.style.display   = 'block';
+            if (paginationContainer) paginationContainer.innerHTML = '';
         }
 
         const isFiltered = searchQuery || activeCategory !== 'all' || minPrice > 0 || maxPrice < 999999999 || activePlan !== 'all' || inStockOnly;
-        clearFiltersBtn.style.display = isFiltered ? 'block' : 'none';
+        if (clearFiltersBtn) clearFiltersBtn.style.display = isFiltered ? 'block' : 'none';
     }
 
     function renderPagination(totalPages) {
