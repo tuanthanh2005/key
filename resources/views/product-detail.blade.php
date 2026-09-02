@@ -106,16 +106,22 @@ $curReviews = intval($defaultPlan['reviews'] ?? 0);
 
 @push('head')
 @if($defaultPlan)
+@php
+    $prodNameJson = addslashes($firstProduct ? $firstProduct->name : ($brand['name'] . ' ' . $defaultPlan['label']));
+    $prodDescJson = addslashes(strip_tags($defaultPlan['description'] ?? $brand['desc']));
+    $prodBrandJson = addslashes($cleanBrandName);
+    $prodImgJson = !empty($defaultPlan['image_path']) ? (str_starts_with($defaultPlan['image_path'], 'http') ? $defaultPlan['image_path'] : asset($defaultPlan['image_path'])) : '';
+@endphp
 <script type="application/ld+json">
 {
   "@@context": "https://schema.org/",
   "@@type": "Product",
-  "name": "{{ $firstProduct ? $firstProduct->name : ($brand['name'] . ' ' . $defaultPlan['label']) }}",
-  "image": "{{ !empty($defaultPlan['image_path']) ? (str_starts_with($defaultPlan['image_path'], 'http') ? $defaultPlan['image_path'] : asset($defaultPlan['image_path'])) : '' }}",
-  "description": "{{ strip_tags($defaultPlan['description'] ?? $brand['desc']) }}",
+  "name": "{{ $prodNameJson }}",
+  "image": "{{ $prodImgJson }}",
+  "description": "{{ $prodDescJson }}",
   "brand": {
     "@@type": "Brand",
-    "name": "{{ $cleanBrandName }}"
+    "name": "{{ $prodBrandJson }}"
   },
   "offers": {
     "@@type": "Offer",
@@ -125,10 +131,10 @@ $curReviews = intval($defaultPlan['reviews'] ?? 0);
     "priceValidUntil": "{{ date('Y-12-31') }}",
     "itemCondition": "https://schema.org/NewCondition",
     "availability": "{{ $defaultPlan['stock'] > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock' }}"
-  }@if($curRating > 0 && $curReviews > 0),
+  }@if($curRating >= 1 && $curReviews >= 1),
   "aggregateRating": {
     "@@type": "AggregateRating",
-    "ratingValue": "{{ $curRating }}",
+    "ratingValue": "{{ number_format($curRating, 1) }}",
     "reviewCount": "{{ $curReviews }}"
   }
   @endif
