@@ -98,30 +98,6 @@
                     <input type="text" id="productSearch" placeholder="Tìm sản phẩm..." style="width:100%; border:none; background:none; outline:none; color:var(--text-primary); font-size:0.85rem;">
                 </div>
 
-                {{-- Category Filter Card --}}
-                <div class="card" style="padding:16px;">
-                    <h3 style="font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-muted); margin-bottom:12px; display:flex; align-items:center; gap:6px;">
-                        <i class="bi bi-folder-fill text-primary"></i> Danh Mục
-                    </h3>
-                    <div style="display:flex; flex-direction:column; gap:4px;" id="sidebarCategories">
-                        <a href="#" class="filter-category-item active" data-category="all">
-                            <i class="bi bi-grid-fill" style="margin-right:8px;"></i> Tất Cả (<span id="count-all">{{ $totalActiveProducts }}</span>)
-                        </a>
-                        @foreach($categories as $cat)
-                        <a href="#" class="filter-category-item" data-category="{{ $cat->slug }}" style="display: flex; align-items: center; gap: 8px;">
-                            @if($cat->image_path && strlen($cat->image_url) > 5)
-                                <img src="{{ $cat->image_url }}" alt="{{ $cat->name }}" width="14" height="14" loading="lazy" decoding="async" style="width: 14px; height: 14px; object-fit: contain; border-radius: 2px; flex-shrink: 0;" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='inline-block';">
-                                <i class="bi {{ catIcon($cat->slug, $cat->type) }}" style="flex-shrink: 0; display:none;"></i>
-                            @else
-                                <i class="bi {{ catIcon($cat->slug, $cat->type) }}" style="flex-shrink: 0;"></i>
-                            @endif
-                            <span style="flex: 1; text-align: left; white-space:nowrap; text-overflow:ellipsis; overflow:hidden;">{{ $cat->name }}</span>
-                            <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">(<span id="count-{{ $cat->slug }}">{{ $cat->products_count ?? 0 }}</span>)</span>
-                        </a>
-                        @endforeach
-                    </div>
-                </div>
-
                 {{-- Price Filter Card --}}
                 <div class="card" style="padding:16px;">
                     <h3 style="font-size:0.8rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-muted); margin-bottom:12px; display:flex; align-items:center; gap:6px;">
