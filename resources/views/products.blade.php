@@ -178,42 +178,18 @@
 
                 <style>
                 .category-tabs-container {
-                    position: relative;
                     margin-bottom: 24px;
                 }
                 .category-tabs {
                     display: flex;
                     flex-wrap: wrap;
                     gap: 8px;
-                    max-height: 44px;
+                    max-height: 46px;
                     overflow: hidden;
                     transition: max-height 0.4s ease-in-out;
-                    padding-right: 48px;
                 }
                 .category-tabs.expanded {
                     max-height: 2500px !important;
-                }
-                .category-tabs-toggle-btn {
-                    position: absolute;
-                    top: 0;
-                    right: 0;
-                    width: 38px;
-                    height: 38px;
-                    border-radius: 10px;
-                    background: var(--bg-card);
-                    border: 1px solid var(--border);
-                    color: var(--text-primary);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    cursor: pointer;
-                    transition: all 0.2s ease;
-                    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-                    z-index: 5;
-                }
-                .category-tabs-toggle-btn:hover {
-                    border-color: var(--primary-light);
-                    color: var(--primary-light);
                 }
                 </style>
 
@@ -235,9 +211,15 @@
                         </a>
                         @endforeach
                     </div>
-                    <button type="button" class="category-tabs-toggle-btn" id="toggleProductsCatTabsBtn" onclick="toggleProductsCategoryTabs()" title="Xem tất cả danh mục">
-                        <i class="bi bi-chevron-down" id="toggleProductsCatTabsIcon"></i>
-                    </button>
+
+                    @if(count(collect($categories)) > 8)
+                    <div style="text-align:center; margin-top:14px;">
+                        <button type="button" class="btn btn-outline btn-sm" id="toggle-prod-cats-btn" onclick="toggleProductsCategoryTabs()" style="border-radius:20px; padding:6px 24px; font-weight:600; font-size:0.85rem; background:var(--bg-card); border:1px solid var(--border); color:var(--text-primary); cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:all 0.2s ease;">
+                            <span id="toggle-prod-cats-text">Xem thêm {{ count(collect($categories)) - 8 }}+ danh mục</span>
+                            <i class="bi bi-chevron-down" id="toggle-prod-cats-icon"></i>
+                        </button>
+                    </div>
+                    @endif
                 </div>
 
                 {{-- Grid --}}
@@ -590,11 +572,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function toggleProductsCategoryTabs() {
     const tabs = document.getElementById('productsCategoryTabs');
-    const icon = document.getElementById('toggleProductsCatTabsIcon');
-    if (!tabs || !icon) return;
+    const text = document.getElementById('toggle-prod-cats-text');
+    const icon = document.getElementById('toggle-prod-cats-icon');
+    if (!tabs) return;
+
     tabs.classList.toggle('expanded');
     const isExpanded = tabs.classList.contains('expanded');
-    icon.className = isExpanded ? 'bi bi-chevron-up' : 'bi bi-chevron-down';
+
+    if (text && icon) {
+        if (isExpanded) {
+            text.textContent = 'Thu gọn danh mục';
+            icon.className = 'bi bi-chevron-up';
+        } else {
+            text.textContent = 'Xem thêm {{ count(collect($categories)) - 8 }}+ danh mục';
+            icon.className = 'bi bi-chevron-down';
+        }
+    }
 }
 </script>
 @endsection
