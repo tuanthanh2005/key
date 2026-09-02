@@ -216,46 +216,19 @@ class Product extends Model
     public function getSeoTitleAttribute(): string
     {
         if (!empty($this->meta_title)) {
-            return $this->meta_title;
+            $t = $this->meta_title;
+            if (!str_contains(mb_strtolower($t), 'giá rẻ')) {
+                $t .= ' Giá Rẻ - Bảo Hành Trọn Gói';
+            }
+            return $t;
         }
 
-        $lowerName = mb_strtolower($this->name);
-
-        if (str_contains($lowerName, 'expressvpn') || (str_contains($lowerName, 'express') && str_contains($lowerName, 'vpn'))) {
-            return 'Mua tài khoản ExpressVPN giá rẻ - Bảo hành Full - vpnstore.pro';
-        }
-        if (str_contains($lowerName, 'nordvpn') || (str_contains($lowerName, 'nord') && str_contains($lowerName, 'vpn'))) {
-            return 'Mua tài khoản NordVPN giá rẻ - Bảo hành Full - vpnstore.pro';
-        }
-        if (str_contains($lowerName, 'surfshark')) {
-            return 'Mua tài khoản Surfshark VPN giá rẻ - Bảo hành Full - vpnstore.pro';
-        }
-        if (str_contains($lowerName, 'hma')) {
-            return 'Mua tài khoản HMA VPN giá rẻ - Bảo hành Full - vpnstore.pro';
-        }
-        if (str_contains($lowerName, 'vpn')) {
-            return 'Mua tài khoản VPN Premium giá rẻ - Bảo hành Full - vpnstore.pro';
-        }
-        if (str_contains($lowerName, 'chatgpt') || str_contains($lowerName, 'chat gpt') || str_contains($lowerName, 'openai')) {
-            return 'Mua tài khoản ChatGPT Plus giá rẻ - Bảo hành Full - vpnstore.pro';
-        }
-        if (str_contains($lowerName, 'gemini')) {
-            return 'Mua tài khoản Gemini Advanced giá rẻ - Bảo hành Full - vpnstore.pro';
-        }
-        if (str_contains($lowerName, 'youtube')) {
-            return 'Mua tài khoản YouTube Premium giá rẻ - Bảo hành Full - vpnstore.pro';
-        }
-        if (str_contains($lowerName, 'netflix') || str_contains($lowerName, 'nexflix')) {
-            return 'Mua tài khoản Netflix Premium 4K giá rẻ - Bảo hành Full - vpnstore.pro';
-        }
-        if (str_contains($lowerName, 'cursor')) {
-            return 'Mua tài khoản Cursor Pro giá rẻ - Bảo hành Full - vpnstore.pro';
-        }
-        if (str_contains($lowerName, 'claude')) {
-            return 'Mua tài khoản Claude Pro / Claude Code giá rẻ - Bảo hành Full - vpnstore.pro';
+        $name = trim($this->name);
+        if (!str_starts_with(mb_strtolower($name), 'tài khoản')) {
+            $name = 'Tài Khoản ' . $name;
         }
 
-        return 'Mua tài khoản ' . $this->name . ' giá rẻ - Bảo hành Full - vpnstore.pro';
+        return $name . ' Giá Rẻ - Bảo Hành Trọn Gói';
     }
 
     public function getSeoDescriptionAttribute(): string
@@ -264,47 +237,19 @@ class Product extends Model
             return $this->meta_description;
         }
 
-        $lowerName = mb_strtolower($this->name);
-
-        if (str_contains($lowerName, 'expressvpn') || (str_contains($lowerName, 'express') && str_contains($lowerName, 'vpn'))) {
-            return 'Mua tài khoản ExpressVPN chính hãng giá rẻ nhất thị trường. Bảo hành 1-đổi-1, giao key tự động 24/7. Tối ưu hóa tốc độ lướt web bảo mật tại vpnstore.pro.';
-        }
-        if (str_contains($lowerName, 'nordvpn') || (str_contains($lowerName, 'nord') && str_contains($lowerName, 'vpn'))) {
-            return 'Mua tài khoản NordVPN chính hãng giá rẻ nhất. Bảo hành 1-đổi-1, giao tài khoản nhanh chóng, hỗ trợ bảo mật thông tin và truy cập mọi website tại vpnstore.pro.';
-        }
-        if (str_contains($lowerName, 'surfshark')) {
-            return 'Mua tài khoản Surfshark VPN chính hãng giá tốt nhất. Bảo hành 1-đổi-1 toàn thời gian, hỗ trợ kết nối không giới hạn thiết bị, bảo mật an toàn.';
-        }
-        if (str_contains($lowerName, 'hma')) {
-            return 'Cung cấp tài khoản HMA VPN chính hãng giá rẻ nhất thị trường. Bảo hành 1-đổi-1, giao hàng tự động 24/7. Mua ngay tại vpnstore.pro!';
-        }
-        if (str_contains($lowerName, 'vpn')) {
-            return 'Cung cấp tài khoản VPN Premium chính hãng giá rẻ nhất thị trường. Bảo hành 1-đổi-1, giao hàng tự động 24/7. Mua ngay tại vpnstore.pro!';
-        }
-        if (str_contains($lowerName, 'chatgpt') || str_contains($lowerName, 'chat gpt') || str_contains($lowerName, 'openai')) {
-            return 'Mua tài khoản ChatGPT Plus (OpenAI) giá rẻ nhất thị trường. Nâng cấp chính chủ, bảo hành full thời hạn sử dụng. Giao key tự động 24/7.';
-        }
-        if (str_contains($lowerName, 'gemini')) {
-            return 'Cung cấp tài khoản Gemini Advanced AI giá rẻ, bảo hành trọn đời, hỗ trợ nâng cấp tài khoản chính chủ nhanh chóng tại vpnstore.pro.';
-        }
-        if (str_contains($lowerName, 'youtube')) {
-            return 'Nâng cấp YouTube Premium chính chủ giá rẻ nhất, không quảng cáo, nghe nhạc background. Bảo hành 1-đổi-1 toàn thời gian sử dụng.';
-        }
-        if (str_contains($lowerName, 'netflix') || str_contains($lowerName, 'nexflix')) {
-            return 'Mua tài khoản Netflix Premium 4K UHD giá rẻ, xem phim thả ga chất lượng cao. Hỗ trợ bảo hành toàn thời gian sử dụng, giao tài khoản tự động.';
-        }
-        if (str_contains($lowerName, 'cursor')) {
-            return 'Cung cấp tài khoản Cursor Pro AI code editor giá rẻ, hỗ trợ đắc lực lập trình viên. Bảo hành uy tín, giao tài khoản tức thì tại vpnstore.pro.';
-        }
-        if (str_contains($lowerName, 'claude')) {
-            return 'Mua tài khoản Claude Pro & Claude Code AI giá rẻ nhất thị trường. Bảo hành 1-đổi-1 uy tín, hỗ trợ đắc lực cho lập trình và viết code.';
-        }
-
         if (!empty($this->description)) {
-            return Str::limit(strip_tags($this->description), 160);
+            $plainDesc = trim(strip_tags($this->description));
+            if (mb_strlen($plainDesc) > 20) {
+                return Str::limit($plainDesc, 160);
+            }
         }
 
-        return 'Mua tài khoản ' . $this->name . ' giá rẻ, chính hãng tại vpnstore.pro. Giao hàng tự động, bảo hành uy tín full thời gian sử dụng.';
+        $name = trim($this->name);
+        if (!str_starts_with(mb_strtolower($name), 'tài khoản')) {
+            $name = 'Tài khoản ' . $name;
+        }
+
+        return 'Mua ' . mb_strtolower($name) . ' giá rẻ, chính hãng tại vpnstore.pro. Giao tài khoản tự động 24/7, bảo hành uy tín trọn gói 1 đổi 1.';
     }
 
     /**

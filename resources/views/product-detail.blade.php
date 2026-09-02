@@ -200,6 +200,10 @@ $curReviews = intval($defaultPlan['reviews'] ?? 0);
 
 @php
     $storeName = $settings['store_name'] ?? 'VPNStore';
+    $rawName = $firstProduct ? $firstProduct->name : $brand['name'];
+    if (!str_starts_with(mb_strtolower(trim($rawName)), 'tài khoản')) {
+        $rawName = 'Tài Khoản ' . trim($rawName);
+    }
     
     $seoTitle = isset($category) && !empty($category->seo_title) ? $category->seo_title : null;
     if (!$seoTitle && $defaultPlan && !empty($defaultPlan['meta_title'])) {
@@ -207,10 +211,12 @@ $curReviews = intval($defaultPlan['reviews'] ?? 0);
     }
     
     if (!$seoTitle) {
-        $seoTitle = 'Tài Khoản ' . ($firstProduct ? $firstProduct->name : $brand['name']) . ' Bản Quyền Chính Hãng';
+        $seoTitle = $rawName . ' Giá Rẻ - Bảo Hành Trọn Gói';
     } else {
-        // Strip store suffix from DB meta_title if already present to avoid duplication in layout
         $seoTitle = preg_replace('/\s*[\|—–\-]\s*' . preg_quote($storeName, '/') . '$/i', '', $seoTitle);
+        if (!str_contains(mb_strtolower($seoTitle), 'giá rẻ')) {
+            $seoTitle .= ' Giá Rẻ - Bảo Hành Trọn Gói';
+        }
     }
 
     $seoDesc = isset($category) && !empty($category->seo_description) ? $category->seo_description : null;
@@ -218,7 +224,7 @@ $curReviews = intval($defaultPlan['reviews'] ?? 0);
         $seoDesc = $defaultPlan['meta_description'];
     }
     if (!$seoDesc) {
-        $seoDesc = 'Mua tài khoản / key ' . ($firstProduct ? $firstProduct->name : $brand['name']) . ' bản quyền chính hãng tại ' . $storeName . ' với giá tốt nhất thị trường. Giao key tự động nhanh chóng, hỗ trợ kích hoạt miễn phí và bảo hành uy tín 1 đổi 1.';
+        $seoDesc = 'Mua ' . mb_strtolower($rawName) . ' giá rẻ chính hãng tại ' . $storeName . '. Giao tài khoản tự động 24/7, bảo hành trọn gói 1 đổi 1 uy tín, hỗ trợ nhanh chóng.';
     }
 
     $cleanBrandName = str_replace('-', ' ', $brand['name']);

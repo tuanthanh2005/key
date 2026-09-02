@@ -19,8 +19,8 @@
     @else
         <title>{{ !empty($settings['seo_title']) ? $settings['seo_title'] : ($settings['store_name'] ?? 'VPN Store Pro') }}</title>
     @endif
-    <meta name="description" content="@yield('meta_description', $settings['meta_description'] ?? 'VPN Store Pro - Mua VPN Premium, AI Code, Design Software, Xem Phim Premium giá tốt nhất. Giao hàng tự động, hỗ trợ 24/7.')">
-    <meta name="keywords" content="@yield('meta_keywords', $settings['meta_keywords'] ?? 'vpn premium, nordvpn, expressvpn, mua vpn, ai code, design software, xem phim premium, phần mềm bản quyền')">
+    <meta name="description" content="@yield('meta_description', $settings['meta_description'] ?? 'Cửa hàng tài khoản bản quyền giá rẻ uy tín #1 Việt Nam. Mua tài khoản ChatGPT, TikTok, Canva, Netflix, CapCut, Spotify, VPN chính hãng - Bảo hành trọn gói 1 đổi 1.')">
+    <meta name="keywords" content="@yield('meta_keywords', $settings['meta_keywords'] ?? 'tai khoan gia re, tai khoan tiktok gia re, mua tai khoan chatgpt, tai khoan canva pro, tai khoan netflix gia re, tai khoan vpn gia re, phan mem ban quyen gia re, bao hanh tron goi')">
     <meta name="robots" content="@yield('meta_robots', 'index, follow')">
     <link rel="canonical" href="{{ url()->current() }}">
 
@@ -317,7 +317,7 @@
                     @endif
                     <span class="gradient-text" style="font-size:1.2rem; font-weight:800;">{{ $settings['store_name'] ?? 'VPNStore' }}</span>
                 </div>
-                <p>Cửa hàng phần mềm bản quyền uy tín #1 Việt Nam. Cung cấp VPN Premium và Proxy chính hãng với giá tốt nhất và giao hàng tự động 24/7.</p>
+                <p>Cửa hàng tài khoản bản quyền giá rẻ uy tín #1 Việt Nam. Cung cấp tài khoản ChatGPT, TikTok, Canva, Netflix, CapCut, Spotify, VPN chính hãng với giá rẻ nhất và giao hàng tự động 24/7.</p>
                 <div class="footer-social">
                     @if(!empty($settings['telegram_support']))
                     <a href="{{ $settings['telegram_url'] ?? 'https://t.me/' . ltrim($settings['telegram_support'],'@') }}" target="_blank" rel="noopener noreferrer" class="social-btn" title="Hỗ trợ qua Telegram" aria-label="Telegram"><i class="bi bi-telegram" style="font-size: 1.1rem;"></i></a>

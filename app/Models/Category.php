@@ -67,4 +67,36 @@ class Category extends Model
 
         return asset('storage/'.$path);
     }
+
+    public function getSeoTitleAttribute()
+    {
+        if (!empty($this->attributes['seo_title'])) {
+            $t = $this->attributes['seo_title'];
+            if (!str_contains(mb_strtolower($t), 'giá rẻ')) {
+                $t .= ' Giá Rẻ - Bảo Hành Trọn Gói';
+            }
+            return $t;
+        }
+
+        $name = trim($this->name);
+        if (!str_starts_with(mb_strtolower($name), 'tài khoản')) {
+            $name = 'Tài Khoản ' . $name;
+        }
+
+        return $name . ' Giá Rẻ - Bảo Hành Trọn Gói';
+    }
+
+    public function getSeoDescriptionAttribute()
+    {
+        if (!empty($this->attributes['seo_description'])) {
+            return $this->attributes['seo_description'];
+        }
+
+        $name = trim($this->name);
+        if (!str_starts_with(mb_strtolower($name), 'tài khoản')) {
+            $name = 'Tài khoản ' . $name;
+        }
+
+        return 'Mua ' . mb_strtolower($name) . ' giá rẻ, chính hãng tại vpnstore.pro. Giao tài khoản tự động 24/7, bảo hành uy tín trọn gói 1 đổi 1.';
+    }
 }

@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
-@section('title', $settings['seo_title'] ?? 'VPNStore - Cửa Hàng VPN & Proxy Chính Hãng Số 1 Việt Nam')
-@section('meta_description', $settings['meta_description'] ?? 'Mua VPN Premium, ChatGPT, Adobe, JetBrains, Netflix với giá tốt nhất thị trường. Giao hàng tự động, bảo hành uy tín, hỗ trợ 24/7.')
-@section('meta_keywords', $settings['meta_keywords'] ?? 'vpn gia re, proxy gia re, mua vpn, mua proxy, key vpn ban quyen')
+@section('title', $settings['seo_title'] ?? 'VPNStore - Mua Tài Khoản Bản Quyền, AI, TikTok, Canva Giá Rẻ - Bảo Hành Trọn Gói')
+@section('meta_description', $settings['meta_description'] ?? 'Cửa hàng cung cấp tài khoản bản quyền giá rẻ uy tín #1 Việt Nam. Mua tài khoản ChatGPT, TikTok, Canva, Netflix, CapCut, Spotify, VPN chính hãng giá rẻ - Bảo hành trọn gói 1 đổi 1. Giao tự động 24/7.')
+@section('meta_keywords', $settings['meta_keywords'] ?? 'tai khoan gia re, tai khoan tiktok gia re, mua tai khoan chatgpt, tai khoan canva pro, tai khoan netflix gia re, tai khoan vpn gia re, phan mem ban quyen gia re, bao hanh tron goi')
 
 @section('content')
 

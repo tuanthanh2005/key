@@ -1,11 +1,17 @@
 @extends('layouts.app')
 
 @if($selectedCategory)
-    @section('title', $selectedCategory->seo_title ?: $selectedCategory->name)
-    @section('meta_description', $selectedCategory->seo_description ?: 'Khám phá các phần mềm bản quyền chính hãng trong danh mục ' . $selectedCategory->name . ' với giá tốt nhất.')
+    @php
+        $catTitle = $selectedCategory->seo_title ?: $selectedCategory->name;
+        if (!str_contains(mb_strtolower($catTitle), 'giá rẻ')) {
+            $catTitle = 'Tài Khoản ' . preg_replace('/^Tài Khoản\s+/i', '', $catTitle) . ' Giá Rẻ - Bảo Hành Trọn Gói';
+        }
+    @endphp
+    @section('title', $catTitle)
+    @section('meta_description', $selectedCategory->seo_description ?: 'Mua tài khoản ' . $selectedCategory->name . ' giá rẻ chính hãng tại VPNStore. Giao hàng tự động 24/7, bảo hành trọn gói 1 đổi 1 uy tín.')
 @else
-    @section('title', 'Danh Sách Sản Phẩm')
-    @section('meta_description', 'Khám phá các phần mềm bản quyền chính hãng: VPN Premium, AI Code, Design Software, Xem Phim Premium với giá tốt nhất.')
+    @section('title', 'Tài Khoản Bản Quyền Giá Rẻ - Bảo Hành Trọn Gói')
+    @section('meta_description', 'Cửa hàng cung cấp tài khoản bản quyền giá rẻ: ChatGPT, TikTok, Canva, Netflix, Spotify, VPN chính hãng. Giao hàng tự động 24/7, bảo hành trọn gói 1 đổi 1.')
 @endif
 
 @section('content')
