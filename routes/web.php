@@ -70,7 +70,9 @@ Route::get('/sitemap.xml', function () {
     $categorySlugs = Category::pluck('slug')->toArray();
 
     // Get all active Product slugs
-    $productSlugs = Product::where('status', 'active')
+    $productSlugs = Product::where(function($q) {
+            $q->where('is_active', true)->orWhere('status', 'active');
+        })
         ->whereNotNull('slug')
         ->pluck('slug')
         ->toArray();
