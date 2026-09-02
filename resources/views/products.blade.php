@@ -41,16 +41,15 @@
 </style>
 
 @php
-    // Category icon mapping by slug keywords
+    // Category icon mapping by slug keywords for all 78+ catalog items
     function catIcon(string $slug, string $type): string {
         $s = strtolower($slug);
-        if (str_contains($s, 'vpn') || $type === 'vpn') return 'bi-shield-lock-fill';
-        if (str_contains($s, 'chat') || str_contains($s, 'gpt') || str_contains($s, 'ai') || str_contains($s, 'gemini') || str_contains($s, 'grok') || str_contains($s, 'claude')) return 'bi-cpu-fill';
-        if (str_contains($s, 'canva') || str_contains($s, 'design') || str_contains($s, 'adobe') || str_contains($s, 'photoshop')) return 'bi-palette-fill';
-        if (str_contains($s, 'youtube') || str_contains($s, 'capcut') || str_contains($s, 'netflix') || str_contains($s, 'video') || str_contains($s, 'phim')) return 'bi-play-btn-fill';
-        if (str_contains($s, 'intellij') || str_contains($s, 'code') || str_contains($s, 'cursor')) return 'bi-code-slash';
-        if (str_contains($s, 'proxy')) return 'bi-hdd-network-fill';
-        return 'bi-grid-fill';
+        if (str_contains($s, 'vpn') || str_contains($s, 'proxy') || $type === 'vpn') return 'bi-shield-lock-fill';
+        if (str_contains($s, 'chat') || str_contains($s, 'gpt') || str_contains($s, 'ai') || str_contains($s, 'gemini') || str_contains($s, 'grok') || str_contains($s, 'claude') || str_contains($s, 'cursor') || str_contains($s, 'deepseek') || str_contains($s, 'perplexity') || str_contains($s, 'elevenlabs') || str_contains($s, 'runway') || str_contains($s, 'lovable') || str_contains($s, 'qwen') || str_contains($s, 'genspark') || str_contains($s, 'kling') || str_contains($s, 'krea') || str_contains($s, 'openart') || str_contains($s, 'leonardo') || str_contains($s, 'heygen') || str_contains($s, 'minimax') || str_contains($s, 'higgfield') || str_contains($s, 'akool') || str_contains($s, 'seedance') || str_contains($s, 'antigravity')) return 'bi-cpu-fill';
+        if (str_contains($s, 'canva') || str_contains($s, 'design') || str_contains($s, 'adobe') || str_contains($s, 'photoshop') || str_contains($s, 'figma') || str_contains($s, 'freepik') || str_contains($s, 'meitu') || str_contains($s, 'xingtu') || str_contains($s, 'wink') || str_contains($s, 'decor')) return 'bi-palette-fill';
+        if (str_contains($s, 'youtube') || str_contains($s, 'capcut') || str_contains($s, 'netflix') || str_contains($s, 'video') || str_contains($s, 'phim') || str_contains($s, 'tv-360') || str_contains($s, 'galaxy') || str_contains($s, 'tiktok') || str_contains($s, 'spotify')) return 'bi-play-btn-fill';
+        if (str_contains($s, 'code') || str_contains($s, 'intellij') || str_contains($s, 'jetbrains') || str_contains($s, 'replit') || str_contains($s, 'gpm') || str_contains($s, 'aws')) return 'bi-code-slash';
+        return 'bi-box-seam-fill';
     }
 
     // Build a JS-safe list of categories
