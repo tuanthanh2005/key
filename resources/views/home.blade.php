@@ -117,13 +117,14 @@
                     }
                 }
 
-                $catIcons = [
-                    'nordvpn' => 'bi bi-shield-lock-fill',
-                    'expressvpn' => 'bi bi-shield-lock-fill',
-                    'surfshark' => 'bi bi-shield-lock-fill',
-                    'hma' => 'bi bi-shield-lock-fill'
-                ];
-                $iconClass = $catIcons[$cSlug] ?? 'bi bi-tag-fill';
+                $slugLower = strtolower($cSlug . ' ' . $cName);
+                if (str_contains($slugLower, 'vpn')) $iconClass = 'bi bi-shield-lock-fill';
+                elseif (str_contains($slugLower, 'chat') || str_contains($slugLower, 'gpt') || str_contains($slugLower, 'ai') || str_contains($slugLower, 'gemini') || str_contains($slugLower, 'grok') || str_contains($slugLower, 'claude')) $iconClass = 'bi bi-cpu-fill';
+                elseif (str_contains($slugLower, 'canva') || str_contains($slugLower, 'design') || str_contains($slugLower, 'adobe') || str_contains($slugLower, 'photoshop')) $iconClass = 'bi bi-palette-fill';
+                elseif (str_contains($slugLower, 'youtube') || str_contains($slugLower, 'capcut') || str_contains($slugLower, 'netflix') || str_contains($slugLower, 'video') || str_contains($slugLower, 'phim')) $iconClass = 'bi bi-play-btn-fill';
+                elseif (str_contains($slugLower, 'intellij') || str_contains($slugLower, 'code') || str_contains($slugLower, 'cursor') || str_contains($slugLower, 'jetbrains')) $iconClass = 'bi bi-code-slash';
+                elseif (str_contains($slugLower, 'proxy')) $iconClass = 'bi bi-hdd-network-fill';
+                else $iconClass = 'bi bi-grid-fill';
             @endphp
             <a href="{{ route('products', ['brand' => $cSlug]) }}"
                class="card animate-on-scroll category-card @if($index >= 2) category-card-hidden-mobile @endif"

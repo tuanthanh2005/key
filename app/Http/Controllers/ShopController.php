@@ -42,8 +42,27 @@ class ShopController extends Controller
                 ->toArray();
         });
 
-        $categories = \Illuminate\Support\Facades\Cache::remember('home_categories_count_v3', 300, function () {
-            return Category::withCount('products')->get()->toArray();
+        $categories = \Illuminate\Support\Facades\Cache::remember('home_categories_count_v5', 300, function () {
+            $cats = Category::withCount(['products' => function ($q) {
+                $q->where('status', 'active')->where('show_in_list', true);
+            }])->get();
+
+            foreach ($cats as $cat) {
+                if ($cat->products_count == 0) {
+                    $matchCount = Product::where(function($q) {
+                            $q->where('is_active', true)->orWhere('status', 'active');
+                        })
+                        ->where('show_in_list', true)
+                        ->where(function($q) use ($cat) {
+                            $q->where('brand', 'like', '%' . $cat->name . '%')
+                              ->orWhere('slug', 'like', '%' . $cat->slug . '%')
+                              ->orWhere('category_id', $cat->id);
+                        })->count();
+                    $cat->products_count = $matchCount;
+                }
+            }
+
+            return $cats->toArray();
         });
 
         return view('home', compact('featuredProducts', 'popularProducts', 'categories'));
