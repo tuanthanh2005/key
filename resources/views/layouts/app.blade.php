@@ -111,36 +111,37 @@
 
     <ul class="navbar-nav" id="nav-links">
         <li><a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}"><i class="bi bi-house-door"></i> Trang Chủ</a></li>
-        <li class="user-dropdown">
-            <a href="#" class="{{ request()->routeIs('products') ? 'active' : '' }}" style="display: inline-flex; align-items: center; gap: 4px;">
-                <i class="bi bi-box-seam"></i> Sản Phẩm <i class="bi bi-chevron-down" style="font-size:0.75rem;"></i>
+        <li class="dropdown" id="navProductDropdown">
+            <a href="{{ route('products') }}" class="dropdown-toggle {{ request()->routeIs('products') ? 'active' : '' }}">
+                <i class="bi bi-box-seam"></i> Sản Phẩm <i class="bi bi-chevron-down ms-1" style="font-size: 0.75rem;"></i>
             </a>
-            <div class="dropdown-menu" style="left:0; right:auto; min-width: 400px; padding: 12px;">
-                <a href="{{ route('products') }}" class="dropdown-item" style="margin-bottom: 8px; font-weight: 700;">
-                    <i class="bi bi-grid-fill text-primary"></i> Tất Cả Sản Phẩm
-                </a>
-                <div class="dropdown-divider" style="margin-bottom: 8px;"></div>
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px;">
+            <div class="dropdown-menu mega-menu-panel" style="width: 860px; max-width: 92vw; padding: 20px; left: 50%; transform: translateX(-50%); border-radius: 16px; background: var(--bg-elevated); border: 1px solid var(--border); box-shadow: 0 16px 40px rgba(0,0,0,0.4);">
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border);">
+                    <a href="{{ route('products') }}" style="font-weight:700; color:var(--primary-light); text-decoration:none; font-size:0.92rem; display:inline-flex; align-items:center; gap:8px;">
+                        <i class="bi bi-grid-fill"></i> Xem Tất Cả Sản Phẩm ({{ count($sharedCategories) }} danh mục)
+                    </a>
+                    <input type="text" id="megaMenuSearchInput" onkeyup="filterMegaMenuItems()" placeholder="Tìm nhanh danh mục..." style="padding:6px 14px; font-size:0.8rem; border-radius:20px; border:1px solid var(--border); background:var(--bg-input); color:var(--text-primary); outline:none; width:200px;">
+                </div>
+                <div class="mega-menu-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px 8px; max-height: 380px; overflow-y: auto; padding-right: 6px;" id="megaMenuList">
                     @foreach($sharedCategories as $cat)
                         @php
-                            $icon = 'bi-shield-lock-fill';
+                            $icon = 'bi-box-seam-fill';
                             $slug = strtolower($cat->slug);
                             $type = strtolower($cat->type);
                             if (str_contains($slug, 'vpn') || $type === 'vpn') $icon = 'bi-shield-lock-fill';
-                            elseif (str_contains($slug, 'ai') || str_contains($slug, 'code')) $icon = 'bi-cpu-fill';
-                            elseif (str_contains($slug, 'design') || str_contains($slug, 'adobe') || str_contains($slug, 'canva')) $icon = 'bi-palette-fill';
-                            elseif (str_contains($slug, 'phim') || str_contains($slug, 'film') || str_contains($slug, 'movie') || str_contains($slug, 'youtube')) $icon = 'bi-play-btn-fill';
-                            elseif (str_contains($slug, 'proxy') || $type === 'proxy') $icon = 'bi-hdd-network-fill';
-                            else $icon = 'bi-folder-fill';
+                            elseif (str_contains($slug, 'chat') || str_contains($slug, 'gpt') || str_contains($slug, 'ai') || str_contains($slug, 'gemini') || str_contains($slug, 'grok') || str_contains($slug, 'claude') || str_contains($slug, 'cursor') || str_contains($slug, 'deepseek') || str_contains($slug, 'perplexity') || str_contains($slug, 'elevenlabs') || str_contains($slug, 'runway') || str_contains($slug, 'lovable') || str_contains($slug, 'qwen') || str_contains($slug, 'genspark') || str_contains($slug, 'kling') || str_contains($slug, 'krea') || str_contains($slug, 'openart') || str_contains($slug, 'leonardo') || str_contains($slug, 'heygen')) $icon = 'bi-cpu-fill';
+                            elseif (str_contains($slug, 'canva') || str_contains($slug, 'design') || str_contains($slug, 'adobe') || str_contains($slug, 'photoshop') || str_contains($slug, 'figma') || str_contains($slug, 'freepik') || str_contains($slug, 'meitu') || str_contains($slug, 'xingtu')) $icon = 'bi-palette-fill';
+                            elseif (str_contains($slug, 'youtube') || str_contains($slug, 'capcut') || str_contains($slug, 'netflix') || str_contains($slug, 'video') || str_contains($slug, 'phim') || str_contains($slug, 'tv-360') || str_contains($slug, 'galaxy') || str_contains($slug, 'tiktok') || str_contains($slug, 'spotify')) $icon = 'bi-play-btn-fill';
+                            elseif (str_contains($slug, 'code') || str_contains($slug, 'intellij') || str_contains($slug, 'jetbrains') || str_contains($slug, 'replit') || str_contains($slug, 'gpm') || str_contains($slug, 'aws')) $icon = 'bi-code-slash';
                         @endphp
-                        <a href="{{ route('products', ['category' => $cat->slug]) }}" class="dropdown-item" style="padding: 8px 10px; display: inline-flex; align-items: center; gap: 8px;">
+                        <a href="{{ route('products', ['category' => $cat->slug]) }}" class="dropdown-item mega-item" data-name="{{ strtolower($cat->name) }}" style="padding: 6px 8px; display: flex; align-items: center; gap: 8px; border-radius: 6px; font-size: 0.83rem; color:var(--text-secondary); text-decoration:none;">
                             @if(!empty($cat->image_url) && strlen($cat->image_url) > 5)
-                                <img src="{{ $cat->image_url }}" alt="{{ $cat->name }}" style="width: 16px; height: 16px; object-fit: contain; border-radius: 2px;" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='inline-block';">
-                                <i class="bi {{ $icon }} text-primary" style="display:none;"></i>
+                                <img src="{{ $cat->image_url }}" alt="{{ $cat->name }}" style="width: 16px; height: 16px; object-fit: contain; border-radius: 2px; flex-shrink: 0;" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='inline-block';">
+                                <i class="bi {{ $icon }} text-primary" style="display:none; flex-shrink: 0;"></i>
                             @else
-                                <i class="bi {{ $icon }} text-primary"></i>
+                                <i class="bi {{ $icon }} text-primary" style="flex-shrink: 0;"></i>
                             @endif
-                            {{ $cat->name }}
+                            <span style="white-space:nowrap; text-overflow:ellipsis; overflow:hidden;">{{ $cat->name }}</span>
                         </a>
                     @endforeach
                 </div>
@@ -332,19 +333,24 @@
                 </div>
             </div>
 
-            <div style="grid-column: span 1 / span 1;">
-                <h4 class="footer-heading">Danh Mục Sản Phẩm</h4>
-                <ul class="footer-links" style="display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:8px 20px;">
-                    <li><a href="{{ route('products') }}" title="Danh sách tất cả sản phẩm & danh mục">Tất Cả Sản Phẩm</a></li>
-                    @if(isset($sharedCategories) && count($sharedCategories) > 0)
-                        @foreach($sharedCategories->take(9) as $cat)
-                            <li>
-                                <a href="{{ route('product.detail', $cat->slug) }}" title="Mua {{ $cat->name }} bản quyền chính hãng giá rẻ" style="white-space:nowrap; text-overflow:ellipsis; overflow:hidden; display:block;">
-                                    {{ $cat->name }}
-                                </a>
-                            </li>
-                        @endforeach
-                    @endif
+            <div>
+                <h4 class="footer-heading">Quảng Cáo & Hợp Tác</h4>
+                <ul class="footer-links" style="display:flex; flex-direction:column; gap:10px;">
+                    <li>
+                        <a href="javascript:void(0)" onclick="openFooterModal('adv')" title="Liên hệ đặt banner & quảng cáo">
+                            <i class="bi bi-megaphone-fill text-warning me-2"></i> Liên Hệ Quảng Cáo
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)" onclick="openFooterModal('partner')" title="Liên hệ hợp tác gán sản phẩm">
+                            <i class="bi bi-box-arrow-in-right text-success me-2"></i> Liên Hệ Gán Sản Phẩm
+                        </a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)" onclick="openFooterModal('hours')" title="Xem giờ mở cửa & hỗ trợ">
+                            <i class="bi bi-clock-fill text-info me-2"></i> Giờ Mở Cửa (24/24)
+                        </a>
+                    </li>
                 </ul>
             </div>
 
@@ -1363,7 +1369,99 @@ function escapeHtml(str) {
             }
         }
     }, true);
-})();
+<!-- Footer Interactive Modals -->
+<div id="footerModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.65); backdrop-filter:blur(5px); z-index:999999; align-items:center; justify-content:center; padding:16px;">
+    <div style="width:100%; max-width:460px; padding:24px; border-radius:20px; background:var(--bg-card); border:1px solid var(--border); box-shadow:0 20px 50px rgba(0,0,0,0.5); position:relative; animation: modalPop 0.3s ease-out;">
+        <button type="button" onclick="closeFooterModal()" style="position:absolute; top:14px; right:16px; background:rgba(255,255,255,0.08); border:none; color:var(--text-muted); font-size:1.2rem; cursor:pointer; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center;">&times;</button>
+        <div id="footerModalBody"></div>
+    </div>
+</div>
+
+<script>
+function openFooterModal(type) {
+    const modal = document.getElementById('footerModal');
+    const body = document.getElementById('footerModalBody');
+    if (!modal || !body) return;
+
+    let html = '';
+    const teleUrl = "{{ !empty($settings['telegram_support']) ? ($settings['telegram_url'] ?? 'https://t.me/' . ltrim($settings['telegram_support'],'@')) : '#' }}";
+    const zaloUrl = "{{ !empty($settings['zalo_support']) ? ($settings['zalo_url_1'] ?? 'https://zalo.me/' . $settings['zalo_support']) : '#' }}";
+
+    if (type === 'adv') {
+        html = `
+            <div style="text-align:center; margin-bottom:16px;">
+                <div style="width:52px; height:52px; border-radius:50%; background:rgba(245, 158, 11, 0.15); color:#f59e0b; display:inline-flex; align-items:center; justify-content:center; font-size:1.5rem; margin-bottom:10px;"><i class="bi bi-megaphone-fill"></i></div>
+                <h3 style="font-size:1.2rem; font-weight:700; color:var(--text-primary); margin:0;">Liên Hệ Quảng Cáo</h3>
+            </div>
+            <p style="font-size:0.875rem; color:var(--text-secondary); line-height:1.6; margin-bottom:20px; text-align:center;">
+                Hệ thống VPNStore hỗ trợ hợp tác đặt Banner quảng cáo, PR dịch vụ tài khoản số & sản phẩm phần mềm với hàng chục ngàn lượt truy cập mỗi ngày.
+            </p>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+                <a href="${teleUrl}" target="_blank" class="btn btn-primary btn-full" style="display:flex; align-items:center; justify-content:center; gap:8px; padding:10px; font-weight:700;">
+                    <i class="bi bi-telegram" style="font-size:1.1rem;"></i> Liên Hệ Qua Telegram
+                </a>
+                <a href="${zaloUrl}" target="_blank" class="btn btn-outline btn-full" style="display:flex; align-items:center; justify-content:center; gap:8px; padding:10px; font-weight:700;">
+                    <i class="bi bi-chat-dots-fill" style="font-size:1.1rem; color:#0068ff;"></i> Liên Hệ Qua Zalo
+                </a>
+            </div>
+        `;
+    } else if (type === 'partner') {
+        html = `
+            <div style="text-align:center; margin-bottom:16px;">
+                <div style="width:52px; height:52px; border-radius:50%; background:rgba(16, 185, 129, 0.15); color:#10b981; display:inline-flex; align-items:center; justify-content:center; font-size:1.5rem; margin-bottom:10px;"><i class="bi bi-box-arrow-in-right"></i></div>
+                <h3 style="font-size:1.2rem; font-weight:700; color:var(--text-primary); margin:0;">Liên Hệ Gán Sản Phẩm</h3>
+            </div>
+            <p style="font-size:0.875rem; color:var(--text-secondary); line-height:1.6; margin-bottom:20px; text-align:center;">
+                Bạn là Nhà Cung Cấp (Vendor/Reseller) muốn gán bán sản phẩm tự động trên VPNStore? Kết nối ngay với chúng tôi để phân phối sản phẩm.
+            </p>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+                <a href="${teleUrl}" target="_blank" class="btn btn-primary btn-full" style="display:flex; align-items:center; justify-content:center; gap:8px; padding:10px; font-weight:700; background:#10b981; border-color:#10b981;">
+                    <i class="bi bi-telegram" style="font-size:1.1rem;"></i> Hợp Tác Qua Telegram
+                </a>
+                <a href="${zaloUrl}" target="_blank" class="btn btn-outline btn-full" style="display:flex; align-items:center; justify-content:center; gap:8px; padding:10px; font-weight:700;">
+                    <i class="bi bi-chat-dots-fill" style="font-size:1.1rem; color:#0068ff;"></i> Hợp Tác Qua Zalo
+                </a>
+            </div>
+        `;
+    } else if (type === 'hours') {
+        html = `
+            <div style="text-align:center; margin-bottom:16px;">
+                <div style="width:52px; height:52px; border-radius:50%; background:rgba(59, 130, 246, 0.15); color:#3b82f6; display:inline-flex; align-items:center; justify-content:center; font-size:1.5rem; margin-bottom:10px;"><i class="bi bi-clock-fill"></i></div>
+                <h3 style="font-size:1.2rem; font-weight:700; color:var(--text-primary); margin:0;">Giờ Mở Cửa (24/24)</h3>
+            </div>
+            <div style="background:var(--bg-elevated); padding:16px; border-radius:12px; margin-bottom:20px; font-size:0.875rem; color:var(--text-secondary); display:flex; flex-direction:column; gap:10px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span>⚡ Đặt hàng & Giao key:</span>
+                    <strong style="color:#10b981; font-weight:700;">Tự động 24/7/365</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span>💬 Hỗ trợ CSKH trực tuyến:</span>
+                    <strong style="color:var(--primary-light); font-weight:700;">08:00 - 24:00 mỗi ngày</strong>
+                </div>
+            </div>
+            <button type="button" onclick="closeFooterModal()" class="btn btn-primary btn-full" style="padding:10px; font-weight:700;">Đã Hiểu</button>
+        `;
+    }
+
+    body.innerHTML = html;
+    modal.style.display = 'flex';
+}
+
+function closeFooterModal() {
+    const modal = document.getElementById('footerModal');
+    if (modal) modal.style.display = 'none';
+}
+
+function filterMegaMenuItems() {
+    const input = document.getElementById('megaMenuSearchInput');
+    if (!input) return;
+    const filter = input.value.toLowerCase().trim();
+    const items = document.querySelectorAll('#megaMenuList .mega-item');
+    items.forEach(item => {
+        const name = item.dataset.name || '';
+        item.style.display = name.includes(filter) ? 'flex' : 'none';
+    });
+}
 </script>
 @endauth
 </body>
