@@ -2634,6 +2634,52 @@ body {
    BREAKPOINT: 768px (Tablet Portrait / Large Mobile)
    ===================================================== */
 @media (max-width: 768px) {
+  /* Hero Mobile Compact */
+  section.hero {
+    padding: 20px 0 16px !important;
+    min-height: auto !important;
+  }
+
+  .hero .container-fluid {
+    padding: 0 16px !important;
+  }
+
+  .hero-title {
+    font-size: 1.25rem !important;
+    line-height: 1.3 !important;
+    margin-bottom: 6px !important;
+  }
+
+  .hero-desc {
+    font-size: 0.78rem !important;
+    line-height: 1.35 !important;
+    margin-bottom: 12px !important;
+  }
+
+  .hero-actions {
+    gap: 8px !important;
+  }
+
+  .hero-actions .btn {
+    padding: 7px 14px !important;
+    font-size: 0.78rem !important;
+  }
+
+  .hero-badges {
+    margin-left: 0 !important;
+    margin-top: 10px !important;
+    width: 100% !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    gap: 4px !important;
+    font-size: 0.68rem !important;
+    flex-wrap: nowrap !important;
+  }
+
+  .hero-badges span {
+    white-space: nowrap !important;
+  }
+
   .order-card {
     padding: 14px !important;
   }

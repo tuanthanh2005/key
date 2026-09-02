@@ -48,10 +48,10 @@
                     </a>
                     <a href="#featured" class="btn btn-outline btn-sm" style="padding: 8px 18px; font-size: 0.88rem;">Xem Nổi Bật</a>
 
-                    <div style="display:flex; align-items:center; gap:16px; margin-left:8px; font-size:0.78rem; color:var(--text-secondary); font-weight:600;">
-                        <span style="display:inline-flex; align-items:center; gap:4px;"><i class="bi bi-lightning-charge-fill text-warning"></i> Giao Tự Động</span>
-                        <span style="display:inline-flex; align-items:center; gap:4px;"><i class="bi bi-shield-check text-success"></i> Bảo Hành 1-Đổi-1</span>
-                        <span style="display:inline-flex; align-items:center; gap:4px;"><i class="bi bi-headset text-primary"></i> Hỗ Trợ 24/7</span>
+                    <div class="hero-badges" style="display:flex; align-items:center; gap:16px; margin-left:8px; font-size:0.78rem; color:var(--text-secondary); font-weight:600;">
+                        <span style="display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><i class="bi bi-lightning-charge-fill text-warning"></i> Giao Tự Động</span>
+                        <span style="display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><i class="bi bi-shield-check text-success"></i> Bảo Hành 1-Đổi-1</span>
+                        <span style="display:inline-flex; align-items:center; gap:4px; white-space:nowrap;"><i class="bi bi-headset text-primary"></i> Hỗ Trợ 24/7</span>
                     </div>
                 </div>
             </div>
