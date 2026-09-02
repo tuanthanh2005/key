@@ -106,6 +106,17 @@
                     $cCount = 0;
                 }
 
+                if (empty($cImgUrl) && !empty($cImgPath)) {
+                    $p = trim($cImgPath);
+                    if (str_starts_with($p, 'http://') || str_starts_with($p, 'https://')) {
+                        $cImgUrl = $p;
+                    } else if (str_starts_with($p, 'storage/')) {
+                        $cImgUrl = asset($p);
+                    } else {
+                        $cImgUrl = asset('storage/' . $p);
+                    }
+                }
+
                 $catIcons = [
                     'nordvpn' => 'bi bi-shield-lock-fill',
                     'expressvpn' => 'bi bi-shield-lock-fill',
@@ -117,8 +128,9 @@
             <a href="{{ route('products', ['brand' => $cSlug]) }}"
                class="card animate-on-scroll category-card @if($index >= 2) category-card-hidden-mobile @endif"
                style="cursor:pointer; text-decoration:none;">
-                @if($cImgPath)
-                    <img src="{{ $cImgUrl }}" alt="{{ $cName }}" width="32" height="32" loading="lazy" decoding="async" style="width:32px; height:32px; object-fit:contain; flex-shrink:0;">
+                @if(!empty($cImgUrl) && strlen($cImgUrl) > 5)
+                    <img src="{{ $cImgUrl }}" alt="{{ $cName }}" width="32" height="32" loading="lazy" decoding="async" style="width:32px; height:32px; object-fit:contain; flex-shrink:0;" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';">
+                    <div style="font-size:1.3rem; color:var(--primary-light); flex-shrink:0; display:none; align-items:center; justify-content:center; width:32px; height:32px;"><i class="{{ $iconClass }}"></i></div>
                 @else
                     <div style="font-size:1.3rem; color:var(--primary-light); flex-shrink:0; display:flex; align-items:center; justify-content:center; width:32px; height:32px;"><i class="{{ $iconClass }}"></i></div>
                 @endif

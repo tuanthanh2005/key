@@ -19,6 +19,8 @@ class Category extends Model
         'image_path',
     ];
 
+    protected $appends = ['image_url'];
+
     protected static function booted(): void
     {
         static::saved(fn () => Cache::forget('shared_categories'));
@@ -43,20 +45,26 @@ class Category extends Model
         if (empty($this->image_path)) {
             return null;
         }
-        if (str_starts_with($this->image_path, 'storage/')) {
-            return asset($this->image_path);
-        }
-        if (str_starts_with($this->image_path, 'categories/') || str_starts_with($this->image_path, 'uploads/categories/')) {
-            if (file_exists(public_path($this->image_path))) {
-                return asset($this->image_path);
-            }
-            if (file_exists(storage_path('app/public/'.$this->image_path))) {
-                return asset('storage/'.$this->image_path);
-            }
 
-            return asset($this->image_path);
+        $path = trim($this->image_path);
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            return $path;
         }
 
-        return asset('storage/'.$this->image_path);
+        if (str_starts_with($path, 'storage/')) {
+            return asset($path);
+        }
+
+        if (str_starts_with($path, 'categories/') || str_starts_with($path, 'uploads/') || str_starts_with($path, 'products/')) {
+            if (file_exists(public_path($path))) {
+                return asset($path);
+            }
+            if (file_exists(storage_path('app/public/'.$path))) {
+                return asset('storage/'.$path);
+            }
+            return asset($path);
+        }
+
+        return asset('storage/'.$path);
     }
 }

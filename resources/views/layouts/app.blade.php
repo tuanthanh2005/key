@@ -134,8 +134,9 @@
                             else $icon = 'bi-folder-fill';
                         @endphp
                         <a href="{{ route('products', ['category' => $cat->slug]) }}" class="dropdown-item" style="padding: 8px 10px; display: inline-flex; align-items: center; gap: 8px;">
-                            @if($cat->image_path)
-                                <img src="{{ $cat->image_url }}" alt="{{ $cat->name }}" style="width: 16px; height: 16px; object-fit: contain; border-radius: 2px;">
+                            @if(!empty($cat->image_url) && strlen($cat->image_url) > 5)
+                                <img src="{{ $cat->image_url }}" alt="{{ $cat->name }}" style="width: 16px; height: 16px; object-fit: contain; border-radius: 2px;" onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='inline-block';">
+                                <i class="bi {{ $icon }} text-primary" style="display:none;"></i>
                             @else
                                 <i class="bi {{ $icon }} text-primary"></i>
                             @endif
