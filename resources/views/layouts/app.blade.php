@@ -92,10 +92,10 @@
     </a>
 
     <ul class="navbar-nav" id="nav-links">
-        <li><a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}">Trang Chủ</a></li>
+        <li><a href="{{ route('home') }}" class="{{ request()->routeIs('home') ? 'active' : '' }}"><i class="bi bi-house-door"></i> Trang Chủ</a></li>
         <li class="user-dropdown">
             <a href="#" class="{{ request()->routeIs('products') ? 'active' : '' }}" style="display: inline-flex; align-items: center; gap: 4px;">
-                Sản Phẩm <i class="bi bi-chevron-down" style="font-size:0.75rem;"></i>
+                <i class="bi bi-box-seam"></i> Sản Phẩm <i class="bi bi-chevron-down" style="font-size:0.75rem;"></i>
             </a>
             <div class="dropdown-menu" style="left:0; right:auto; min-width: 400px; padding: 12px;">
                 <a href="{{ route('products') }}" class="dropdown-item" style="margin-bottom: 8px; font-weight: 700;">
@@ -127,19 +127,20 @@
                 </div>
             </div>
         </li>
-        <li><a href="{{ route('posts.index') }}" class="{{ request()->routeIs('posts.*') ? 'active' : '' }}">Bài Viết</a></li>
-        <li><a href="{{ route('order.check') }}" class="{{ request()->routeIs('order.check') ? 'active' : '' }}">Tra Cứu Mã Đơn</a></li>
-        <li><a href="{{ route('contact') }}" class="{{ request()->routeIs('contact') ? 'active' : '' }}">Liên Hệ</a></li>
+        <li><a href="{{ route('posts.index') }}" class="{{ request()->routeIs('posts.*') ? 'active' : '' }}"><i class="bi bi-newspaper"></i> Bài Viết</a></li>
+        <li><a href="{{ route('order.check') }}" class="{{ request()->routeIs('order.check') ? 'active' : '' }}"><i class="bi bi-search"></i> Tra Cứu Mã Đơn</a></li>
+        <li><a href="{{ route('contact') }}" class="{{ request()->routeIs('contact') ? 'active' : '' }}"><i class="bi bi-envelope"></i> Liên Hệ</a></li>
         @if(auth()->check() && auth()->user()->isAdmin())
-            <li><a href="{{ route('admin.dashboard') }}" style="color: var(--primary-light);"><i class="bi bi-speedometer2" style="margin-right:4px;"></i> Admin</a></li>
+            <li><a href="{{ route('admin.dashboard') }}" style="color: var(--primary-light);"><i class="bi bi-speedometer2"></i> Admin</a></li>
         @endif
     </ul>
 
     <div class="navbar-actions">
-        {{-- Search Button --}}
-        <button class="cart-btn" style="padding:0; width:38px; height:38px; justify-content:center; align-items:center; border-radius:50%;" onclick="openSearchModal()" title="Tìm kiếm">
-            <i class="bi bi-search" style="font-size:1.1rem;"></i>
-        </button>
+        {{-- Search Input Pill --}}
+        <form action="{{ route('search') }}" method="GET" class="nav-search-pill" onclick="if(window.innerWidth <= 768) { openSearchModal(); return false; }">
+            <i class="bi bi-search search-icon"></i>
+            <input type="text" name="q" placeholder="Tìm kiếm nhanh..." autocomplete="off">
+        </form>
 
         {{-- Gift Button --}}
         @if(auth()->check() && !empty($userCoupons) && $userCoupons->isNotEmpty())
@@ -222,6 +223,19 @@
         </div>
         <a href="{{ route('home') }}" class="dropdown-item"><i class="bi bi-house-door" style="margin-right:8px;"></i> Trang Chủ</a>
         <a href="{{ route('products') }}" class="dropdown-item"><i class="bi bi-box-seam" style="margin-right:8px;"></i> Tất Cả Sản Phẩm</a>
+        <a href="{{ route('posts.index') }}" class="dropdown-item"><i class="bi bi-file-text" style="margin-right:8px;"></i> Bài Viết</a>
+        <a href="{{ route('order.check') }}" class="dropdown-item"><i class="bi bi-search" style="margin-right:8px;"></i> Tra Cứu Mã Đơn</a>
+        <a href="{{ route('contact') }}" class="dropdown-item"><i class="bi bi-envelope" style="margin-right:8px;"></i> Liên Hệ</a>
+        <div class="dropdown-divider"></div>
+        @if(auth()->check())
+            <a href="{{ route('order.history') }}" class="dropdown-item"><i class="bi bi-clock-history" style="margin-right:8px;"></i> Lịch Sử Đơn Hàng</a>
+            <a href="{{ route('wishlist.index') }}" class="dropdown-item"><i class="bi bi-heart" style="margin-right:8px;"></i> Yêu Thích</a>
+        @else
+            <a href="{{ route('auth.login') }}" class="dropdown-item"><i class="bi bi-box-arrow-in-right" style="margin-right:8px;"></i> Đăng Nhập</a>
+            <a href="{{ route('auth.register') }}" class="dropdown-item"><i class="bi bi-person-plus" style="margin-right:8px;"></i> Đăng Ký</a>
+        @endif
+        <div class="dropdown-divider"></div>
+        <div style="font-size:0.75rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; padding:4px 10px 0; letter-spacing:0.5px;">Danh Mục Sản Phẩm</div>
         @foreach($sharedCategories as $cat)
             @php
                 $icon = 'bi-shield-lock-fill';
@@ -243,17 +257,6 @@
                 {{ $cat->name }}
             </a>
         @endforeach
-        <a href="{{ route('posts.index') }}" class="dropdown-item"><i class="bi bi-file-text" style="margin-right:8px;"></i> Bài Viết</a>
-        <a href="{{ route('order.check') }}" class="dropdown-item"><i class="bi bi-search" style="margin-right:8px;"></i> Tra Cứu Mã Đơn</a>
-        <a href="{{ route('contact') }}" class="dropdown-item"><i class="bi bi-envelope" style="margin-right:8px;"></i> Liên Hệ</a>
-        <div class="dropdown-divider"></div>
-        @if(auth()->check())
-            <a href="{{ route('order.history') }}" class="dropdown-item"><i class="bi bi-clock-history" style="margin-right:8px;"></i> Lịch Sử Đơn Hàng</a>
-            <a href="{{ route('wishlist.index') }}" class="dropdown-item"><i class="bi bi-heart" style="margin-right:8px;"></i> Yêu Thích</a>
-        @else
-            <a href="{{ route('auth.login') }}" class="dropdown-item"><i class="bi bi-box-arrow-in-right" style="margin-right:8px;"></i> Đăng Nhập</a>
-            <a href="{{ route('auth.register') }}" class="dropdown-item"><i class="bi bi-person-plus" style="margin-right:8px;"></i> Đăng Ký</a>
-        @endif
     </div>
 </div>
 

@@ -22,20 +22,20 @@
     <div class="container" style="max-width: 1000px;">
         
         {{-- Checkout steps --}}
-        <div style="display:flex; align-items:center; justify-content:center; gap:16px; margin-bottom:40px; flex-wrap:wrap;">
-            <div style="display:flex; align-items:center; gap:8px;">
-                <div style="width:28px; height:28px; background:var(--primary); color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:700;">1</div>
-                <span style="font-weight:700; color:var(--text-primary); font-size:0.85rem;">Giỏ Hàng</span>
+        <div class="cart-steps-container">
+            <div class="cart-step active">
+                <div class="step-num">1</div>
+                <span class="step-label">Giỏ Hàng</span>
             </div>
-            <div style="width:60px; height:1px; background:var(--border);"></div>
-            <div style="display:flex; align-items:center; gap:8px;">
-                <div style="width:28px; height:28px; background:var(--bg-card); border:1px solid var(--border); color:var(--text-muted); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:700;">2</div>
-                <span style="font-weight:600; color:var(--text-muted); font-size:0.85rem;">Thanh Toán</span>
+            <div class="step-line"></div>
+            <div class="cart-step">
+                <div class="step-num">2</div>
+                <span class="step-label">Thanh Toán</span>
             </div>
-            <div style="width:60px; height:1px; background:var(--border);"></div>
-            <div style="display:flex; align-items:center; gap:8px;">
-                <div style="width:28px; height:28px; background:var(--bg-card); border:1px solid var(--border); color:var(--text-muted); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:700;">3</div>
-                <span style="font-weight:600; color:var(--text-muted); font-size:0.85rem;">Hoàn Tất</span>
+            <div class="step-line"></div>
+            <div class="cart-step">
+                <div class="step-num">3</div>
+                <span class="step-label">Hoàn Tất</span>
             </div>
         </div>
 
@@ -43,15 +43,6 @@
             
             {{-- ===== LEFT: ITEMS CONTAINER ===== --}}
             <div>
-                {{-- Coupon Code Card --}}
-                <div class="card" style="padding:16px; margin-bottom:20px; display:flex; flex-direction:row; gap:12px; align-items:center; flex-wrap:wrap;">
-                    <div style="display:flex; align-items:center; gap:8px; flex:1; min-width:200px;">
-                        <span style="font-size:1.2rem; color:var(--primary-light);"><i class="bi bi-tag"></i></span>
-                        <input type="text" id="couponInput" placeholder="Nhập mã giảm giá (VPNVN10, VIP20...)" style="background:var(--bg-input); border:1px solid var(--border); color:var(--text-primary); padding:10px 14px; border-radius:var(--radius); font-size:0.85rem; width:100%; outline:none;">
-                    </div>
-                    <button class="btn btn-primary" style="padding:10px 20px;" onclick="applyCoupon()">Áp Dụng</button>
-                </div>
-
                 {{-- Items Wrapper --}}
                 <div id="cartItemsContainer">
                     <div style="text-align:center; padding:48px 0;">
@@ -61,11 +52,63 @@
                 </div>
 
                 {{-- Back button --}}
-                <div style="margin-top:20px;">
-                    <a href="{{ route('products') }}" style="color:var(--primary-light); font-weight:700; text-decoration:none; font-size:0.9rem;">
-                        <i class="bi bi-arrow-left me-1"></i> Tiếp tục mua sắm
+                <div style="margin-top:20px; margin-bottom:28px;">
+                    <a href="{{ route('products') }}" style="color:var(--primary-light); font-weight:700; text-decoration:none; font-size:0.9rem; display:inline-flex; align-items:center; gap:6px;">
+                        <i class="bi bi-arrow-left"></i> Tiếp tục mua sắm
                     </a>
                 </div>
+
+                {{-- Service Guarantees Card (Desktop Only) --}}
+                <div class="card cart-desktop-extra" style="padding:20px; margin-bottom:24px; background:linear-gradient(135deg, rgba(124, 58, 237, 0.05) 0%, rgba(6, 182, 212, 0.05) 100%); border:1px solid rgba(124, 58, 237, 0.15);">
+                    <h6 style="font-weight:800; font-size:0.92rem; color:var(--text-primary); margin-bottom:16px; display:flex; align-items:center; gap:8px;">
+                        <i class="bi bi-patch-check-fill text-primary"></i> Cam Kết & Dịch Vụ Tại VPNStore
+                    </h6>
+                    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:14px;">
+                        <div style="display:flex; align-items:flex-start; gap:10px;">
+                            <div style="width:32px; height:32px; border-radius:50%; background:rgba(16, 185, 129, 0.12); color:var(--success); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:0.95rem;">
+                                <i class="bi bi-lightning-charge-fill"></i>
+                            </div>
+                            <div>
+                                <strong style="font-size:0.82rem; display:block; color:var(--text-primary);">Giao Key Tự Động 30s</strong>
+                                <span style="font-size:0.73rem; color:var(--text-muted);">Gửi trực tiếp qua Email ngay sau khi thanh toán</span>
+                            </div>
+                        </div>
+
+                        <div style="display:flex; align-items:flex-start; gap:10px;">
+                            <div style="width:32px; height:32px; border-radius:50%; background:rgba(124, 58, 237, 0.12); color:var(--primary-light); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:0.95rem;">
+                                <i class="bi bi-shield-lock-fill"></i>
+                            </div>
+                            <div>
+                                <strong style="font-size:0.82rem; display:block; color:var(--text-primary);">Bảo Hành 1 Đổi 1</strong>
+                                <span style="font-size:0.73rem; color:var(--text-muted);">Hỗ trợ đổi mới trọn thời gian sử dụng</span>
+                            </div>
+                        </div>
+
+                        <div style="display:flex; align-items:flex-start; gap:10px;">
+                            <div style="width:32px; height:32px; border-radius:50%; background:rgba(6, 182, 212, 0.12); color:var(--info); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:0.95rem;">
+                                <i class="bi bi-headset"></i>
+                            </div>
+                            <div>
+                                <strong style="font-size:0.82rem; display:block; color:var(--text-primary);">Hỗ Trợ Kỹ Thuật 24/7</strong>
+                                <span style="font-size:0.73rem; color:var(--text-muted);">Giải đáp thắc mắc qua Zalo & Telegram</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Recommended Products Section (Desktop Only) --}}
+                @if(isset($recommendedProducts) && count($recommendedProducts) > 0)
+                    <div class="cart-desktop-extra" style="margin-top:28px;">
+                        <h6 style="font-weight:800; font-size:0.95rem; color:var(--text-primary); margin-bottom:14px; display:flex; align-items:center; gap:8px;">
+                            <i class="bi bi-stars text-warning"></i> Có Thể Bạn Cũng Thích
+                        </h6>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                            @foreach($recommendedProducts as $recProd)
+                                @include('partials.product-card', ['product' => $recProd])
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
             </div>
 
             {{-- ===== RIGHT: SUMMARY BOX ===== --}}
@@ -93,10 +136,19 @@
                             <span style="font-weight:700; color:var(--success);">Miễn phí</span>
                         </div>
 
-                        <div style="display:flex; justify-content:space-between; align-items:baseline; padding-top:8px; margin-bottom:20px;">
+                        <div style="display:flex; justify-content:space-between; align-items:baseline; padding-top:8px; margin-bottom:16px;">
                             <strong style="font-size:0.95rem; color:var(--text-primary);">Tổng thanh toán</strong>
                             <strong id="cart-total" style="font-size:1.6rem; color:var(--primary-light); font-family:var(--font-mono);">0đ</strong>
                         </div>
+                    </div>
+
+                    {{-- Coupon Code Card --}}
+                    <div class="coupon-card" style="margin-bottom:20px; padding:10px; background:var(--bg-elevated); border:1px solid var(--border); border-radius:var(--radius-lg);">
+                        <div style="display:flex; align-items:center; gap:8px; flex:1;">
+                            <span style="font-size:1.1rem; color:var(--primary-light); flex-shrink:0;"><i class="bi bi-tag"></i></span>
+                            <input type="text" id="couponInput" placeholder="Nhập mã giảm giá..." style="background:var(--bg-input); border:1px solid var(--border); color:var(--text-primary); padding:8px 12px; border-radius:var(--radius); font-size:0.82rem; width:100%; outline:none;">
+                        </div>
+                        <button class="btn btn-primary btn-sm" style="padding:8px 16px; flex-shrink:0; font-size:0.8rem;" onclick="applyCoupon()">Áp Dụng</button>
                     </div>
 
                     <a href="{{ route('checkout') }}" class="btn btn-primary btn-full btn-lg" style="padding:14px; font-weight:700;">
@@ -131,6 +183,12 @@
 <script>
 window.stockMap = @json($stockMap);
 const validCouponsFromServer = @json($publicCoupons ?? []);
+@php
+    $catImageMap = \App\Models\Category::all()->mapWithKeys(function($cat) {
+        return [$cat->slug => $cat->image_url];
+    })->filter()->all();
+@endphp
+window.categoryImages = @json($catImageMap);
 
 function applyCoupon() {
     const code = document.getElementById('couponInput').value.trim().toUpperCase();

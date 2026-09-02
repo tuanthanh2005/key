@@ -330,27 +330,22 @@ $curReviews = intval($defaultPlan['reviews'] ?? 0);
                     <span style="font-size:0.75rem; font-weight:800; color:var(--accent); text-transform:uppercase; letter-spacing:0.05em; display:block; margin-bottom:6px;">Premium Account</span>
                     <h1 style="font-size:1.6rem; font-weight:800; margin-bottom:12px; color:var(--text-primary);">{{ $firstProduct ? $firstProduct->name : $brand['name'] }}</h1>
                     
-                    {{-- Rating Stars --}}
-                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:20px;">
-                        <div class="stars" style="display:flex; gap:2px; color:var(--warning); font-size:0.85rem;">
-                            @if($curReviews > 0)
+                    {{-- Rating Stars & Sold Count --}}
+                    @php
+                        $detailRealRating = $curRating ? (float)$curRating : 0;
+                        $detailRealSold = $firstProduct ? (int)($firstProduct->sold ?? $firstProduct->sold_count ?? 0) : 0;
+                    @endphp
+                    <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px; font-size:0.85rem;">
+                        <div style="display:flex; align-items:center; gap:6px;">
+                            <div class="stars" style="display:flex; gap:2px; color:var(--warning);">
                                 @for($i = 1; $i <= 5; $i++)
-                                    @if($i <= floor($curRating))
-                                        <i class="bi bi-star-fill"></i>
-                                    @elseif($i - $curRating < 1)
-                                        <i class="bi bi-star-half"></i>
-                                    @else
-                                        <i class="bi bi-star" style="color:var(--border)"></i>
-                                    @endif
+                                    <i class="bi bi-star-fill"></i>
                                 @endfor
-                            @else
-                                @for($i = 1; $i <= 5; $i++)
-                                    <i class="bi bi-star" style="color:var(--border)"></i>
-                                @endfor
-                            @endif
+                            </div>
+                            <span style="font-weight:700; color:var(--text-primary);">{{ $detailRealRating > 0 ? number_format($detailRealRating, 1) : '0' }}</span>
                         </div>
-                        <span style="font-size:0.85rem; font-weight:700; color:var(--text-primary);">{{ $curReviews > 0 ? number_format($curRating, 1) : '0.0' }}</span>
-                        <span style="font-size:0.85rem; color:var(--text-muted);">({{ number_format($curReviews) }} đánh giá)</span>
+                        <span style="color:var(--border);">•</span>
+                        <span style="color:var(--text-muted);">Đã bán {{ number_format($detailRealSold) }}</span>
                     </div>
                     {{-- Price Display --}}
                     <div style="margin-bottom:24px; padding-bottom:20px; border-bottom:1px solid var(--border);">
@@ -432,6 +427,7 @@ $curReviews = intval($defaultPlan['reviews'] ?? 0);
                                 data-price="{{ $defaultPlan['price'] ?? 0 }}"
                                 data-color="{{ $brand['color'] }}"
                                 data-slug="{{ $slug }}"
+                                data-image="{{ ($firstProduct && $firstProduct->image_url) ? $firstProduct->image_url : (isset($brand['image_path']) ? asset($brand['image_path']) : '') }}"
                                 data-require-email="{{ $defaultPlan['require_upgrade_email'] ? '1' : '0' }}"
                                 {!! $btnDisabledAttr !!}>
                             @if($isDefaultOutOfStock)

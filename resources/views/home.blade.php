@@ -30,58 +30,28 @@
         </svg>
     </div>
 
-    <div class="container">
+    <div class="container-fluid" style="width: 100%; padding: 0 32px;">
         <div class="hero-grid-wrap">
             <div class="hero-content animate-fade-up">
-                <div class="hero-eyebrow">
-                    <div class="dot"></div>
-                    <i class="bi bi-fire text-warning" style="margin-right:6px;"></i> Kho cung cấp số 1 Việt Nam
-                </div>
-
                 <h1 class="hero-title">
-                    Phần Mềm <span class="gradient-text">Bản Quyền</span><br>
-                    Giá Siêu Rẻ
+                    Phần Mềm <span class="gradient-text">Bản Quyền</span> Giá Siêu Rẻ
                 </h1>
 
                 <p class="hero-desc">
-                    Chuyên cung cấp các gói VPN Premium & Proxy bản quyền chính hãng với giá tốt nhất. Giao hàng tức thì, bảo hành uy tín, hỗ trợ 24/7.
+                    Chuyên cung cấp VPN Premium, Proxy & Tài khoản bản quyền chính hãng với giá tốt nhất thị trường.
                 </p>
 
-                <div class="hero-actions">
-                    <a href="{{ route('products') }}" class="btn btn-primary btn-xl">
-                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                <div class="hero-actions" style="margin-bottom:0; display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+                    <a href="{{ route('products') }}" class="btn btn-primary btn-sm" style="padding: 8px 22px; font-size: 0.88rem; font-weight:700;">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
                         Mua VPN Ngay
                     </a>
-                    <a href="#featured" class="btn btn-outline btn-xl">Xem Nổi Bật</a>
-                </div>
+                    <a href="#featured" class="btn btn-outline btn-sm" style="padding: 8px 18px; font-size: 0.88rem;">Xem Nổi Bật</a>
 
-                <div class="hero-stats">
-                    <div class="hero-stat">
-                        <div style="width: 42px; height: 42px; background: rgba(79, 70, 229, 0.08); color: var(--primary); border: 1px solid rgba(79, 70, 229, 0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0;">
-                            <i class="bi bi-lightning-charge-fill"></i>
-                        </div>
-                        <div style="display: flex; flex-direction: column; gap: 2px;">
-                            <span style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary);">Giao Tự Động</span>
-                            <span style="font-size: 0.72rem; color: var(--text-muted);">Nhận sản phẩm ngay sau khi mua</span>
-                        </div>
-                    </div>
-                    <div class="hero-stat">
-                        <div style="width: 42px; height: 42px; background: rgba(16, 185, 129, 0.08); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0;">
-                            <i class="bi bi-shield-check"></i>
-                        </div>
-                        <div style="display: flex; flex-direction: column; gap: 2px;">
-                            <span style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary);">Bảo Hành 1-Đổi-1</span>
-                            <span style="font-size: 0.72rem; color: var(--text-muted);">Cam kết bảo hành suốt thời hạn</span>
-                        </div>
-                    </div>
-                    <div class="hero-stat">
-                        <div style="width: 42px; height: 42px; background: rgba(124, 58, 237, 0.08); color: var(--accent); border: 1px solid rgba(124, 58, 237, 0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0;">
-                            <i class="bi bi-headset"></i>
-                        </div>
-                        <div style="display: flex; flex-direction: column; gap: 2px;">
-                            <span style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary);">Hỗ Trợ 24/7</span>
-                            <span style="font-size: 0.72rem; color: var(--text-muted);">Đội ngũ kỹ thuật hỗ trợ tận tình</span>
-                        </div>
+                    <div style="display:flex; align-items:center; gap:16px; margin-left:8px; font-size:0.78rem; color:var(--text-secondary); font-weight:600;">
+                        <span style="display:inline-flex; align-items:center; gap:4px;"><i class="bi bi-lightning-charge-fill text-warning"></i> Giao Tự Động</span>
+                        <span style="display:inline-flex; align-items:center; gap:4px;"><i class="bi bi-shield-check text-success"></i> Bảo Hành 1-Đổi-1</span>
+                        <span style="display:inline-flex; align-items:center; gap:4px;"><i class="bi bi-headset text-primary"></i> Hỗ Trợ 24/7</span>
                     </div>
                 </div>
             </div>
@@ -90,27 +60,27 @@
             <div class="animate-float hero-visual-wrap" style="display:flex; justify-content:center; align-items:center;">
                 <div class="hero-visual-inner">
                     <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center;">
-                        <div style="width:200px; height:200px; background:linear-gradient(135deg, rgba(124,58,237,0.2), rgba(6,182,212,0.2)); border:1px solid rgba(124,58,237,0.3); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:4.5rem; color:var(--primary-light); box-shadow:0 0 60px rgba(124,58,237,0.3);">
+                        <div style="width:100px; height:100px; background:linear-gradient(135deg, rgba(124,58,237,0.2), rgba(6,182,212,0.2)); border:1px solid rgba(124,58,237,0.3); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:2.2rem; color:var(--primary-light); box-shadow:0 0 30px rgba(124,58,237,0.3);">
                             <i class="bi bi-shield-fill-check"></i>
                         </div>
                     </div>
                     @php
                         $orbIcons = [
-                            ['bi bi-shield-lock-fill', 'top:20px; left:50%; transform:translateX(-50%)', 'VPN', 'var(--primary-light)'],
-                            ['bi bi-cpu-fill', 'top:50%; right:10px; transform:translateY(-50%)', 'AI', 'var(--accent)'],
-                            ['bi bi-palette-fill', 'bottom:20px; left:50%; transform:translateX(-50%)', 'Design', '#ec4899'],
-                            ['bi bi-code-slash', 'top:50%; left:10px; transform:translateY(-50%)', 'Dev', 'var(--warning)'],
+                            ['bi bi-shield-lock-fill', 'top:2px; left:50%; transform:translateX(-50%)', 'VPN', 'var(--primary-light)'],
+                            ['bi bi-cpu-fill', 'top:50%; right:-4px; transform:translateY(-50%)', 'AI', 'var(--accent)'],
+                            ['bi bi-palette-fill', 'bottom:2px; left:50%; transform:translateX(-50%)', 'Design', '#ec4899'],
+                            ['bi bi-code-slash', 'top:50%; left:-4px; transform:translateY(-50%)', 'Dev', 'var(--warning)'],
                         ];
                     @endphp
                     @foreach($orbIcons as $i => $orb)
-                    <div style="position:absolute; {{ $orb[1] }}; width:64px; height:64px; background:var(--bg-card); border:1px solid var(--border); border-radius:16px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; box-shadow:var(--shadow-card); backdrop-filter:blur(10px);">
-                        <span style="font-size:1.5rem; color:{{ $orb[3] }}; line-height:1;"><i class="{{ $orb[0] }}"></i></span>
-                        <span style="font-size:0.55rem; color:var(--text-muted); font-weight:700; margin-top:4px;">{{ $orb[2] }}</span>
+                    <div style="position:absolute; {{ $orb[1] }}; width:40px; height:40px; background:var(--bg-card); border:1px solid var(--border); border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px; box-shadow:var(--shadow-card); backdrop-filter:blur(10px);">
+                        <span style="font-size:0.95rem; color:{{ $orb[3] }}; line-height:1;"><i class="{{ $orb[0] }}"></i></span>
+                        <span style="font-size:0.48rem; color:var(--text-muted); font-weight:700;">{{ $orb[2] }}</span>
                     </div>
                     @endforeach
 
-                    <div style="position:absolute; inset:30px; border:1px dashed rgba(124,58,237,0.2); border-radius:50%; animation:spin 20s linear infinite;"></div>
-                    <div style="position:absolute; inset:60px; border:1px dashed rgba(6,182,212,0.15); border-radius:50%; animation:spin 15s linear infinite reverse;"></div>
+                    <div style="position:absolute; inset:12px; border:1px dashed rgba(124,58,237,0.2); border-radius:50%; animation:spin 20s linear infinite;"></div>
+                    <div style="position:absolute; inset:32px; border:1px dashed rgba(6,182,212,0.15); border-radius:50%; animation:spin 15s linear infinite reverse;"></div>
                 </div>
             </div>
         </div>
@@ -118,14 +88,14 @@
 </section>
 
 {{-- ===== CATEGORIES SECTION ===== --}}
-<section class="section-sm home-brands-section" style="background:var(--bg-elevated);">
-    <div class="container">
-        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:24px;">
-            <h2 style="font-size:1.1rem; font-weight:700;">Thương Hiệu & Danh Mục</h2>
-            <a href="{{ route('products') }}" class="btn btn-ghost btn-sm">Tất Cả →</a>
+<section class="home-brands-section" style="background:var(--bg-elevated); padding: 16px 0;">
+    <div class="container-fluid" style="width:100%; padding: 0 32px;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+            <h2 style="font-size:1rem; font-weight:700;">Thương Hiệu & Danh Mục</h2>
+            <a href="{{ route('products') }}" class="btn btn-ghost btn-sm" style="padding:4px 10px; font-size:0.8rem;">Tất Cả →</a>
         </div>
-        <div style="display:flex; justify-content:center; flex-wrap:wrap; gap:16px; margin:0 auto;">
-            @foreach($categories as $cat)
+        <div class="categories-grid" id="categories-grid">
+            @foreach($categories as $index => $cat)
             @php
                 $catIcons = [
                     'nordvpn' => 'bi bi-shield-lock-fill',
@@ -136,30 +106,54 @@
                 $iconClass = $catIcons[$cat->slug] ?? 'bi bi-tag-fill';
             @endphp
             <a href="{{ route('products', ['brand' => $cat->slug]) }}"
-               class="card animate-on-scroll category-card"
+               class="card animate-on-scroll category-card @if($index >= 2) category-card-hidden-mobile @endif"
                style="cursor:pointer; text-decoration:none;">
                 @if($cat->image_path)
-                    <img src="{{ $cat->image_url }}" alt="{{ $cat->name }}" width="50" height="50" loading="lazy" decoding="async" style="width:50px; height:50px; object-fit:contain; margin-bottom:12px;">
+                    <img src="{{ $cat->image_url }}" alt="{{ $cat->name }}" width="32" height="32" loading="lazy" decoding="async" style="width:32px; height:32px; object-fit:contain; flex-shrink:0;">
                 @else
-                    <div style="font-size:2.2rem; margin-bottom:12px; color:var(--primary-light);"><i class="{{ $iconClass }}"></i></div>
+                    <div style="font-size:1.3rem; color:var(--primary-light); flex-shrink:0; display:flex; align-items:center; justify-content:center; width:32px; height:32px;"><i class="{{ $iconClass }}"></i></div>
                 @endif
-                <div style="font-size:0.85rem; font-weight:700; color:var(--text-primary); margin-bottom:6px;">{{ $cat->name }}</div>
-                <div style="font-size:0.75rem; color:var(--text-muted);">{{ $cat->products_count }} sản phẩm</div>
+                <div style="display:flex; flex-direction:column; min-width:0; flex:1;">
+                    <div style="font-size:0.8rem; font-weight:700; color:var(--text-primary); white-space:nowrap; text-overflow:ellipsis; overflow:hidden;">{{ $cat->name }}</div>
+                    <div style="font-size:0.68rem; color:var(--text-muted);">{{ $cat->products_count }} sản phẩm</div>
+                </div>
             </a>
             @endforeach
         </div>
+
+        @if(count($categories) > 2)
+        <div class="toggle-categories-mobile" style="text-align:center; margin-top:10px;">
+            <button type="button" class="btn btn-outline btn-sm" id="toggle-cats-btn" onclick="toggleMobileCategories()" aria-label="Xem thêm danh mục" style="border-radius:50%; width:36px; height:36px; padding:0; display:inline-flex; align-items:center; justify-content:center; font-size:0.9rem; background:var(--bg-card);">
+                <i class="bi bi-chevron-down"></i>
+            </button>
+        </div>
+        @endif
     </div>
 </section>
 
+<script>
+function toggleMobileCategories() {
+    const grid = document.getElementById('categories-grid');
+    const btn = document.getElementById('toggle-cats-btn');
+    if (!grid || !btn) return;
+
+    grid.classList.toggle('expanded');
+    const isExpanded = grid.classList.contains('expanded');
+
+    btn.innerHTML = isExpanded
+        ? '<i class="bi bi-chevron-up"></i>'
+        : '<i class="bi bi-chevron-down"></i>';
+}
+</script>
+
 {{-- ===== FEATURED PRODUCTS ===== --}}
-<section class="section" id="featured">
-    <div class="container">
-        <div class="section-header">
+<section class="section" id="featured" style="padding: 24px 0;">
+    <div class="container-fluid" style="width:100%; padding: 0 32px;">
+        <div class="section-header" style="margin-bottom: 16px;">
             <div>
-                <h2 class="section-title"><i class="bi bi-fire text-warning" style="margin-right:8px;"></i> Sản Phẩm <span>Nổi Bật</span></h2>
-                <p class="section-subtitle">Được lựa chọn nhiều nhất - Chất lượng đảm bảo</p>
+                <h2 class="section-title"><i class="bi bi-fire text-warning" style="margin-right:6px;"></i> Sản Phẩm <span>Nổi Bật</span></h2>
             </div>
-            <a href="{{ route('products') }}" class="btn btn-outline">Xem Tất Cả</a>
+            <a href="{{ route('products') }}" class="btn btn-outline btn-sm" style="padding: 6px 14px; font-size: 0.82rem;">Xem Tất Cả</a>
         </div>
 
         <div class="product-grid">
@@ -171,12 +165,11 @@
 </section>
 
 @if($popularProducts->count())
-<section class="section">
-    <div class="container">
-        <div class="section-header">
+<section class="section" style="padding: 24px 0;">
+    <div class="container-fluid" style="width:100%; padding: 0 32px;">
+        <div class="section-header" style="margin-bottom: 16px;">
             <div>
-                <h2 class="section-title"><i class="bi bi-graph-up-arrow text-primary" style="margin-right: 8px;"></i> Bán Chạy <span>Nhất</span></h2>
-                <p class="section-subtitle">Lựa chọn hàng đầu của hàng nghìn khách hàng</p>
+                <h2 class="section-title"><i class="bi bi-graph-up-arrow text-primary" style="margin-right: 6px;"></i> Bán Chạy <span>Nhất</span></h2>
             </div>
         </div>
         <div class="product-grid">
@@ -189,9 +182,9 @@
 @endif
 
 {{-- ===== WHY US SECTION ===== --}}
-<section class="section" style="background:var(--bg-elevated);">
-    <div class="container">
-        <div class="section-header">
+<section class="section" style="background:var(--bg-elevated); padding: 28px 0;">
+    <div class="container-fluid" style="width:100%; padding: 0 32px;">
+        <div class="section-header" style="margin-bottom: 16px;">
             <div>
                 <h2 class="section-title">Tại Sao Chọn <span>{{ $settings['store_name'] ?? 'VPNStore' }}?</span></h2>
                 <p class="section-subtitle">Cam kết mang đến trải nghiệm mua sắm tốt nhất</p>
@@ -200,22 +193,22 @@
 
         <div class="features-grid">
             <div class="feature-card animate-on-scroll">
-                <span class="feature-icon" style="font-size:2rem; line-height:1;"><i class="bi bi-lightning-charge-fill" style="color:var(--warning);"></i></span>
+                <span class="feature-icon" style="font-size:1.6rem; line-height:1;"><i class="bi bi-lightning-charge-fill" style="color:var(--warning);"></i></span>
                 <h3 class="feature-title">Giao Hàng Tự Động</h3>
                 <p class="feature-desc">License key và tài khoản được giao ngay lập tức sau khi thanh toán. Không phải chờ đợi.</p>
             </div>
             <div class="feature-card animate-on-scroll delay-1">
-                <span class="feature-icon" style="font-size:2rem; line-height:1;"><i class="bi bi-shield-lock-fill" style="color:var(--accent);"></i></span>
+                <span class="feature-icon" style="font-size:1.6rem; line-height:1;"><i class="bi bi-shield-lock-fill" style="color:var(--accent);"></i></span>
                 <h3 class="feature-title">Bảo Hành Uy Tín</h3>
                 <p class="feature-desc">Cam kết hoàn tiền hoặc đổi sản phẩm nếu có lỗi trong vòng thời gian bảo hành.</p>
             </div>
             <div class="feature-card animate-on-scroll delay-2">
-                <span class="feature-icon" style="font-size:2rem; line-height:1;"><i class="bi bi-wallet2" style="color:#10b981;"></i></span>
+                <span class="feature-icon" style="font-size:1.6rem; line-height:1;"><i class="bi bi-wallet2" style="color:#10b981;"></i></span>
                 <h3 class="feature-title">Giá Tốt Nhất</h3>
                 <p class="feature-desc">Giá thấp hơn 60-80% so với mua trực tiếp. Cập nhật deal mới mỗi ngày.</p>
             </div>
             <div class="feature-card animate-on-scroll delay-3">
-                <span class="feature-icon" style="font-size:2rem; line-height:1;"><i class="bi bi-shield-fill-check" style="color:var(--primary-light);"></i></span>
+                <span class="feature-icon" style="font-size:1.6rem; line-height:1;"><i class="bi bi-shield-fill-check" style="color:var(--primary-light);"></i></span>
                 <h3 class="feature-title">Thanh Toán An Toàn</h3>
                 <p class="feature-desc">Thanh toán qua ngân hàng/Momo. Mã hóa SSL 256-bit bảo vệ thông tin của bạn.</p>
             </div>

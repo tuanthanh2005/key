@@ -114,7 +114,12 @@ class ShopController extends Controller
             $stockMap[$key] = $p->stock;
         }
 
-        return view('cart', ['stockMap' => $stockMap]);
+        $recommendedProducts = Product::where('stock', '>', 0)->inRandomOrder()->take(2)->get();
+
+        return view('cart', [
+            'stockMap' => $stockMap,
+            'recommendedProducts' => $recommendedProducts,
+        ]);
     }
 
     /**

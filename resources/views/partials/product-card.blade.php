@@ -8,12 +8,17 @@
     $prodPlan = $isArr ? ($product['plan'] ?? null) : $product->plan;
     $prodImage = $isArr ? ($product['image_url'] ?? $product['image_path'] ?? null) : ($product->image_url ?: $product->image_path);
     $prodIsPopular = $isArr ? ($product['is_popular'] ?? false) : $product->is_popular;
-    $prodRating = $isArr ? ($product['rating'] ?? 0) : $product->rating;
-    $prodReviews = $isArr ? ($product['reviews'] ?? 0) : $product->reviews;
+    $prodRating = $isArr ? ($product['rating'] ?? 0) : ($product->rating ?? 0);
+    $prodReviews = $isArr ? ($product['reviews'] ?? 0) : ($product->reviews ?? 0);
+    $prodSold = $isArr ? ($product['sold'] ?? $product['sold_count'] ?? 0) : ($product->sold ?? $product->sold_count ?? 0);
     $prodStock = $isArr ? ($product['stock'] ?? 0) : $product->stock;
     $prodColor = $isArr ? ($product['color'] ?? '#2563eb') : $product->color;
     $prodBrand = $isArr ? ($product['brand'] ?? '') : $product->brand;
     $prodRequireEmail = $isArr ? ($product['require_upgrade_email'] ?? false) : ($product->require_upgrade_email ?? false);
+    
+    // Real rating & sold count
+    $realRating = (float)$prodRating;
+    $realSold = (int)$prodSold;
     
     // Category relation
     $cat = $isArr ? ($product['category'] ?? null) : $product->category;
@@ -30,31 +35,42 @@
     <div class="product-card-image">
         <a href="{{ route('product.detail', $catSlug ?: $prodSlug) }}" style="display:block; width:100%; height:100%;">
             @if($prodImage)
-                <img src="{{ asset($prodImage) }}" alt="{{ $prodName }}" loading="lazy" style="width:100%; height:100%; object-fit:cover; display:block;">
-            @else
-                {{-- Placeholder with gradient --}}
-                <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, {{ $prodColor }}, {{ $prodColor }}55);">
+                <img src="{{ asset($prodImage) }}" alt="{{ $prodName }}" loading="lazy"
+                     onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';"
+                     style="width:100%; height:100%; object-fit:cover; display:block;">
+                <div style="display:none; width:100%; height:100%; align-items:center; justify-content:center; background:linear-gradient(135deg, {{ $prodColor }}, {{ $prodColor }}77);">
                     <div style="text-align:center;">
-                        <div style="font-size:3rem; line-height:1; color:#fff;">
+                        <div style="font-size:2.5rem; line-height:1; color:#fff;">
                             <i class="bi bi-shield-lock-fill"></i>
                         </div>
-                        <div style="font-size:0.6rem; color:#fff; margin-top:12px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase;">{{ $catName ?: $prodBrand }}</div>
+                        <div style="font-size:0.6rem; color:#fff; margin-top:8px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase;">{{ $catName ?: $prodBrand }}</div>
+                    </div>
+                </div>
+            @else
+                <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, {{ $prodColor }}, {{ $prodColor }}77);">
+                    <div style="text-align:center;">
+                        <div style="font-size:2.5rem; line-height:1; color:#fff;">
+                            <i class="bi bi-shield-lock-fill"></i>
+                        </div>
+                        <div style="font-size:0.6rem; color:#fff; margin-top:8px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase;">{{ $catName ?: $prodBrand }}</div>
                     </div>
                 </div>
             @endif
         </a>
 
-        <div class="product-badge">
+        <div class="product-badge-left">
             @if($prodIsPopular)
-                <span class="badge badge-popular"><i class="bi bi-star-fill text-warning" style="margin-right:4px;"></i> Popular</span>
-            @endif
-            @if($prodPlan === '1year' || $prodPlan === '2year')
-                <span class="badge badge-featured"><i class="bi bi-fire text-danger" style="margin-right:4px;"></i> Hot</span>
-            @endif
-            @if($discount > 0)
-                <span class="badge badge-sale">-{{ $discount }}%</span>
+                <span class="badge badge-popular"><i class="bi bi-star-fill text-warning"></i> Popular</span>
+            @elseif($prodPlan === '1year' || $prodPlan === '2year')
+                <span class="badge badge-featured"><i class="bi bi-fire"></i> Hot</span>
             @endif
         </div>
+
+        @if($discount > 0)
+            <div class="product-badge-right">
+                <span class="badge badge-sale">-{{ $discount }}%</span>
+            </div>
+        @endif
     </div>
 
     <a href="{{ route('product.detail', $catSlug ?: $prodSlug) }}" style="flex:1; display:flex; flex-direction:column;">
@@ -74,26 +90,16 @@
                 </div>
             @endif
 
-            <div class="product-rating" style="margin-bottom:8px;">
-                <div class="stars" style="display:flex; gap:2px;">
-                    @if($prodReviews > 0)
+            <div class="product-rating" style="margin-bottom:8px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:4px; font-size:0.78rem;">
+                <div style="display:flex; align-items:center; gap:4px;">
+                    <div class="stars" style="display:flex; gap:1px;">
                         @for($i = 1; $i <= 5; $i++)
-                            @if($i <= floor($prodRating))
-                                <i class="bi bi-star-fill text-warning"></i>
-                            @elseif($i - $prodRating < 1)
-                                <i class="bi bi-star-half text-warning"></i>
-                            @else
-                                <i class="bi bi-star text-muted"></i>
-                            @endif
+                            <i class="bi bi-star-fill text-warning"></i>
                         @endfor
-                    @else
-                        @for($i = 1; $i <= 5; $i++)
-                            <i class="bi bi-star text-muted"></i>
-                        @endfor
-                    @endif
+                    </div>
+                    <span style="font-weight:700; color:var(--text-primary);">{{ $realRating > 0 ? number_format($realRating, 1) : '0' }}</span>
                 </div>
-                <span style="font-size:0.8rem; font-weight:600; margin-left:6px; color:var(--text-primary);">{{ $prodReviews > 0 ? number_format($prodRating, 1) : '0.0' }}</span>
-                <span style="font-size:0.8rem; color:var(--text-muted); margin-left:4px;">({{ number_format($prodReviews) }} đánh giá)</span>
+                <span style="font-size:0.75rem; color:var(--text-muted);">Đã bán {{ number_format($realSold) }}</span>
             </div>
 
             <div class="product-pricing" style="margin-top:auto;">
@@ -105,8 +111,9 @@
         </div>
     </a>
 
-    <div class="product-card-footer">
-        <button class="btn btn-primary btn-full"
+    <div class="product-card-footer" style="display:flex; gap:8px; align-items:center;">
+        <button class="btn btn-primary"
+                style="flex:1; height:38px; border-radius:20px; padding:0 12px; justify-content:center; font-size:0.85rem;"
                 data-add-cart
                 data-id="{{ $prodId }}"
                 data-name="{{ $prodName }}"
@@ -115,14 +122,19 @@
                 data-price="{{ $prodPrice }}"
                 data-color="{{ $prodColor }}"
                 data-slug="{{ $prodSlug }}"
+                data-image="{{ $prodImage ? asset($prodImage) : '' }}"
                 data-require-email="{{ $prodRequireEmail ? '1' : '0' }}"
                 @if(($prodStock ?? 0) <= 0) disabled @endif>
             @if(($prodStock ?? 0) > 0)
-                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="margin-right:6px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="margin-right:5px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
                 Thêm Vào Giỏ
             @else
                 Hết Hàng
             @endif
+        </button>
+
+        <button type="button" class="btn btn-outline btn-wishlist-card" data-wishlist data-id="{{ $prodId }}" aria-label="Thêm vào yêu thích" title="Lưu vào sản phẩm yêu thích" style="width:38px; height:38px; min-width:38px; padding:0; display:inline-flex; align-items:center; justify-content:center; border-radius:50%; flex-shrink:0;">
+            <i class="bi bi-heart"></i>
         </button>
     </div>
 </div>

@@ -132,15 +132,33 @@
                         <!-- Order Items -->
                         <div class="p-4 border-bottom" style="border-color:var(--gray-100)!important">
                             <h6 class="fw-700 mb-3" style="font-size:14px">Sản Phẩm Đặt Mua</h6>
-                            <div class="order-product-item d-flex align-items-center gap-3 p-3 rounded-3" style="background:var(--gray-50)">
-                                <div style="width:52px;height:52px;background:linear-gradient(135deg,#4687FF,#2563eb);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:24px">
-                                    <i class="bi bi-shield-lock-fill"></i>
+                            @php
+                                $cat = \App\Models\Category::where('name', 'like', '%' . $order->brand . '%')
+                                    ->orWhere('slug', \Illuminate\Support\Str::slug($order->brand))
+                                    ->first();
+                                $catImage = $cat ? $cat->image_url : null;
+                            @endphp
+                            <div class="order-product-item p-3 rounded-3" style="background:var(--bg-elevated); border:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+                                <div style="display:flex; align-items:center; gap:12px; flex:1; min-width:220px;">
+                                    @if($catImage)
+                                        <div style="width:56px; height:56px; border-radius:10px; padding:6px; background:var(--bg-card); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                            <img src="{{ $catImage }}" alt="{{ $order->product_name }}" style="width:100%; height:100%; object-fit:contain;">
+                                        </div>
+                                    @else
+                                        <div style="width:56px; height:56px; border-radius:10px; background:rgba(124,58,237,0.1); border:1px solid rgba(124,58,237,0.2); color:var(--primary-light); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:1.5rem;">
+                                            <i class="bi bi-shield-lock-fill"></i>
+                                        </div>
+                                    @endif
+
+                                    <div>
+                                        <h5 class="fw-700 mb-1" style="font-size:0.92rem; color:var(--text-primary); line-height:1.4;">{{ $order->product_name }}</h5>
+                                        <div class="text-muted" style="font-size:0.78rem;">Thương hiệu: <strong style="color:var(--text-primary);">{{ $order->brand }}</strong> · Gói: <strong>{{ ucfirst($order->plan) }}</strong> · SL: <strong>{{ $order->quantity }}</strong></div>
+                                    </div>
                                 </div>
-                                <div class="flex-grow-1">
-                                    <div class="fw-700" style="font-size:14px">{{ $order->product_name }}</div>
-                                    <div class="text-muted" style="font-size:12.5px">Thương hiệu: {{ $order->brand }} · Gói: {{ ucfirst($order->plan) }} · Số lượng: {{ $order->quantity }}</div>
+
+                                <div class="fw-800 text-primary ms-auto" style="font-size:1.1rem; font-family:var(--font-mono);">
+                                    {{ number_format($order->total) }}đ
                                 </div>
-                                <div class="fw-800 text-primary" style="font-size:16px">{{ number_format($order->total) }}đ</div>
                             </div>
                         </div>
 

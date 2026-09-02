@@ -117,6 +117,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const price       = parseFloat(this.dataset.price) || 0;
             const brandColor  = this.dataset.color || '#2563eb';
             const brandSlug   = this.dataset.slug || '';
+            const image       = this.dataset.image || '';
             const requireEmail = this.dataset.requireEmail === '1';
 
             // Check if there is a quantity selector on the page (e.g. product-detail page)
@@ -132,6 +133,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 price,
                 brandColor,
                 brandSlug,
+                image,
                 requireEmail,
                 qty: qtyVal
             });
@@ -446,33 +448,46 @@ document.addEventListener('DOMContentLoaded', function () {
             if (isOutOfStock) {
                 hasOutOfStockItem = true;
             }
+
+            const brandSlug = (item.brandSlug || item.brand || '').toLowerCase().trim();
+            const fallbackImg = (window.categoryImages && (window.categoryImages[brandSlug] || window.categoryImages[item.brand ? item.brand.toLowerCase() : '']))
+                ? (window.categoryImages[brandSlug] || window.categoryImages[item.brand ? item.brand.toLowerCase() : ''])
+                : '';
+            const itemImgSrc = (item.image && item.image.length > 5) ? item.image : fallbackImg;
+
+            const imgMarkup = (itemImgSrc && itemImgSrc.length > 5)
+                ? `<div style="width:88px; height:88px; border-radius:14px; padding:8px; background:var(--bg-elevated); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+                       <img src="${itemImgSrc}" alt="${item.name}" style="width:100%; height:100%; object-fit:contain;">
+                   </div>`
+                : `<div style="width:88px; height:88px; border-radius:14px; background:${item.brandColor || '#7c3aed'}15; color:${item.brandColor || '#7c3aed'}; border:1px solid ${item.brandColor || '#7c3aed'}30; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                       <i class="bi bi-shield-lock-fill" style="font-size:36px"></i>
+                   </div>`;
+
             return `
             <div class="cart-item mb-3 ${isOutOfStock ? 'border-danger bg-light' : ''}" id="cart-item-${item.id}">
                 <div class="d-flex align-items-center gap-3">
-                    <div class="cart-item-img" style="background:${item.brandColor}15;color:${item.brandColor}">
-                        <i class="bi bi-shield-lock-fill" style="font-size:28px"></i>
-                    </div>
+                    ${imgMarkup}
                     <div class="flex-grow-1">
-                        <div class="fw-700 mb-1" style="font-size:14px">
+                        <div class="fw-700 mb-1" style="font-size:15px; color:var(--text-primary);">
                             ${item.name}
                             ${isOutOfStock ? '<span class="badge bg-danger ms-2" style="font-size:10.5px">Hết Hàng</span>' : ''}
                         </div>
-                        <div class="text-muted" style="font-size:12.5px">
-                            <span class="badge me-1" style="background:${item.brandColor}20;color:${item.brandColor};font-size:11px;font-weight:600;padding:3px 8px;border-radius:6px">${item.brand}</span>
+                        <div style="font-size:13px; color:var(--text-muted); margin-bottom:10px;">
+                            <span class="badge me-1" style="background:${item.brandColor || '#7c3aed'}20;color:${item.brandColor || '#7c3aed'};font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px">${item.brand}</span>
                             Gói: ${item.plan}
                         </div>
-                        <div class="d-flex align-items-center gap-3 mt-2">
+                        <div class="d-flex align-items-center gap-3">
                             <div class="qty-control">
                                 <button class="qty-btn" data-action="minus" onclick="updateItemQty('${item.id}','${item.plan}', -1)" ${isOutOfStock ? 'disabled' : ''}><i class="bi bi-dash"></i></button>
                                 <input type="text" class="qty-input" value="${item.qty}" id="qty-${item.id}" readonly>
                                 <button class="qty-btn" data-action="plus" onclick="updateItemQty('${item.id}','${item.plan}', 1)" ${isOutOfStock ? 'disabled' : ''}><i class="bi bi-plus"></i></button>
                             </div>
-                            <span class="fw-800 text-primary" style="font-size:16px">${formatCurrency(item.price)}</span>
+                            <span class="fw-800" style="font-size:15px; color:var(--text-secondary);">${formatCurrency(item.price)}</span>
                         </div>
                     </div>
-                    <div class="d-flex flex-column align-items-end gap-2">
-                        <div class="fw-800 text-primary" style="font-size:18px;font-family:'Poppins',sans-serif">${formatCurrency(item.price * item.qty)}</div>
-                        <button class="btn btn-sm btn-outline-danger" onclick="removeCartItem('${item.id}','${item.plan}')">
+                    <div class="d-flex flex-column align-items-end gap-3" style="margin-left:auto;">
+                        <div class="fw-800 text-primary" style="font-size:1.2rem; font-family:var(--font-mono); color:var(--primary-light);">${formatCurrency(item.price * item.qty)}</div>
+                        <button class="btn btn-sm btn-outline-danger" onclick="removeCartItem('${item.id}','${item.plan}')" style="border-radius:50%; width:34px; height:34px; padding:0; display:inline-flex; align-items:center; justify-content:center;">
                             <i class="bi bi-trash"></i>
                         </button>
                     </div>
