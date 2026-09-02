@@ -73,12 +73,35 @@ class ShopController extends Controller
      */
     public function products(Request $request)
     {
-        $allProducts = Product::with('category')->where('status', 'active')->where('show_in_list', true)->get()->toArray();
+        $allProducts = Product::where(function($q) {
+                $q->where('is_active', true)->orWhere('status', 'active');
+            })
+            ->where('show_in_list', true)
+            ->with('category')
+            ->get()
+            ->toArray();
+
         $categories = Category::withCount(['products' => function ($q) {
-            $q->where('status', 'active')->where('show_in_list', true);
+            $q->where(function($sq) {
+                $sq->where('is_active', true)->orWhere('status', 'active');
+            })->where('show_in_list', true);
         }])->get();
 
-        $categorySlug = $request->query('category');
+        foreach ($categories as $cat) {
+            if ($cat->products_count == 0) {
+                $matchCount = collect($allProducts)->filter(function($p) use ($cat) {
+                    $catId = $p['category_id'] ?? null;
+                    $b = strtolower($p['brand'] ?? '');
+                    $n = strtolower($p['name'] ?? '');
+                    $cName = strtolower($cat->name);
+                    $cSlug = strtolower($cat->slug);
+                    return ($catId && $catId == $cat->id) || ($b && (str_contains($b, $cName) || str_contains($b, $cSlug))) || (str_contains($n, $cName) || str_contains($n, $cSlug));
+                })->count();
+                $cat->products_count = $matchCount;
+            }
+        }
+
+        $categorySlug = $request->query('category') ?: $request->query('brand');
         $selectedCategory = null;
         if ($categorySlug) {
             $selectedCategory = $categories->where('slug', $categorySlug)->first();
