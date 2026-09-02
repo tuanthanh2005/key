@@ -404,18 +404,32 @@ document.addEventListener('DOMContentLoaded', function () {
             summaryEl.innerHTML = '<p class="text-center text-muted py-3">Giỏ hàng trống</p>';
             return;
         }
-        summaryEl.innerHTML = cart.map(item => `
+        summaryEl.innerHTML = cart.map(item => {
+            const brandSlug = (item.brandSlug || item.brand || '').toLowerCase().trim();
+            const fallbackImg = (window.categoryImages && (window.categoryImages[brandSlug] || window.categoryImages[item.brand ? item.brand.toLowerCase() : '']))
+                ? (window.categoryImages[brandSlug] || window.categoryImages[item.brand ? item.brand.toLowerCase() : ''])
+                : '';
+            const itemImgSrc = (item.image && item.image.length > 5) ? item.image : fallbackImg;
+
+            const imgMarkup = (itemImgSrc && itemImgSrc.length > 5)
+                ? `<div style="width:42px; height:42px; border-radius:10px; padding:3px; background:var(--bg-elevated); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                       <img src="${itemImgSrc}" alt="${item.name}" style="width:100%; height:100%; object-fit:contain; border-radius:6px;">
+                   </div>`
+                : `<div class="cart-item-img flex-shrink-0" style="background:${item.brandColor || '#7c3aed'}22;color:${item.brandColor || '#7c3aed'}">
+                       <i class="bi bi-shield-fill-check"></i>
+                   </div>`;
+
+            return `
             <div class="d-flex align-items-center gap-3 mb-3 pb-3 border-bottom">
-                <div class="cart-item-img flex-shrink-0" style="background:${item.brandColor}22;color:${item.brandColor}">
-                    <i class="bi bi-shield-fill-check"></i>
-                </div>
+                ${imgMarkup}
                 <div class="flex-grow-1">
                     <div class="fw-600 small">${item.name}</div>
                     <div class="text-muted" style="font-size:12px">${item.plan} · SL: ${item.qty}</div>
                 </div>
                 <div class="fw-700 text-primary small">${formatCurrency(item.price * item.qty)}</div>
             </div>
-        `).join('');
+            `;
+        }).join('');
     }
 
     // ============================

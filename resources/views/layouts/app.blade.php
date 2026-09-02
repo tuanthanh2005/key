@@ -304,13 +304,13 @@
 </main>
 
 {{-- FOOTER --}}
-<footer class="footer">
+<footer class="footer" itemscope itemtype="https://schema.org/WPFooter">
     <div class="container">
         <div class="footer-grid">
             <div class="footer-brand">
                 <div class="navbar-brand" style="margin-bottom:0;">
                     @if(!empty($settings['logo_path']))
-                        <div class="brand-icon" style="background:none; box-shadow:none;"><img src="{{ asset($settings['logo_path']) }}" alt="Logo" style="max-width:100%; max-height:100%; object-fit:contain;"></div>
+                        <div class="brand-icon" style="background:none; box-shadow:none;"><img src="{{ asset($settings['logo_path']) }}" alt="Logo {{ $settings['store_name'] ?? 'VPNStore' }}" style="max-width:100%; max-height:100%; object-fit:contain;"></div>
                     @else
                         <div class="brand-icon"><i class="bi bi-shield-lock-fill"></i></div>
                     @endif
@@ -318,12 +318,11 @@
                 </div>
                 <p>Cửa hàng phần mềm bản quyền uy tín #1 Việt Nam. Cung cấp VPN Premium và Proxy chính hãng với giá tốt nhất và giao hàng tự động 24/7.</p>
                 <div class="footer-social">
-                    <a href="https://facebook.com" target="_blank" class="social-btn" title="Facebook"><i class="bi bi-facebook" style="font-size: 1.1rem;"></i></a>
                     @if(!empty($settings['telegram_support']))
-                    <a href="{{ $settings['telegram_url'] ?? 'https://t.me/' . ltrim($settings['telegram_support'],'@') }}" target="_blank" class="social-btn" title="Telegram"><i class="bi bi-telegram" style="font-size: 1.1rem;"></i></a>
+                    <a href="{{ $settings['telegram_url'] ?? 'https://t.me/' . ltrim($settings['telegram_support'],'@') }}" target="_blank" rel="noopener noreferrer" class="social-btn" title="Hỗ trợ qua Telegram" aria-label="Telegram"><i class="bi bi-telegram" style="font-size: 1.1rem;"></i></a>
                     @endif
                     @if(!empty($settings['zalo_support']))
-                    <a href="{{ $settings['zalo_url_1'] ?? 'https://zalo.me/' . $settings['zalo_support'] }}" target="_blank" class="social-btn" title="Zalo">
+                    <a href="{{ $settings['zalo_url_1'] ?? 'https://zalo.me/' . $settings['zalo_support'] }}" target="_blank" rel="noopener noreferrer" class="social-btn" title="Hỗ trợ qua Zalo" aria-label="Zalo">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24" style="display:inline-block; vertical-align:middle;">
                             <path d="M12.49 10.2722v-.4496h1.3467v6.3218h-.7704a.576.576 0 01-.5763-.5729l-.0006.0005a3.273 3.273 0 01-1.9372.6321c-1.8138 0-3.2844-1.4697-3.2844-3.2823 0-1.8125 1.4706-3.2822 3.2844-3.2822a3.273 3.273 0 011.9372.6321l.0006.0005zM6.9188 7.7896v.205c0 .3823-.051.6944-.2995 1.0605l-.03.0343c-.0542.0615-.1815.206-.2421.2843L2.024 14.8h4.8948v.7682a.5764.5764 0 01-.5767.5761H0v-.3622c0-.4436.1102-.6414.2495-.8476L4.8582 9.23H.1922V7.7896h6.7266zm8.5513 8.3548a.4805.4805 0 01-.4803-.4798v-7.875h1.4416v8.3548H15.47zM20.6934 9.6C22.52 9.6 24 11.0807 24 12.9044c0 1.8252-1.4801 3.306-3.3066 3.306-1.8264 0-3.3066-1.4808-3.3066-3.306 0-1.8237 1.4802-3.3044 3.3066-3.3044zm-10.1412 5.253c1.0675 0 1.9324-.8645 1.9324-1.9312 0-1.065-.865-1.9295-1.9324-1.9295s-1.9324.8644-1.9324 1.9295c0 1.0667.865 1.9312 1.9324 1.9312zm10.1412-.0033c1.0737 0 1.945-.8707 1.945-1.9453 0-1.073-.8713-1.9436-1.945-1.9436-1.0753 0-1.945.8706-1.945 1.9436 0 1.0746.8697 1.9453 1.945 1.9453z"/>
                         </svg>
@@ -332,40 +331,45 @@
                 </div>
             </div>
 
-            <div>
-                <h4 class="footer-heading">Sản Phẩm</h4>
-                <ul class="footer-links">
-                    <li><a href="{{ route('products') }}">Tất Cả Sản Phẩm</a></li>
-                    @if(isset($sharedCategories))
-                        @foreach($sharedCategories->take(4) as $navCat)
-                            <li><a href="{{ route('products', ['brand' => $navCat->slug]) }}">{{ $navCat->name }}</a></li>
+            <div style="grid-column: span 1 / span 1;">
+                <h4 class="footer-heading">Danh Mục Sản Phẩm</h4>
+                <ul class="footer-links" style="display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:8px 20px;">
+                    <li><a href="{{ route('products') }}" title="Danh sách tất cả sản phẩm & danh mục">Tất Cả Sản Phẩm</a></li>
+                    @if(isset($sharedCategories) && count($sharedCategories) > 0)
+                        @foreach($sharedCategories->take(9) as $cat)
+                            <li>
+                                <a href="{{ route('product.detail', $cat->slug) }}" title="Mua {{ $cat->name }} bản quyền chính hãng giá rẻ" style="white-space:nowrap; text-overflow:ellipsis; overflow:hidden; display:block;">
+                                    {{ $cat->name }}
+                                </a>
+                            </li>
                         @endforeach
                     @endif
                 </ul>
             </div>
 
             <div>
-                <h4 class="footer-heading">Hỗ Trợ</h4>
+                <h4 class="footer-heading">Hỗ Trợ Khách Hàng</h4>
                 <ul class="footer-links">
-                    <li><a href="{{ route('order.check') }}">Tra Cứu Đơn Hàng</a></li>
-                    <li><a href="{{ route('about') }}">Giới Thiệu</a></li>
-                    <li><a href="{{ route('contact') }}">Liên Hệ Hỗ Trợ</a></li>
+                    <li><a href="{{ route('order.check') }}" title="Tra cứu mã đơn hàng tự động 24/7">Tra Cứu Đơn Hàng</a></li>
+                    <li><a href="{{ route('posts.index') }}" title="Đọc tin tức & hướng dẫn VPN">Tin Tức & Hướng Dẫn</a></li>
+                    <li><a href="{{ route('about') }}" title="Giới thiệu cửa hàng VPNStore">Giới Thiệu</a></li>
+                    <li><a href="{{ route('contact') }}" title="Liên hệ kênh hỗ trợ trực tuyến">Liên Hệ Hỗ Trợ</a></li>
                 </ul>
             </div>
 
             <div>
-                <h4 class="footer-heading">Liên Hệ</h4>
+                <h4 class="footer-heading">Thông Tin Liên Hệ</h4>
                 <div style="display:flex; flex-direction:column; gap:12px;">
                     @if(!empty($settings['contact_email']))
                     <div style="display:flex; align-items:center; gap:10px; font-size:0.875rem; color:var(--text-muted);">
                         <i class="bi bi-envelope-fill" style="color: var(--primary-light); font-size: 1rem;"></i>
-                        <span>{{ $settings['contact_email'] }}</span>
+                        <a href="mailto:{{ $settings['contact_email'] }}" style="color:var(--text-muted); text-decoration:none;">{{ $settings['contact_email'] }}</a>
                     </div>
                     @endif
                     @if(!empty($settings['telegram_support']))
                     <div style="display:flex; align-items:center; gap:10px; font-size:0.875rem; color:var(--text-muted);">
                         <i class="bi bi-telegram" style="color: var(--primary-light); font-size: 1rem;"></i>
-                        <span>Telegram: {{ '@' . ltrim($settings['telegram_support'],'@') }}</span>
+                        <a href="{{ $settings['telegram_url'] ?? 'https://t.me/' . ltrim($settings['telegram_support'],'@') }}" target="_blank" rel="noopener noreferrer" style="color:var(--text-muted); text-decoration:none;">Telegram: {{ '@' . ltrim($settings['telegram_support'],'@') }}</a>
                     </div>
                     @endif
                     <div style="display:flex; align-items:center; gap:10px; font-size:0.875rem; color:var(--text-muted);">
@@ -378,7 +382,7 @@
                     <div style="font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:var(--text-muted); margin-bottom:10px;">Thanh Toán An Toàn</div>
                     <div style="display:flex; gap:8px; flex-wrap:wrap;">
                         <div style="padding:6px 12px; background:var(--bg-card); border:1px solid var(--border); border-radius:6px; font-size:0.75rem; color:var(--text-secondary);">MB Bank</div>
-                        <div style="padding:6px 12px; background:var(--bg-card); border:1px solid var(--border); border-radius:6px; font-size:0.75rem; color:var(--text-secondary);">ATM</div>
+                        <div style="padding:6px 12px; background:var(--bg-card); border:1px solid var(--border); border-radius:6px; font-size:0.75rem; color:var(--text-secondary);">ATM / Chuyển Khoản</div>
                         <div style="padding:6px 12px; background:var(--bg-card); border:1px solid var(--border); border-radius:6px; font-size:0.75rem; color:var(--text-secondary);">Momo</div>
                     </div>
                 </div>
@@ -386,10 +390,10 @@
         </div>
 
         <div class="footer-bottom">
-            <p class="footer-copy">© {{ date('Y') }} <span>{{ $settings['store_name'] ?? 'VPNStore' }}</span>. Bảo lưu mọi quyền.</p>
+            <p class="footer-copy">© {{ date('Y') }} <span>{{ $settings['store_name'] ?? 'VPNStore' }}</span>. Cửa Hàng VPN & Proxy Bản Quyền Số 1 Việt Nam.</p>
             <div style="display:flex; gap:20px;">
-                <a href="#" onclick="event.preventDefault(); openSeoModal('terms')" style="font-size:0.8rem; color:var(--text-muted); transition:var(--transition);">Điều Khoản</a>
-                <a href="#" onclick="event.preventDefault(); openSeoModal('privacy')" style="font-size:0.8rem; color:var(--text-muted); transition:var(--transition);">Bảo Mật</a>
+                <a href="#" onclick="event.preventDefault(); openSeoModal('terms')" style="font-size:0.8rem; color:var(--text-muted); transition:var(--transition);" title="Điều khoản dịch vụ">Điều Khoản</a>
+                <a href="#" onclick="event.preventDefault(); openSeoModal('privacy')" style="font-size:0.8rem; color:var(--text-muted); transition:var(--transition);" title="Chính sách bảo mật">Bảo Mật</a>
             </div>
         </div>
     </div>
@@ -1279,5 +1283,87 @@ function escapeHtml(str) {
 <script src="{{ asset('js/app.js') }}?v={{ filemtime(public_path('js/app.js')) }}"></script>
 @yield('extra_js')
 @stack('scripts')
+
+@auth
+<script>
+    localStorage.removeItem('guest_session_start_time');
+</script>
+@else
+{{-- Khóa Màn Hình Khách Vãng Lai Sau 5 Phút --}}
+<div id="guestLockoutOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(15, 23, 42, 0.96); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); z-index:99999999; flex-direction:column; align-items:center; justify-content:center; padding:20px; text-align:center;">
+    <div style="max-width:460px; width:100%; background:var(--bg-card, #1e293b); border:1px solid rgba(255,255,255,0.15); border-radius:24px; padding:36px 28px; box-shadow:0 25px 50px -12px rgba(0,0,0,0.7); animation: guestPulse 2s infinite ease-in-out;">
+        <div style="width:72px; height:72px; background:rgba(239, 68, 68, 0.15); color:#ef4444; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:2.4rem; margin-bottom:20px; border:2px solid rgba(239, 68, 68, 0.3);">
+            <i class="bi bi-lock-fill"></i>
+        </div>
+        <h3 style="font-weight:800; font-size:1.35rem; color:#ffffff; margin-bottom:12px;">Hết Thời Gian Trải Nghiệm</h3>
+        <p style="font-size:0.9rem; color:#94a3b8; line-height:1.6; margin-bottom:24px;">
+            Bạn đã sử dụng hết <strong>5 phút trải nghiệm miễn phí</strong> dành cho khách vãng lai. Vui lòng đăng nhập hoặc đăng ký tài khoản để tiếp tục xem sản phẩm và thực hiện giao dịch trên hệ thống!
+        </p>
+
+        <div style="display:flex; flex-direction:column; gap:12px;">
+            <a href="{{ route('auth.login') }}" class="btn btn-primary btn-lg" style="width:100%; font-weight:700; padding:14px; border-radius:12px; font-size:0.95rem; display:flex; align-items:center; justify-content:center; gap:8px;">
+                <i class="bi bi-box-arrow-in-right" style="font-size:1.2rem;"></i> Đăng Nhập Ngay
+            </a>
+            <a href="{{ route('auth.register') }}" class="btn btn-outline" style="width:100%; font-weight:700; padding:14px; border-radius:12px; font-size:0.95rem; display:flex; align-items:center; justify-content:center; gap:8px; border:1px solid rgba(255,255,255,0.2); color:#ffffff; background:rgba(255,255,255,0.05);">
+                <i class="bi bi-person-plus-fill" style="font-size:1.2rem;"></i> Đăng Ký Tài Khoản Mới
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes guestPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.015); }
+    100% { transform: scale(1); }
+}
+</style>
+
+<script>
+(function() {
+    const LOCK_TIME_SECONDS = 300; // 5 phút = 300 giây
+    let startTime = localStorage.getItem('guest_session_start_time');
+    
+    if (!startTime) {
+        startTime = Date.now().toString();
+        localStorage.setItem('guest_session_start_time', startTime);
+    }
+    
+    function checkGuestLockout() {
+        const elapsedSeconds = Math.floor((Date.now() - parseInt(startTime)) / 1000);
+        if (elapsedSeconds >= LOCK_TIME_SECONDS) {
+            triggerLockout();
+        }
+    }
+    
+    function triggerLockout() {
+        const overlay = document.getElementById('guestLockoutOverlay');
+        if (overlay) {
+            overlay.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            document.body.style.pointerEvents = 'none';
+            overlay.style.pointerEvents = 'auto';
+        }
+    }
+    
+    // Check immediately on load
+    checkGuestLockout();
+    
+    // Check every 1 second
+    setInterval(checkGuestLockout, 1000);
+    
+    // Prevent closing via keyboard (ESC, Tab)
+    window.addEventListener('keydown', function(e) {
+        const elapsedSeconds = Math.floor((Date.now() - parseInt(startTime)) / 1000);
+        if (elapsedSeconds >= LOCK_TIME_SECONDS) {
+            if (e.key === 'Escape' || e.key === 'Tab' || e.keyCode === 27 || e.keyCode === 9) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        }
+    }, true);
+})();
+</script>
+@endauth
 </body>
 </html>

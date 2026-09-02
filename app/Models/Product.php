@@ -333,4 +333,38 @@ class Product extends Model
 
         return asset('storage/' . $path);
     }
+
+    /**
+     * Helper to generate standardized plan key from label string
+     */
+    public static function generatePlanKey($label)
+    {
+        $l = strtolower(trim($label));
+        if (str_contains($l, '1 tháng') || str_contains($l, '1thang') || $l === '1m') return '1month';
+        if (str_contains($l, '2 tháng') || str_contains($l, '2thang') || $l === '2m') return '2month';
+        if (str_contains($l, '3 tháng') || str_contains($l, '3thang') || $l === '3m') return '3month';
+        if (str_contains($l, '6 tháng') || str_contains($l, '6thang') || $l === '6m') return '6month';
+        if (str_contains($l, '1 năm') || str_contains($l, '1nam') || $l === '1y') return '1year';
+        if (str_contains($l, '2 năm') || str_contains($l, '2nam') || $l === '2y') return '2year';
+        if (str_contains($l, '3 năm') || str_contains($l, '3nam') || $l === '3y') return '3year';
+        if (str_contains($l, 'vĩnh viễn') || str_contains($l, 'lifetime')) return 'lifetime';
+        return \Illuminate\Support\Str::slug($label);
+    }
+
+    /**
+     * Helper to guess duration days from plan key
+     */
+    public static function guessDurationDays($planKey)
+    {
+        $k = strtolower(trim($planKey));
+        if ($k === '1month') return 30;
+        if ($k === '2month') return 60;
+        if ($k === '3month') return 90;
+        if ($k === '6month') return 180;
+        if ($k === '1year') return 365;
+        if ($k === '2year') return 730;
+        if ($k === '3year') return 1095;
+        if ($k === 'lifetime') return 3650;
+        return 30;
+    }
 }

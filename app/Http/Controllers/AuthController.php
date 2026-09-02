@@ -82,13 +82,34 @@ class AuthController extends Controller
             'password.confirmed' => 'Mật khẩu xác nhận không khớp.',
         ]);
 
+        $clientIp = $request->ip();
+        $todayStart = now()->startOfDay();
+
+        $ipRegCountDb = User::where('ip_address', $clientIp)
+            ->where('created_at', '>=', $todayStart)
+            ->count();
+
+        $cacheKey = 'ip_reg_count_' . str_replace([':', '.'], '_', $clientIp) . '_' . date('Y-m-d');
+        $ipRegCountCache = (int) \Illuminate\Support\Facades\Cache::get($cacheKey, 0);
+
+        $totalRegistrationsToday = max($ipRegCountDb, $ipRegCountCache);
+
+        if ($totalRegistrationsToday >= 3) {
+            return redirect()->back()
+                ->withInput($request->except('password', 'password_confirmation'))
+                ->withErrors(['email' => 'Địa chỉ IP của bạn đã đạt giới hạn tạo 3 tài khoản trong ngày hôm nay. Vui lòng liên hệ trực tiếp Admin để được hỗ trợ tạo tài khoản!']);
+        }
+
         $user = User::create([
-            'name'     => $request->name,
-            'email'    => $request->email,
-            'password' => Hash::make($request->password),
-            'role'     => 'user',
-            'status'   => 'active',
+            'name'       => $request->name,
+            'email'      => $request->email,
+            'password'   => Hash::make($request->password),
+            'role'       => 'user',
+            'status'     => 'active',
+            'ip_address' => $clientIp,
         ]);
+
+        \Illuminate\Support\Facades\Cache::put($cacheKey, $totalRegistrationsToday + 1, now()->endOfDay());
 
         Auth::login($user);
         $request->session()->regenerate();

@@ -133,16 +133,28 @@
                         <div class="p-4 border-bottom" style="border-color:var(--gray-100)!important">
                             <h6 class="fw-700 mb-3" style="font-size:14px">Sản Phẩm Đặt Mua</h6>
                             @php
-                                $cat = \App\Models\Category::where('name', 'like', '%' . $order->brand . '%')
-                                    ->orWhere('slug', \Illuminate\Support\Str::slug($order->brand))
-                                    ->first();
-                                $catImage = $cat ? $cat->image_url : null;
+                                $prod = null;
+                                if (!empty($order->product_id)) {
+                                    $prod = \App\Models\Product::find($order->product_id);
+                                }
+                                if (!$prod && !empty($order->brand)) {
+                                    $prod = \App\Models\Product::where('brand', $order->brand)
+                                        ->orWhere('name', 'like', '%' . $order->brand . '%')
+                                        ->first();
+                                }
+                                $orderImgUrl = $prod ? $prod->image_url : null;
+                                if (!$orderImgUrl) {
+                                    $cat = \App\Models\Category::where('name', 'like', '%' . $order->brand . '%')
+                                        ->orWhere('slug', \Illuminate\Support\Str::slug($order->brand))
+                                        ->first();
+                                    $orderImgUrl = $cat ? $cat->image_url : null;
+                                }
                             @endphp
                             <div class="order-product-item p-3 rounded-3" style="background:var(--bg-elevated); border:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
                                 <div style="display:flex; align-items:center; gap:12px; flex:1; min-width:220px;">
-                                    @if($catImage)
+                                    @if($orderImgUrl)
                                         <div style="width:56px; height:56px; border-radius:10px; padding:6px; background:var(--bg-card); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                                            <img src="{{ $catImage }}" alt="{{ $order->product_name }}" style="width:100%; height:100%; object-fit:contain;">
+                                            <img src="{{ $orderImgUrl }}" alt="{{ $order->product_name }}" style="width:100%; height:100%; object-fit:contain;">
                                         </div>
                                     @else
                                         <div style="width:56px; height:56px; border-radius:10px; background:rgba(124,58,237,0.1); border:1px solid rgba(124,58,237,0.2); color:var(--primary-light); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:1.5rem;">

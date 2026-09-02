@@ -6,17 +6,6 @@
 
 @section('content')
 
-@php
-    // Query items using Eloquent models directly in Blade to bypass controller constraints
-    $featuredProducts = \App\Models\Product::where('status', 'active')->where('show_in_list', true)->where('is_popular', true)->with('category')
-        ->orderBy('id', 'desc')->limit(8)->get();
-
-    $popularProducts = \App\Models\Product::where('status', 'active')->where('show_in_list', true)
-        ->orderBy('sold', 'desc')->limit(6)->get();
-
-    $categories = \App\Models\Category::withCount('products')->get();
-@endphp
-
 {{-- ===== HERO SECTION ===== --}}
 <section class="hero">
     <div class="hero-bg">
@@ -97,31 +86,51 @@
         <div class="categories-grid" id="categories-grid">
             @foreach($categories as $index => $cat)
             @php
+                if (is_object($cat)) {
+                    $cSlug = $cat->slug ?? '';
+                    $cName = $cat->name ?? '';
+                    $cImgPath = $cat->image_path ?? null;
+                    $cImgUrl = $cat->image_url ?? '';
+                    $cCount = $cat->products_count ?? 0;
+                } else if (is_array($cat)) {
+                    $cSlug = $cat['slug'] ?? '';
+                    $cName = $cat['name'] ?? '';
+                    $cImgPath = $cat['image_path'] ?? null;
+                    $cImgUrl = $cat['image_url'] ?? '';
+                    $cCount = $cat['products_count'] ?? 0;
+                } else {
+                    $cSlug = (string)$cat;
+                    $cName = (string)$cat;
+                    $cImgPath = null;
+                    $cImgUrl = '';
+                    $cCount = 0;
+                }
+
                 $catIcons = [
                     'nordvpn' => 'bi bi-shield-lock-fill',
                     'expressvpn' => 'bi bi-shield-lock-fill',
                     'surfshark' => 'bi bi-shield-lock-fill',
                     'hma' => 'bi bi-shield-lock-fill'
                 ];
-                $iconClass = $catIcons[$cat->slug] ?? 'bi bi-tag-fill';
+                $iconClass = $catIcons[$cSlug] ?? 'bi bi-tag-fill';
             @endphp
-            <a href="{{ route('products', ['brand' => $cat->slug]) }}"
+            <a href="{{ route('products', ['brand' => $cSlug]) }}"
                class="card animate-on-scroll category-card @if($index >= 2) category-card-hidden-mobile @endif"
                style="cursor:pointer; text-decoration:none;">
-                @if($cat->image_path)
-                    <img src="{{ $cat->image_url }}" alt="{{ $cat->name }}" width="32" height="32" loading="lazy" decoding="async" style="width:32px; height:32px; object-fit:contain; flex-shrink:0;">
+                @if($cImgPath)
+                    <img src="{{ $cImgUrl }}" alt="{{ $cName }}" width="32" height="32" loading="lazy" decoding="async" style="width:32px; height:32px; object-fit:contain; flex-shrink:0;">
                 @else
                     <div style="font-size:1.3rem; color:var(--primary-light); flex-shrink:0; display:flex; align-items:center; justify-content:center; width:32px; height:32px;"><i class="{{ $iconClass }}"></i></div>
                 @endif
                 <div style="display:flex; flex-direction:column; min-width:0; flex:1;">
-                    <div style="font-size:0.8rem; font-weight:700; color:var(--text-primary); white-space:nowrap; text-overflow:ellipsis; overflow:hidden;">{{ $cat->name }}</div>
-                    <div style="font-size:0.68rem; color:var(--text-muted);">{{ $cat->products_count }} sản phẩm</div>
+                    <div style="font-size:0.8rem; font-weight:700; color:var(--text-primary); white-space:nowrap; text-overflow:ellipsis; overflow:hidden;">{{ $cName }}</div>
+                    <div style="font-size:0.68rem; color:var(--text-muted);">{{ $cCount }} sản phẩm</div>
                 </div>
             </a>
             @endforeach
         </div>
 
-        @if(count($categories) > 2)
+        @if(count(collect($categories)) > 2)
         <div class="toggle-categories-mobile" style="text-align:center; margin-top:10px;">
             <button type="button" class="btn btn-outline btn-sm" id="toggle-cats-btn" onclick="toggleMobileCategories()" aria-label="Xem thêm danh mục" style="border-radius:50%; width:36px; height:36px; padding:0; display:inline-flex; align-items:center; justify-content:center; font-size:0.9rem; background:var(--bg-card);">
                 <i class="bi bi-chevron-down"></i>
@@ -164,7 +173,7 @@ function toggleMobileCategories() {
     </div>
 </section>
 
-@if($popularProducts->count())
+@if(count(collect($popularProducts)) > 0)
 <section class="section" style="padding: 24px 0;">
     <div class="container-fluid" style="width:100%; padding: 0 32px;">
         <div class="section-header" style="margin-bottom: 16px;">

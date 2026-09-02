@@ -22,9 +22,31 @@ class ShopController extends Controller
      */
     public function home()
     {
-        $allProducts = Product::where('status', 'active')->where('show_in_list', true)->get()->toArray();
+        $featuredProducts = \Illuminate\Support\Facades\Cache::remember('home_featured_products_v3', 300, function () {
+            return Product::where('is_active', true)
+                ->where('show_in_list', true)
+                ->where('is_popular', true)
+                ->with('category')
+                ->orderBy('id', 'desc')
+                ->limit(8)
+                ->get()
+                ->toArray();
+        });
 
-        return view('home', compact('allProducts'));
+        $popularProducts = \Illuminate\Support\Facades\Cache::remember('home_popular_products_v3', 300, function () {
+            return Product::where('is_active', true)
+                ->where('show_in_list', true)
+                ->orderBy('sold', 'desc')
+                ->limit(6)
+                ->get()
+                ->toArray();
+        });
+
+        $categories = \Illuminate\Support\Facades\Cache::remember('home_categories_count_v3', 300, function () {
+            return Category::withCount('products')->get()->toArray();
+        });
+
+        return view('home', compact('featuredProducts', 'popularProducts', 'categories'));
     }
 
     /**
@@ -49,31 +71,51 @@ class ShopController extends Controller
     /**
      * Chi tiết sản phẩm theo slug thương hiệu – slug lấy dynamic từ DB
      */
+    /**
+     * Chi tiết sản phẩm theo slug thương hiệu / sản phẩm
+     */
     public function productDetail($slug)
     {
-        $category = Category::where('slug', $slug)->first();
-        if ($category) {
-            $dbProducts = Product::where('status', 'active')
-                ->where('category_id', $category->id)
-                ->get();
-        } else {
-            $product = Product::where('status', 'active')
-                ->where('slug', $slug)
-                ->first();
+        $slugLower = strtolower(trim($slug));
 
-            if ($product) {
-                if ($product->category_id) {
-                    $cat = Category::find($product->category_id);
-                    if ($cat) {
-                        return redirect()->route('product.detail', ['slug' => $cat->slug], 301);
-                    }
-                }
-                $dbProducts = collect([$product]);
-            } else {
-                $dbProducts = collect();
+        // 1. Tìm sản phẩm theo đúng slug của sản phẩm
+        $dbProducts = Product::where(function($q) {
+                $q->where('is_active', true)->orWhere('status', 'active');
+            })
+            ->where('slug', $slugLower)
+            ->get();
+
+        // 2. Nếu không tìm thấy theo slug sản phẩm, tìm theo slug danh mục / thương hiệu
+        if ($dbProducts->isEmpty()) {
+            $category = Category::where('slug', $slugLower)->first();
+            if ($category) {
+                $dbProducts = Product::where(function($q) {
+                        $q->where('is_active', true)->orWhere('status', 'active');
+                    })
+                    ->where('category_id', $category->id)
+                    ->get();
+            }
+        } else {
+            $category = Category::find($dbProducts->first()->category_id);
+        }
+
+        // 3. Tìm tương đối theo tên thương hiệu (ví dụ: hma-vpn => hma)
+        if ($dbProducts->isEmpty()) {
+            $cleanBrand = str_replace(['-vpn', 'vpn-', '-'], '', $slugLower);
+            $dbProducts = Product::where(function($q) {
+                    $q->where('is_active', true)->orWhere('status', 'active');
+                })
+                ->where(function ($q) use ($slugLower, $cleanBrand) {
+                    $q->whereRaw('LOWER(REPLACE(brand, " ", "")) = ?', [$slugLower])
+                      ->orWhereRaw('LOWER(REPLACE(brand, " ", "")) = ?', [$cleanBrand]);
+                })
+                ->get();
+            if ($dbProducts->isNotEmpty()) {
+                $category = Category::find($dbProducts->first()->category_id);
             }
         }
 
+        // Nếu không có sản phẩm nào khớp -> Báo lỗi 404 Không Tìm Thấy
         if ($dbProducts->isEmpty()) {
             abort(404, 'Sản phẩm không tồn tại');
         }
@@ -308,6 +350,27 @@ class ShopController extends Controller
                 'coupon' => 'nullable|string|max:50',
                 'cart' => 'required|array|min:1',
             ]);
+
+            // Giới hạn 4 đơn hàng / 1 ngày cho mỗi user / email / phone
+            $todayStart = now()->startOfDay();
+            $userOrdersTodayCount = Order::where(function ($q) use ($request) {
+                if (auth()->check()) {
+                    $q->where('user_id', auth()->id())
+                      ->orWhere('customer_email', $request->customer_email);
+                } else {
+                    $q->where('customer_email', $request->customer_email)
+                      ->orWhere('customer_phone', $request->customer_phone);
+                }
+            })
+            ->where('created_at', '>=', $todayStart)
+            ->count();
+
+            if ($userOrdersTodayCount >= 4) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Hết phiên đặt hàng hôm nay, vui lòng liên hệ trực tiếp Admin để đặt hàng!',
+                ], 422);
+            }
 
             $cart = $request->cart;
             $productNames = [];

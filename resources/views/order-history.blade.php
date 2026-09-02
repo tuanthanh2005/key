@@ -55,16 +55,28 @@
 
                     {{-- Card Body --}}
                     @php
-                        $cat = \App\Models\Category::where('name', 'like', '%' . $order->brand . '%')
-                            ->orWhere('slug', \Illuminate\Support\Str::slug($order->brand))
-                            ->first();
-                        $catImage = $cat ? $cat->image_url : null;
+                        $prod = null;
+                        if (!empty($order->product_id)) {
+                            $prod = \App\Models\Product::find($order->product_id);
+                        }
+                        if (!$prod && !empty($order->brand)) {
+                            $prod = \App\Models\Product::where('brand', $order->brand)
+                                ->orWhere('name', 'like', '%' . $order->brand . '%')
+                                ->first();
+                        }
+                        $orderImgUrl = $prod ? $prod->image_url : null;
+                        if (!$orderImgUrl) {
+                            $cat = \App\Models\Category::where('name', 'like', '%' . $order->brand . '%')
+                                ->orWhere('slug', \Illuminate\Support\Str::slug($order->brand))
+                                ->first();
+                            $orderImgUrl = $cat ? $cat->image_url : null;
+                        }
                     @endphp
                     <div class="order-card-body" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; margin-bottom:14px;">
                         <div style="display:flex; align-items:center; gap:14px; flex:1; min-width:240px;">
-                            @if($catImage)
+                            @if($orderImgUrl)
                                 <div style="width:52px; height:52px; border-radius:12px; padding:6px; background:var(--bg-elevated); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                                    <img src="{{ $catImage }}" alt="{{ $order->product_name }}" style="width:100%; height:100%; object-fit:contain;">
+                                    <img src="{{ $orderImgUrl }}" alt="{{ $order->product_name }}" style="width:100%; height:100%; object-fit:contain;">
                                 </div>
                             @else
                                 <div style="width:52px; height:52px; border-radius:12px; background:rgba(124,58,237,0.1); border:1px solid rgba(124,58,237,0.2); color:var(--primary-light); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:1.4rem;">

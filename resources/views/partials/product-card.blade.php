@@ -1,19 +1,22 @@
 @php
+    if (is_object($product) && get_class($product) === '__PHP_Incomplete_Class') {
+        $product = (array) $product;
+    }
     $isArr = is_array($product);
-    $prodId = $isArr ? $product['id'] : $product->id;
-    $prodName = $isArr ? $product['name'] : $product->name;
-    $prodSlug = $isArr ? $product['slug'] : $product->slug;
-    $prodPrice = $isArr ? $product['price'] : $product->price;
-    $prodOldPrice = $isArr ? ($product['old_price'] ?? null) : $product->old_price;
-    $prodPlan = $isArr ? ($product['plan'] ?? null) : $product->plan;
-    $prodImage = $isArr ? ($product['image_url'] ?? $product['image_path'] ?? null) : ($product->image_url ?: $product->image_path);
-    $prodIsPopular = $isArr ? ($product['is_popular'] ?? false) : $product->is_popular;
+    $prodId = $isArr ? ($product['id'] ?? null) : ($product->id ?? null);
+    $prodName = $isArr ? ($product['name'] ?? '') : ($product->name ?? '');
+    $prodSlug = $isArr ? ($product['slug'] ?? '') : ($product->slug ?? '');
+    $prodPrice = $isArr ? ($product['price'] ?? 0) : ($product->price ?? 0);
+    $prodOldPrice = $isArr ? ($product['old_price'] ?? null) : ($product->old_price ?? null);
+    $prodPlan = $isArr ? ($product['plan'] ?? null) : ($product->plan ?? null);
+    $prodImage = $isArr ? ($product['image_url'] ?? $product['image_path'] ?? $product['image'] ?? null) : ($product->image_url ?? $product->image_path ?? $product->image ?? null);
+    $prodIsPopular = $isArr ? ($product['is_popular'] ?? false) : ($product->is_popular ?? false);
     $prodRating = $isArr ? ($product['rating'] ?? 0) : ($product->rating ?? 0);
     $prodReviews = $isArr ? ($product['reviews'] ?? 0) : ($product->reviews ?? 0);
     $prodSold = $isArr ? ($product['sold'] ?? $product['sold_count'] ?? 0) : ($product->sold ?? $product->sold_count ?? 0);
-    $prodStock = $isArr ? ($product['stock'] ?? 0) : $product->stock;
-    $prodColor = $isArr ? ($product['color'] ?? '#2563eb') : $product->color;
-    $prodBrand = $isArr ? ($product['brand'] ?? '') : $product->brand;
+    $prodStock = $isArr ? ($product['stock'] ?? 0) : ($product->stock ?? 0);
+    $prodColor = $isArr ? ($product['color'] ?? '#2563eb') : ($product->color ?? '#2563eb');
+    $prodBrand = $isArr ? ($product['brand'] ?? '') : ($product->brand ?? '');
     $prodRequireEmail = $isArr ? ($product['require_upgrade_email'] ?? false) : ($product->require_upgrade_email ?? false);
     
     // Real rating & sold count
@@ -21,9 +24,9 @@
     $realSold = (int)$prodSold;
     
     // Category relation
-    $cat = $isArr ? ($product['category'] ?? null) : $product->category;
-    $catName = $cat ? (is_array($cat) ? $cat['name'] : $cat->name) : '';
-    $catSlug = $cat ? (is_array($cat) ? $cat['slug'] : $cat->slug) : '';
+    $cat = $isArr ? ($product['category'] ?? null) : ($product->category ?? null);
+    $catName = $cat ? (is_array($cat) ? ($cat['name'] ?? '') : ($cat->name ?? '')) : '';
+    $catSlug = $cat ? (is_array($cat) ? ($cat['slug'] ?? '') : ($cat->slug ?? '')) : '';
 
     // Calculate discount
     $discount = 0;
@@ -33,7 +36,7 @@
 @endphp
 <div class="product-card animate-on-scroll">
     <div class="product-card-image">
-        <a href="{{ route('product.detail', $catSlug ?: $prodSlug) }}" style="display:block; width:100%; height:100%;">
+        <a href="{{ route('product.detail', $prodSlug ?: $catSlug) }}" style="display:block; width:100%; height:100%;">
             @if($prodImage)
                 <img src="{{ asset($prodImage) }}" alt="{{ $prodName }}" loading="lazy"
                      onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';"
@@ -73,7 +76,7 @@
         @endif
     </div>
 
-    <a href="{{ route('product.detail', $catSlug ?: $prodSlug) }}" style="flex:1; display:flex; flex-direction:column;">
+    <a href="{{ route('product.detail', $prodSlug ?: $catSlug) }}" style="flex:1; display:flex; flex-direction:column;">
         <div class="product-card-body">
             @if($catName)
                 <span class="product-category"><i class="bi bi-tag-fill" style="margin-right:4px;"></i>{{ $catName }}</span>

@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\Category;
 use App\Models\Coupon;
+use App\Models\Product;
 use App\Models\Setting;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Pagination\Paginator;
@@ -83,10 +84,42 @@ class AppServiceProvider extends ServiceProvider
                 $sharedCategories = collect($categoryRows)
                     ->map(fn (array $category) => (object) $category);
             }
+
+            static $sharedHotProducts = null;
+            if ($sharedHotProducts === null) {
+                $productRows = Cache::remember('shared_hot_products_v4', 600, function() {
+                    $prods = Product::query()
+                        ->where('is_active', true)
+                        ->where('show_in_list', true)
+                        ->where('is_popular', true)
+                        ->select(['id', 'name', 'slug', 'brand', 'price'])
+                        ->orderBy('id', 'desc')
+                        ->limit(9)
+                        ->get()
+                        ->toArray();
+                    if (count($prods) < 9) {
+                        $existingIds = array_column($prods, 'id');
+                        $moreProds = Product::query()
+                            ->where('is_active', true)
+                            ->where('show_in_list', true)
+                            ->whereNotIn('id', $existingIds)
+                            ->select(['id', 'name', 'slug', 'brand', 'price'])
+                            ->orderBy('sold', 'desc')
+                            ->limit(9 - count($prods))
+                            ->get()
+                            ->toArray();
+                        $prods = array_merge($prods, $moreProds);
+                    }
+                    return $prods;
+                });
+                $sharedHotProducts = $productRows;
+            }
+
             $view->with([
                 'sharedVpnCategories' => $sharedCategories->where('type', 'vpn'),
                 'sharedProxyCategories' => $sharedCategories->where('type', 'proxy'),
                 'sharedCategories' => $sharedCategories,
+                'sharedHotProducts' => $sharedHotProducts,
             ]);
 
             if ($settings === null) {

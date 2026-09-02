@@ -38,19 +38,15 @@ if (!empty($firstBrand) && isset($brandData[$firstBrand])) {
 }
 
 $cleanBrandName = str_replace('-', ' ', $brand['name']);
-
-$plans = [];
-$hasPopular = false;
-foreach ($dbProducts ?? [] as $dbProd) {
-    if ($dbProd->is_popular) {
-        $hasPopular = true;
-        break;
-    }
+$displayTitle = $firstProduct ? ($firstProduct->name ?: $brand['name']) : $brand['name'];
+if (strlen($displayTitle) > 60 && str_contains($displayTitle, ' - ')) {
+    $displayTitle = trim(explode(' - ', $displayTitle)[0]);
 }
 
+$plans = [];
 foreach ($dbProducts ?? [] as $dbProd) {
     $planKey = $dbProd->plan;
-    $label = \App\Models\Product::formatPlanDuration($planKey);
+    $label = $dbProd->duration ?: \App\Models\Product::formatPlanDuration($planKey);
     $save = null;
     if ($dbProd->old_price && $dbProd->old_price > $dbProd->price) {
         $pct = round((1 - ($dbProd->price / $dbProd->old_price)) * 100);
@@ -63,7 +59,7 @@ foreach ($dbProducts ?? [] as $dbProd) {
         'price' => $dbProd->price,
         'old' => $dbProd->old_price ?: ($dbProd->price * 1.5),
         'save' => $save,
-        'popular' => $hasPopular ? (bool) $dbProd->is_popular : ($planKey === '1year'),
+        'popular' => (bool) $dbProd->is_popular,
         'image_path' => $dbProd->image_url,
         'color' => $dbProd->color,
         'servers' => $dbProd->servers ?: ($brand['servers'] ?? ''),
@@ -107,39 +103,79 @@ $curReviews = intval($defaultPlan['reviews'] ?? 0);
 @push('head')
 @if($defaultPlan)
 @php
-    $prodNameJson = addslashes($firstProduct ? $firstProduct->name : ($brand['name'] . ' ' . $defaultPlan['label']));
-    $prodDescJson = addslashes(strip_tags($defaultPlan['description'] ?? $brand['desc']));
-    $prodBrandJson = addslashes($cleanBrandName);
+    $prodNameJson = $firstProduct ? $firstProduct->name : ($brand['name'] . ' ' . $defaultPlan['label']);
+    $prodDescJson = strip_tags($defaultPlan['description'] ?? $brand['desc']);
+    $prodBrandJson = $cleanBrandName;
     $prodImgJson = !empty($defaultPlan['image_path']) ? (str_starts_with($defaultPlan['image_path'], 'http') ? $defaultPlan['image_path'] : asset($defaultPlan['image_path'])) : '';
+
+    $schemaProduct = [
+        '@context' => 'https://schema.org/',
+        '@type' => 'Product',
+        'name' => $prodNameJson,
+        'image' => $prodImgJson,
+        'description' => $prodDescJson,
+        'brand' => [
+            '@type' => 'Brand',
+            'name' => $prodBrandJson,
+        ],
+        'offers' => [
+            '@type' => 'Offer',
+            'url' => url()->current(),
+            'priceCurrency' => 'VND',
+            'price' => (string)$defaultPlan['price'],
+            'priceValidUntil' => date('Y-12-31'),
+            'itemCondition' => 'https://schema.org/NewCondition',
+            'availability' => $defaultPlan['stock'] > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+        ]
+    ];
+    if ($curRating >= 1 && $curReviews >= 1) {
+        $schemaProduct['aggregateRating'] = [
+            '@type' => 'AggregateRating',
+            'ratingValue' => number_format($curRating, 1),
+            'reviewCount' => (string)$curReviews,
+        ];
+    }
+
+    $schemaBreadcrumbs = [
+        '@context' => 'https://schema.org',
+        '@type' => 'BreadcrumbList',
+        'itemListElement' => [
+            ['@type' => 'ListItem', 'position' => 1, 'name' => 'Trang Chủ', 'item' => route('home')],
+            ['@type' => 'ListItem', 'position' => 2, 'name' => 'Sản Phẩm', 'item' => route('products')],
+            ['@type' => 'ListItem', 'position' => 3, 'name' => $prodBrandJson, 'item' => url()->current()],
+        ]
+    ];
+
+    $collectionItems = [];
+    foreach ($plans as $idx => $pl) {
+        $collectionItems[] = [
+            '@type' => 'ListItem',
+            'position' => $idx + 1,
+            'name' => $cleanBrandName . ' ' . $pl['label'],
+            'url' => url()->current(),
+        ];
+    }
+    $schemaCollection = [
+        '@context' => 'https://schema.org',
+        '@type' => 'CollectionPage',
+        'name' => 'Tài Khoản ' . $prodBrandJson . ' Bản Quyền Chính Hãng',
+        'description' => $prodDescJson,
+        'url' => url()->current(),
+        'mainEntity' => [
+            '@type' => 'ItemList',
+            'numberOfItems' => count($plans),
+            'itemListElement' => $collectionItems,
+        ]
+    ];
 @endphp
 <script type="application/ld+json">
-{
-  "@@context": "https://schema.org/",
-  "@@type": "Product",
-  "name": "{{ $prodNameJson }}",
-  "image": "{{ $prodImgJson }}",
-  "description": "{{ $prodDescJson }}",
-  "brand": {
-    "@@type": "Brand",
-    "name": "{{ $prodBrandJson }}"
-  },
-  "offers": {
-    "@@type": "Offer",
-    "url": "{{ url()->current() }}",
-    "priceCurrency": "VND",
-    "price": "{{ $defaultPlan['price'] }}",
-    "priceValidUntil": "{{ date('Y-12-31') }}",
-    "itemCondition": "https://schema.org/NewCondition",
-    "availability": "{{ $defaultPlan['stock'] > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock' }}"
-  }@if($curRating >= 1 && $curReviews >= 1),
-  "aggregateRating": {
-    "@@type": "AggregateRating",
-    "ratingValue": "{{ number_format($curRating, 1) }}",
-    "reviewCount": "{{ $curReviews }}"
-  }
-  @endif
-
-}
+{!! json_encode($schemaProduct, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+</script>
+<script type="application/ld+json">
+{!! json_encode($schemaBreadcrumbs, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
+</script>
+<script type="application/ld+json">
+{!! json_encode($schemaCollection, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) !!}
 </script>
 @endif
 <style>
@@ -203,7 +239,7 @@ $curReviews = intval($defaultPlan['reviews'] ?? 0);
             <span>/</span>
             <a href="{{ route('products') }}" style="color:var(--text-muted); text-decoration:none;">Sản Phẩm</a>
             <span>/</span>
-            <span style="color:var(--text-primary);">{{ $firstProduct ? $firstProduct->name : $brand['name'] }}</span>
+            <span style="color:var(--text-primary);">{{ $displayTitle }}</span>
         </nav>
 
         <div class="product-detail-layout">
@@ -344,7 +380,7 @@ $curReviews = intval($defaultPlan['reviews'] ?? 0);
             <div class="product-purchase-column product-sidebar-sticky">
                 <div class="product-purchase-card card" style="border-color:rgba(124,58,237,0.3); padding:24px;">
                     <span style="font-size:0.75rem; font-weight:800; color:var(--accent); text-transform:uppercase; letter-spacing:0.05em; display:block; margin-bottom:6px;">Premium Account</span>
-                    <h1 style="font-size:1.6rem; font-weight:800; margin-bottom:12px; color:var(--text-primary);">{{ $firstProduct ? $firstProduct->name : $brand['name'] }}</h1>
+                    <h1 style="font-size:1.6rem; font-weight:800; margin-bottom:12px; color:var(--text-primary);">{{ $displayTitle }}</h1>
                     
                     {{-- Rating Stars & Sold Count --}}
                     @php
@@ -379,13 +415,17 @@ $curReviews = intval($defaultPlan['reviews'] ?? 0);
                         <span style="font-size:0.8rem; font-weight:700; color:var(--text-secondary); display:block; margin-bottom:10px;">Chọn Gói Sử Dụng:</span>
                         <div style="display:flex; flex-direction:column; gap:8px;">
                             @foreach($plans as $p)
-                            <div class="plan-option {{ ($p['id'] == $defaultPlan['id']) ? 'selected' : '' }}"
+                            @php
+                                $isPlanOutOfStock = (isset($p['stock']) && $p['stock'] !== null && $p['stock'] != -1 && (int)$p['stock'] <= 0);
+                            @endphp
+                            <div class="plan-option {{ ($p['id'] == $defaultPlan['id']) ? 'selected' : '' }} {{ $isPlanOutOfStock ? 'plan-out-of-stock' : '' }}"
                                  data-id="{{ $p['id'] }}"
                                  data-price="{{ $p['price'] }}"
                                  data-plan="{{ $p['key'] }}"
                                  data-period="{{ $p['label'] }}"
                                  data-old="{{ $p['old'] }}"
                                  data-stock="{{ $p['stock'] }}"
+                                 data-is-out-of-stock="{{ $isPlanOutOfStock ? '1' : '0' }}"
                                  data-image="{{ $p['image_path'] ? asset($p['image_path']) : '' }}"
                                  data-servers="{{ $p['servers'] }}"
                                  data-countries="{{ $p['countries'] }}"
@@ -398,9 +438,16 @@ $curReviews = intval($defaultPlan['reviews'] ?? 0);
                                  data-desc="{{ $p['description'] }}"
                                  data-specs="{{ json_encode($p['specs'] ?? []) }}"
                                  data-require-email="{{ $p['require_upgrade_email'] ? '1' : '0' }}"
-                                 style="padding:12px; border:1px solid var(--border); border-radius:var(--radius); cursor:pointer; background:var(--bg-elevated); transition:var(--transition); display:flex; justify-content:space-between; align-items:center;">
+                                 style="padding:12px; border:1px solid var(--border); border-radius:var(--radius); cursor:{{ $isPlanOutOfStock ? 'not-allowed' : 'pointer' }}; background:{{ $isPlanOutOfStock ? 'rgba(0,0,0,0.03)' : 'var(--bg-elevated)' }}; opacity:{{ $isPlanOutOfStock ? '0.55' : '1' }}; transition:var(--transition); display:flex; justify-content:space-between; align-items:center;">
                                 <div style="display:flex; flex-direction:column; gap:2px;">
-                                    <strong style="font-size:0.9rem; color:var(--text-primary);">Gói {{ $p['label'] }}</strong>
+                                    <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                                        <strong style="font-size:0.9rem; color:var(--text-primary);">Gói {{ $p['label'] }}</strong>
+                                        @if($isPlanOutOfStock)
+                                            <span class="badge bg-secondary text-white" style="font-size:0.65rem; padding:2px 6px; font-weight:700; background:#64748b !important;">Hết Hàng</span>
+                                        @elseif($p['popular'])
+                                            <span style="font-size:0.65rem; background:linear-gradient(135deg, #f59e0b, #ef4444); color:#fff; padding:2px 7px; border-radius:6px; font-weight:800; text-transform:uppercase; letter-spacing:0.02em; box-shadow:0 2px 4px rgba(245,158,11,0.25); display:inline-flex; align-items:center; gap:3px;"><i class="bi bi-fire"></i> Nổi Bật</span>
+                                        @endif
+                                    </div>
                                     @if(!empty($p['plan_note']))
                                         <span style="font-size:0.75rem; color:var(--text-muted); font-weight:500;">{{ $p['plan_note'] }}</span>
                                     @endif
@@ -430,7 +477,7 @@ $curReviews = intval($defaultPlan['reviews'] ?? 0);
                     {{-- Purchase Buttons --}}
                     <div style="display:flex; gap:12px; margin-bottom:24px;">
                         @php
-                            $isDefaultOutOfStock = ($defaultPlan['stock'] ?? 0) <= 0;
+                            $isDefaultOutOfStock = (isset($defaultPlan['stock']) && $defaultPlan['stock'] !== null && $defaultPlan['stock'] != -1 && (int)$defaultPlan['stock'] <= 0);
                             $btnDisabledAttr = $isDefaultOutOfStock ? 'disabled style="background:#94a3b8; border-color:#94a3b8; cursor:not-allowed; pointer-events:none;"' : '';
                         @endphp
                         <button class="btn btn-primary btn-lg" style="flex:1; padding:14px; font-weight:700;"
@@ -495,7 +542,8 @@ document.querySelectorAll('.plan-option').forEach(opt => {
         const period = this.dataset.period;
         const image = this.dataset.image;
         const btn = document.getElementById('btn-main-add-cart');
-        const stock = parseInt(this.dataset.stock || 0);
+        const stock = parseInt(this.dataset.stock !== undefined ? this.dataset.stock : -1);
+        const isOutOfStock = (this.dataset.isOutOfStock === '1' || (stock !== -1 && stock <= 0));
         
         if (btn) {
             btn.dataset.id = this.dataset.id;
@@ -504,7 +552,7 @@ document.querySelectorAll('.plan-option').forEach(opt => {
             btn.dataset.name  = '{{ $brand["name"] }} ' + period;
             btn.dataset.requireEmail = this.dataset.requireEmail || '0';
 
-            if (stock <= 0) {
+            if (isOutOfStock) {
                 btn.disabled = true;
                 btn.innerHTML = '<i class="bi bi-x-circle me-2"></i>Tạm Hết Hàng';
                 btn.style.background = '#94a3b8';

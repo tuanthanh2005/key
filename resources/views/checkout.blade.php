@@ -235,11 +235,24 @@ document.addEventListener('DOMContentLoaded', function() {
         summaryEl.innerHTML = cart.map(item => {
             const stockKey = (item.brand + '_' + item.plan).toLowerCase().replace(/\s+/g, '');
             const isOutOfStock = window.stockMap !== undefined && window.stockMap[stockKey] !== undefined && window.stockMap[stockKey] <= 0;
+
+            const brandSlug = (item.brandSlug || item.brand || '').toLowerCase().trim();
+            const fallbackImg = (window.categoryImages && (window.categoryImages[brandSlug] || window.categoryImages[item.brand ? item.brand.toLowerCase() : '']))
+                ? (window.categoryImages[brandSlug] || window.categoryImages[item.brand ? item.brand.toLowerCase() : ''])
+                : '';
+            const itemImgSrc = (item.image && item.image.length > 5) ? item.image : fallbackImg;
+
+            const imgMarkup = (itemImgSrc && itemImgSrc.length > 5)
+                ? `<div style="width:42px; height:42px; border-radius:10px; padding:3px; background:var(--bg-elevated); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                       <img src="${itemImgSrc}" alt="${item.name}" style="width:100%; height:100%; object-fit:contain; border-radius:6px;">
+                   </div>`
+                : `<div style="width:42px; height:42px; background:${item.brandColor || '#7c3aed'}15; color:${item.brandColor || '#7c3aed'}; border-radius:10px; border:1px solid ${item.brandColor || '#7c3aed'}30; display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0;">
+                       <i class="bi bi-shield-fill-check"></i>
+                   </div>`;
+
             return `
             <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
-                <div style="width:40px; height:40px; background:${item.brandColor}15; color:${item.brandColor}; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1.3rem; flex-shrink:0;">
-                    <i class="bi bi-shield-fill-check"></i>
-                </div>
+                ${imgMarkup}
                 <div style="flex:1; min-width:0;">
                     <div style="font-weight:700; font-size:0.8rem; color:var(--text-primary); display:flex; align-items:center;">
                         ${item.name}
@@ -418,7 +431,9 @@ function submitCheckout() {
         }
     })
     .catch(err => {
-        showToast(err.message || 'Có lỗi kết nối xảy ra!', 'danger');
+        const msg = err.message || (err.errors ? Object.values(err.errors).flat().join('\n') : 'Có lỗi xảy ra, vui lòng thử lại!');
+        alert(msg);
+        showToast(msg, 'danger');
         if (btn) {
             btn.innerHTML = '<i class="bi bi-shield-check me-2"></i>Xác Nhận Đặt Mua';
             btn.disabled = false;

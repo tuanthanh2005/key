@@ -38,6 +38,20 @@ class SocialAuthController extends Controller
                     ]);
                 }
             } else {
+                $clientIp = request()->ip();
+                $todayStart = now()->startOfDay();
+                $ipRegCountDb = User::where('ip_address', $clientIp)
+                    ->where('created_at', '>=', $todayStart)
+                    ->count();
+                $cacheKey = 'ip_reg_count_' . str_replace([':', '.'], '_', $clientIp) . '_' . date('Y-m-d');
+                $ipRegCountCache = (int) \Illuminate\Support\Facades\Cache::get($cacheKey, 0);
+                $totalRegistrationsToday = max($ipRegCountDb, $ipRegCountCache);
+
+                if ($totalRegistrationsToday >= 3) {
+                    return redirect()->route('auth.login')
+                        ->with('error', 'Địa chỉ IP của bạn đã đạt giới hạn tạo 3 tài khoản trong ngày hôm nay. Vui lòng liên hệ trực tiếp Admin để được hỗ trợ tạo tài khoản!');
+                }
+
                 // Tạo user mới từ Google
                 $user = User::create([
                     'name'      => $googleUser->name,
@@ -47,8 +61,10 @@ class SocialAuthController extends Controller
                     'password'  => bcrypt(\Illuminate\Support\Str::random(32)),
                     'role'      => 'user',
                     'status'    => 'active',
+                    'ip_address'=> $clientIp,
                     'email_verified_at' => now(),
                 ]);
+                \Illuminate\Support\Facades\Cache::put($cacheKey, $totalRegistrationsToday + 1, now()->endOfDay());
             }
 
             // Kiểm tra tài khoản bị khóa
