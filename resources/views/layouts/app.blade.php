@@ -1369,6 +1369,10 @@ function escapeHtml(str) {
             }
         }
     }, true);
+})();
+</script>
+@endauth
+
 <!-- Footer Interactive Modals -->
 <div id="footerModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.65); backdrop-filter:blur(5px); z-index:999999; align-items:center; justify-content:center; padding:16px;">
     <div style="width:100%; max-width:460px; padding:24px; border-radius:20px; background:var(--bg-card); border:1px solid var(--border); box-shadow:0 20px 50px rgba(0,0,0,0.5); position:relative; animation: modalPop 0.3s ease-out;">
@@ -1463,6 +1467,5 @@ function filterMegaMenuItems() {
     });
 }
 </script>
-@endauth
 </body>
 </html>
