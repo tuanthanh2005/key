@@ -1,4 +1,10 @@
 User-agent: *
-Disallow:
+Disallow: /admin/
+Disallow: /auth/
+Disallow: /gio-hang
+Disallow: /thanh-toan
+Disallow: /tra-don-hang
+Disallow: /lich-su-don-hang
+Disallow: /san-pham-yeu-thich
 
 Sitemap: https://vpnstore.pro/sitemap.xml

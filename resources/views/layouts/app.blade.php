@@ -63,18 +63,36 @@
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     @stack('head')
+    @yield('json_ld')
 
-    {{-- Structured Data --}}
+    {{-- Global Structured Data --}}
     <script type="application/ld+json">
     {
         "@@context": "https://schema.org",
-        "@@type": "Store",
-        "name": "{{ $settings['store_name'] ?? 'VPNStore' }}",
-        "description": "{{ $settings['meta_description'] ?? 'Cửa hàng phần mềm bản quyền uy tín - VPN Premium & Proxy' }}",
-        "url": "{{ route('home') }}",
-        "currenciesAccepted": "VND",
-        "priceRange": "$$",
-        "areaServed": "VN"
+        "@@graph": [
+            {
+                "@@type": "OnlineStore",
+                "@@id": "{{ url('/') }}/#store",
+                "name": "{{ $settings['store_name'] ?? 'VPNStore' }}",
+                "description": "{{ $settings['meta_description'] ?? 'Cửa hàng phần mềm bản quyền uy tín - VPN Premium & Proxy' }}",
+                "url": "{{ url('/') }}",
+                "logo": "{{ !empty($settings['logo_path']) ? asset($settings['logo_path']) : asset('images/logo.png') }}",
+                "currenciesAccepted": "VND",
+                "priceRange": "10000VND - 5000000VND"
+            },
+            {
+                "@@type": "WebSite",
+                "@@id": "{{ url('/') }}/#website",
+                "url": "{{ url('/') }}",
+                "name": "{{ $settings['store_name'] ?? 'VPNStore' }}",
+                "publisher": { "@@id": "{{ url('/') }}/#store" },
+                "potentialAction": {
+                    "@@type": "SearchAction",
+                    "target": "{{ route('search') }}?q={search_term_string}",
+                    "query-input": "required name=search_term_string"
+                }
+            }
+        ]
     }
     </script>
 </head>

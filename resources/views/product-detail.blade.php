@@ -97,6 +97,13 @@ $curRating = floatval($defaultPlan['rating'] ?? 0.0);
 $curReviews = intval($defaultPlan['reviews'] ?? 0);
 @endphp
 
+@section('title', ($firstProduct->meta_title ?? null) ?: ($brand['name'] . ' Bản Quyền Giá Rẻ - Giao Key Tự Động'))
+@section('meta_description', ($firstProduct->meta_description ?? null) ?: 'Mua ' . $brand['name'] . ' bản quyền chính hãng với giá tốt nhất thị trường. ' . \Illuminate\Support\Str::limit(strip_tags($brand['desc']), 150))
+@section('meta_keywords', strtolower($brand['name']) . ' gia re, mua ' . strtolower($brand['name']) . ', key ' . strtolower($brand['name']) . ' ban quyen, vpn premium')
+@if(!empty($defaultPlan['image_path']))
+@section('og_image', str_starts_with($defaultPlan['image_path'], 'http') ? $defaultPlan['image_path'] : asset($defaultPlan['image_path']))
+@endif
+
 @push('head')
 @if($defaultPlan)
 <script type="application/ld+json">
@@ -104,7 +111,7 @@ $curReviews = intval($defaultPlan['reviews'] ?? 0);
   "@@context": "https://schema.org/",
   "@@type": "Product",
   "name": "{{ $firstProduct ? $firstProduct->name : ($brand['name'] . ' ' . $defaultPlan['label']) }}",
-  "image": "{{ !empty($defaultPlan['image_path']) ? asset($defaultPlan['image_path']) : '' }}",
+  "image": "{{ !empty($defaultPlan['image_path']) ? (str_starts_with($defaultPlan['image_path'], 'http') ? $defaultPlan['image_path'] : asset($defaultPlan['image_path'])) : '' }}",
   "description": "{{ strip_tags($defaultPlan['description'] ?? $brand['desc']) }}",
   "brand": {
     "@@type": "Brand",
@@ -115,14 +122,17 @@ $curReviews = intval($defaultPlan['reviews'] ?? 0);
     "url": "{{ url()->current() }}",
     "priceCurrency": "VND",
     "price": "{{ $defaultPlan['price'] }}",
+    "priceValidUntil": "{{ date('Y-12-31') }}",
     "itemCondition": "https://schema.org/NewCondition",
     "availability": "{{ $defaultPlan['stock'] > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock' }}"
-  },
+  }@if($curRating > 0 && $curReviews > 0),
   "aggregateRating": {
     "@@type": "AggregateRating",
     "ratingValue": "{{ $curRating }}",
     "reviewCount": "{{ $curReviews }}"
   }
+  @endif
+
 }
 </script>
 @endif

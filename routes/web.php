@@ -88,6 +88,23 @@ Route::get('/sitemap.xml', function () {
 })->name('sitemap');
 
 // =============================================
+// Robots.txt
+// =============================================
+Route::get('/robots.txt', function () {
+    $content = "User-agent: *\n";
+    $content .= "Disallow: /admin/\n";
+    $content .= "Disallow: /auth/\n";
+    $content .= "Disallow: /gio-hang\n";
+    $content .= "Disallow: /thanh-toan\n";
+    $content .= "Disallow: /tra-don-hang\n";
+    $content .= "Disallow: /lich-su-don-hang\n";
+    $content .= "Disallow: /san-pham-yeu-thich\n\n";
+    $content .= "Sitemap: " . url('/sitemap.xml') . "\n";
+
+    return response($content, 200)->header('Content-Type', 'text/plain');
+})->name('robots');
+
+// =============================================
 // XÁC THỰC (Auth)
 // =============================================
 Route::prefix('auth')->name('auth.')->group(function () {
