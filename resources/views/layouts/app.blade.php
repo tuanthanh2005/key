@@ -115,7 +115,7 @@
             <a href="{{ route('products') }}" class="dropdown-toggle {{ request()->routeIs('products') ? 'active' : '' }}">
                 <i class="bi bi-box-seam"></i> Sản Phẩm <i class="bi bi-chevron-down ms-1" style="font-size: 0.75rem;"></i>
             </a>
-            <div class="dropdown-menu mega-menu-panel" style="width: 860px; max-width: 92vw; padding: 20px; left: 50%; transform: translateX(-50%); border-radius: 16px; background: var(--bg-elevated); border: 1px solid var(--border); box-shadow: 0 16px 40px rgba(0,0,0,0.4);">
+            <div class="dropdown-menu mega-menu-panel" style="width: 860px; max-width: 92vw; padding: 20px; border-radius: 16px; background: var(--bg-elevated); border: 1px solid var(--border); box-shadow: 0 16px 40px rgba(0,0,0,0.4);">
                 <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border);">
                     <a href="{{ route('products') }}" style="font-weight:700; color:var(--primary-light); text-decoration:none; font-size:0.92rem; display:inline-flex; align-items:center; gap:8px;">
                         <i class="bi bi-grid-fill"></i> Xem Tất Cả Sản Phẩm ({{ count($sharedCategories) }} danh mục)

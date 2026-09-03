@@ -399,7 +399,8 @@ img {
   box-shadow: 0 0 12px rgba(124, 58, 237, 0.6);
 }
 
-.user-dropdown {
+.user-dropdown,
+.dropdown {
   position: relative;
 }
 
@@ -443,14 +444,45 @@ img {
   visibility: hidden;
   transform: translateY(-8px);
   transition: var(--transition);
-  z-index: 100;
+  z-index: 1000;
+}
+
+/* Invisible hover bridge pseudo element to bridge the gap between toggle and menu */
+.dropdown-menu::before {
+  content: '';
+  position: absolute;
+  top: -14px;
+  left: -20px;
+  right: -20px;
+  height: 16px;
 }
 
 .user-dropdown:hover .dropdown-menu,
+.dropdown:hover .dropdown-menu,
 .dropdown-menu.show {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
+}
+
+.mega-menu-panel {
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%) translateY(-8px);
+}
+
+.dropdown:hover .mega-menu-panel,
+.mega-menu-panel.show {
+  transform: translateX(-50%) translateY(0);
+}
+
+.dropdown:hover .dropdown-toggle .bi-chevron-down {
+  transform: rotate(180deg);
+}
+
+.dropdown-toggle .bi-chevron-down {
+  transition: transform 0.25s ease;
+  display: inline-block;
 }
 
 .dropdown-item {
@@ -2625,9 +2657,9 @@ body {
   transition: all 0.2s ease !important;
 }
 
-.order-card:hover {
-  border-color: rgba(124, 58, 237, 0.3) !important;
-  box-shadow: var(--shadow-card-hover) !important;
+/* Brands & Categories Section - Hidden on Desktop (> 768px) */
+.home-brands-section {
+  display: none;
 }
 
 /* =====================================================
