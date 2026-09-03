@@ -1296,36 +1296,7 @@ function escapeHtml(str) {
     localStorage.removeItem('guest_session_start_time');
 </script>
 @else
-{{-- Khóa Màn Hình Khách Vãng Lai Sau 5 Phút --}}
-<div id="guestLockoutOverlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(15, 23, 42, 0.96); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); z-index:99999999; flex-direction:column; align-items:center; justify-content:center; padding:20px; text-align:center;">
-    <div style="max-width:460px; width:100%; background:var(--bg-card, #1e293b); border:1px solid rgba(255,255,255,0.15); border-radius:24px; padding:36px 28px; box-shadow:0 25px 50px -12px rgba(0,0,0,0.7); animation: guestPulse 2s infinite ease-in-out;">
-        <div style="width:72px; height:72px; background:rgba(239, 68, 68, 0.15); color:#ef4444; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:2.4rem; margin-bottom:20px; border:2px solid rgba(239, 68, 68, 0.3);">
-            <i class="bi bi-lock-fill"></i>
-        </div>
-        <h3 style="font-weight:800; font-size:1.35rem; color:#ffffff; margin-bottom:12px;">Hết Thời Gian Trải Nghiệm</h3>
-        <p style="font-size:0.9rem; color:#94a3b8; line-height:1.6; margin-bottom:24px;">
-            Bạn đã sử dụng hết <strong>5 phút trải nghiệm miễn phí</strong> dành cho khách vãng lai. Vui lòng đăng nhập hoặc đăng ký tài khoản để tiếp tục xem sản phẩm và thực hiện giao dịch trên hệ thống!
-        </p>
-
-        <div style="display:flex; flex-direction:column; gap:12px;">
-            <a href="{{ route('auth.login') }}" class="btn btn-primary btn-lg" style="width:100%; font-weight:700; padding:14px; border-radius:12px; font-size:0.95rem; display:flex; align-items:center; justify-content:center; gap:8px;">
-                <i class="bi bi-box-arrow-in-right" style="font-size:1.2rem;"></i> Đăng Nhập Ngay
-            </a>
-            <a href="{{ route('auth.register') }}" class="btn btn-outline" style="width:100%; font-weight:700; padding:14px; border-radius:12px; font-size:0.95rem; display:flex; align-items:center; justify-content:center; gap:8px; border:1px solid rgba(255,255,255,0.2); color:#ffffff; background:rgba(255,255,255,0.05);">
-                <i class="bi bi-person-plus-fill" style="font-size:1.2rem;"></i> Đăng Ký Tài Khoản Mới
-            </a>
-        </div>
-    </div>
-</div>
-
-<style>
-@keyframes guestPulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.015); }
-    100% { transform: scale(1); }
-}
-</style>
-
+@if(!request()->routeIs('auth.*'))
 <script>
 (function() {
     const LOCK_TIME_SECONDS = 300; // 5 phút = 300 giây
@@ -1339,38 +1310,15 @@ function escapeHtml(str) {
     function checkGuestLockout() {
         const elapsedSeconds = Math.floor((Date.now() - parseInt(startTime)) / 1000);
         if (elapsedSeconds >= LOCK_TIME_SECONDS) {
-            triggerLockout();
+            window.location.href = "{{ route('auth.login') }}";
         }
     }
     
-    function triggerLockout() {
-        const overlay = document.getElementById('guestLockoutOverlay');
-        if (overlay) {
-            overlay.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-            document.body.style.pointerEvents = 'none';
-            overlay.style.pointerEvents = 'auto';
-        }
-    }
-    
-    // Check immediately on load
     checkGuestLockout();
-    
-    // Check every 1 second
     setInterval(checkGuestLockout, 1000);
-    
-    // Prevent closing via keyboard (ESC, Tab)
-    window.addEventListener('keydown', function(e) {
-        const elapsedSeconds = Math.floor((Date.now() - parseInt(startTime)) / 1000);
-        if (elapsedSeconds >= LOCK_TIME_SECONDS) {
-            if (e.key === 'Escape' || e.key === 'Tab' || e.keyCode === 27 || e.keyCode === 9) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-        }
-    }, true);
 })();
 </script>
+@endif
 @endauth
 
 <!-- Footer Interactive Modals -->
