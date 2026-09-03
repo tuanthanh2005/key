@@ -1294,6 +1294,7 @@ function escapeHtml(str) {
 @auth
 <script>
     localStorage.removeItem('guest_session_start_time');
+    localStorage.removeItem('guest_expired_toast');
 </script>
 @else
 @if(!request()->routeIs('auth.*'))
@@ -1310,13 +1311,26 @@ function escapeHtml(str) {
     function checkGuestLockout() {
         const elapsedSeconds = Math.floor((Date.now() - parseInt(startTime)) / 1000);
         if (elapsedSeconds >= LOCK_TIME_SECONDS) {
-            window.location.href = "{{ route('auth.login') }}";
+            localStorage.setItem('guest_expired_toast', '1');
+            window.location.href = "{{ route('auth.login') }}?expired=1";
         }
     }
     
     checkGuestLockout();
     setInterval(checkGuestLockout, 1000);
 })();
+</script>
+@else
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (localStorage.getItem('guest_expired_toast') === '1' || urlParams.has('expired')) {
+        localStorage.removeItem('guest_expired_toast');
+        if (typeof showToast === 'function') {
+            showToast('Bạn đã hết 5 phút trải nghiệm miễn phí. Vui lòng đăng nhập để tiếp tục!', 'warning');
+        }
+    }
+});
 </script>
 @endif
 @endauth

@@ -20,6 +20,13 @@
             <h1 style="font-size:1.5rem; font-weight:800; text-align:center; margin-bottom:6px; color:var(--text-primary);">Đăng Nhập</h1>
             <p style="text-align:center; color:var(--text-muted); font-size:0.875rem; margin-bottom:28px;">Chào mừng bạn trở lại!</p>
 
+            @if(request('expired'))
+            <div style="padding:12px 16px; background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.3); border-radius:var(--radius); color:#f59e0b; font-size:0.875rem; margin-bottom:20px; display:flex; align-items:center; gap:10px; font-weight:600;">
+                <i class="bi bi-clock-history" style="font-size:1.2rem; flex-shrink:0;"></i>
+                <span>Bạn đã hết 5 phút trải nghiệm miễn phí. Vui lòng đăng nhập để tiếp tục!</span>
+            </div>
+            @endif
+
             @if(session('success'))
             <div style="padding:12px; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.2); border-radius:var(--radius); color:var(--success); font-size:0.85rem; margin-bottom:20px; display:flex; align-items:center; gap:8px;">
                 <i class="bi bi-check-circle-fill"></i>
